@@ -1,0 +1,16 @@
+# secrets
+.env
+.env.*
+
+# big shared binaries (restorable: models.py fetch, sfx.py gen, fortune-promo/sfx-pack)
+assets/models/*.fbx
+assets/sfx-library/
+
+# per-reel generated / linked output
+reels/*/assets/models/
+reels/*/assets/sfx/
+reels/*/renders/
+reels/*/snap/
+reels/*/.hyperframes/
+reels/*/node_modules/
+__pycache__/

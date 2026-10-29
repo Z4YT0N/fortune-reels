@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python engine/tools/*)",
+      "Bash(npx --yes hyperframes@0.8.152 *)",
+      "Bash(npm run check)",
+      "Bash(npm run render)",
+      "Bash(ffmpeg *)",
+      "Bash(ffprobe *)",
+      "Bash(git status*)",
+      "Bash(git diff*)",
+      "Bash(git log*)",
+      "Bash(git add *)",
+      "Bash(git commit *)"
+    ],
+    "deny": [
+      "Read(.env)",
+      "Read(.env.*)"
+    ]
+  }
+}
