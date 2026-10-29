@@ -1,0 +1,14 @@
+{
+  "slug": "engine-demo",
+  "title": "Engine Demo",
+  "created": "2026-10-29",
+  "status": "script",
+  "speed": 1.12,
+  "voice": {
+    "id": "KfYUTAF49N2CPU3iKuMi",
+    "pick": "B"
+  },
+  "keyword": null,
+  "sources": [],
+  "delivered": null
+}

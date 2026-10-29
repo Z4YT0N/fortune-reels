@@ -8,6 +8,7 @@
 | 2026-10-28 | 2.5D style: three.js inside HyperFrames ("option 2"). |
 | 2026-10-28 | Real 3D assets (3dicons) instead of drawn shapes. |
 | 2026-10-29 | Build this folder (fortune-reels) as the single reel engine; improve it over time; it must not forget. |
+| 2026-10-29 | CTA «انطباع» approved: the team gives a free first-impression review of the commenter's site. Real portfolio screenshots may appear in reels without client logos or names. |
 | standing | Reels: light Gulf Arabic. TikTok photo slideshows: formal MSA. |
 | standing | Never fabricate numbers, reviews or client results. |
 | standing | Full autonomy on the machine for reel work («كل جهازي ملكك»), but nothing is posted publicly without the owner. |
