@@ -1,0 +1,8 @@
+{
+ "content": [
+  {
+   "type": "text",
+   "text": "{\n  \"mediaIds\": [\n    \"7323dc7c-1ab6-4fde-8b52-2b47ea43526e\",\n    \"e5e3157e-3798-4475-a127-ec7dc9a15ef1\",\n    \"9b59cc8d-3eb6-4df6-ae97-9f2c84e3beb0\",\n    \"40e25f0b-42d0-4a2e-9ab5-2c11268b77b5\"\n  ],\n  \"files\": [\n    \"E:\\\\Library\\\\01-Workspace\\\\Fortune\\\\fortune-reels\\\\reels\\\\014-nov14-roar\\\\flow\\\\K6\\\\7323dc7c-1ab6-4fde-8b52-2b47ea43526e.mp4\",\n    \"E:\\\\Library\\\\01-Workspace\\\\Fortune\\\\fortune-reels\\\\reels\\\\014-nov14-roar\\\\flow\\\\K6\\\\e5e3157e-3798-4475-a127-ec7dc9a15ef1.png\",\n    \"E:\\\\Library\\\\01-Workspace\\\\Fortune\\\\fortune-reels\\\\reels\\\\014-nov14-roar\\\\flow\\\\K6\\\\9b59cc8d-3eb6-4df6-ae97-9f2c84e3beb0.mp4\",\n    \"E:\\\\Library\\\\01-Workspace\\\\Fortune\\\\fortune-reels\\\\reels\\\\014-nov14-roar\\\\flow\\\\K6\\\\40e25f0b-42d0-4a2e-9ab5-2c11268b77b5.png\"\n  ],\n  \"approval\": \"none\",\n  \"reply\": \"\"\n}"
+  }
+ ]
+}

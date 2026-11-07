@@ -1,0 +1,8 @@
+{
+ "content": [
+  {
+   "type": "text",
+   "text": "{\n  \"mediaIds\": [\n    \"418d78be-ea63-4b10-9054-3bfab23839ff\",\n    \"820dc6be-fb75-4502-86ed-e493f63c5113\",\n    \"c6c05937-8048-4ae8-b603-e198546ec224\",\n    \"aff85103-4cc1-4da3-a4aa-ff2e003ce0e4\",\n    \"667bc5cc-a602-49e8-a727-2a2230463d6e\",\n    \"fbdde43d-c831-4e8f-a1af-d6620b3dd41b\"\n  ],\n  \"files\": [\n    \"E:\\\\Library\\\\01-Workspace\\\\Fortune\\\\fortune-reels\\\\reels\\\\014-nov14-roar\\\\flow\\\\K0\\\\418d78be-ea63-4b10-9054-3bfab23839ff.png\",\n    \"E:\\\\Library\\\\01-Workspace\\\\Fortune\\\\fortune-reels\\\\reels\\\\014-nov14-roar\\\\flow\\\\K0\\\\820dc6be-fb75-4502-86ed-e493f63c5113.png\",\n    \"E:\\\\Library\\\\01-Workspace\\\\Fortune\\\\fortune-reels\\\\reels\\\\014-nov14-roar\\\\flow\\\\K0\\\\c6c05937-8048-4ae8-b603-e198546ec224.png\",\n    \"E:\\\\Library\\\\01-Workspace\\\\Fortune\\\\fortune-reels\\\\reels\\\\014-nov14-roar\\\\flow\\\\K0\\\\aff85103-4cc1-4da3-a4aa-ff2e003ce0e4.mp4\",\n    \"E:\\\\Library\\\\01-Workspace\\\\Fortune\\\\fortune-reels\\\\reels\\\\014-nov14-roar\\\\flow\\\\K0\\\\667bc5cc-a602-49e8-a727-2a2230463d6e.png\",\n    \"ERROR Error: no URL yet\"\n  ],\n  \"approval\": \"none\",\n  \"reply\": \"\"\n}"
+  }
+ ]
+}

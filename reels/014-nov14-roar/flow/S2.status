@@ -1,0 +1,8 @@
+{
+ "content": [
+  {
+   "type": "text",
+   "text": "{\n  \"items\": [\n    {\n      \"mediaId\": \"81144cb5-06ea-4c1f-bdfa-5d1917d336f0\",\n      \"workflowId\": \"341e93c2-3274-40f7-b83f-fc0efd76ec4c\",\n      \"state\": \"succeeded\",\n      \"code\": 3,\n      \"prompt\": \"A giant heavy steel padlock falls from above the frame and slams down onto the laptop with a small bounce; the man flinches, steps back half a step and puts his hand on his chin, worried. Slight camera shake on impact, then steady. One continuous camera move, no cut, no scene change. Keep the exact look of the frames: real photograph, light grey paper studio set, the same Saudi man, the same concrete pedestal and silver laptop, Kodak Portra film grain, matte colours. Realistic physics and weight. No text, no letters, no logos appear at any time.\",\n      \"modelKey\": \"macaron_cookie_i2v_fl_4s\"\n    }\n  ],\n  \"creditsLeft\": 809\n}"
+  }
+ ]
+}

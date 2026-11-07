@@ -1,0 +1,8 @@
+{
+ "content": [
+  {
+   "type": "text",
+   "text": "{\n  \"items\": [\n    {\n      \"mediaId\": \"55c61ec8-d185-4706-85a6-4bc06e08d843\",\n      \"workflowId\": \"d90027bf-a9c7-403b-8ecf-bdfdaa9ec6e9\",\n      \"state\": \"succeeded\",\n      \"code\": 3,\n      \"prompt\": \"In the dark, the magnifying glass slowly glides from the upper right down to the left side of the pedestal, its bright beam sliding down over the paper notes taped on the concrete, with a gentle slow camera push-in. One continuous camera move, no cut, no scene change. Keep the exact look of the frames: real photograph, light grey paper studio set, the same Saudi man, the same concrete pedestal and silver laptop, Kodak Portra film grain, matte colours. Realistic physics and weight. No text, no letters, no logos appear at any time.\",\n      \"modelKey\": \"macaron_cookie_i2v_fl_5s\"\n    }\n  ],\n  \"creditsLeft\": 809\n}"
+  }
+ ]
+}

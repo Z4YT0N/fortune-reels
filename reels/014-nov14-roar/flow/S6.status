@@ -1,0 +1,8 @@
+{
+ "content": [
+  {
+   "type": "text",
+   "text": "{\n  \"items\": [\n    {\n      \"mediaId\": \"bcb11ab3-c212-449d-a67a-1f15dd3ff689\",\n      \"workflowId\": \"b68c97f6-6bdd-4b64-8fc1-3e229f8598f3\",\n      \"state\": \"succeeded\",\n      \"code\": 3,\n      \"prompt\": \"The padlock shackle springs open with a jolt and the padlock tumbles off the laptop onto the paper floor; the green tape notes fall away; the laptop screen lights up bright green; the man raises his fist in celebration with a big smile. One continuous camera move, no cut, no scene change. Keep the exact look of the frames: real photograph, light grey paper studio set, the same Saudi man, the same concrete pedestal and silver laptop, Kodak Portra film grain, matte colours. Realistic physics and weight. No text, no letters, no logos appear at any time.\",\n      \"modelKey\": \"macaron_cookie_i2v_fl_5s\"\n    }\n  ],\n  \"creditsLeft\": 809\n}"
+  }
+ ]
+}

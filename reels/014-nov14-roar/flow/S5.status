@@ -1,0 +1,8 @@
+{
+ "content": [
+  {
+   "type": "text",
+   "text": "{\n  \"items\": [\n    {\n      \"mediaId\": \"70a1f38f-e0fb-45f7-8b55-71a3017199ff\",\n      \"workflowId\": \"9b3eff6e-cf46-4870-9184-bd37adf26268\",\n      \"state\": \"succeeded\",\n      \"code\": 3,\n      \"prompt\": \"The magnifying glass slides out of frame and the studio lights switch back on; strips of bright green tape are pressed onto the paper notes one after another; the man stands beside the pedestal with arms crossed and smiles with relief. One continuous camera move, no cut, no scene change. Keep the exact look of the frames: real photograph, light grey paper studio set, the same Saudi man, the same concrete pedestal and silver laptop, Kodak Portra film grain, matte colours. Realistic physics and weight. No text, no letters, no logos appear at any time.\",\n      \"modelKey\": \"macaron_cookie_i2v_fl_4s\"\n    }\n  ],\n  \"creditsLeft\": 809\n}"
+  }
+ ]
+}

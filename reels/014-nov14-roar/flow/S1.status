@@ -1,0 +1,8 @@
+{
+ "content": [
+  {
+   "type": "text",
+   "text": "{\n  \"items\": [\n    {\n      \"mediaId\": \"7b096d37-5f69-4c32-aab2-2a1ac6fb0262\",\n      \"workflowId\": \"ac5a4351-5a25-42d1-b1d7-c69606a54a92\",\n      \"state\": \"succeeded\",\n      \"code\": 3,\n      \"prompt\": \"In the dark, the magnifying glass glides slowly across the laptop and the pedestal and its bright circular beam sweeps over small paper notes; then the magnifier slides out of frame to the right and the studio lights switch on, revealing the man standing proudly with arms crossed beside the pedestal; the paper notes are no longer visible in the light. Slow push-in. One continuous camera move, no cut, no scene change. Keep the exact look of the frames: real photograph, light grey paper studio set, the same Saudi man, the same concrete pedestal and silver laptop, Kodak Portra film grain, matte colours. Realistic physics and weight. No text, no letters, no logos appear at any time.\",\n      \"modelKey\": \"macaron_cookie_i2v_fl_5s\"\n    }\n  ],\n  \"creditsLeft\": 809\n}"
+  }
+ ]
+}

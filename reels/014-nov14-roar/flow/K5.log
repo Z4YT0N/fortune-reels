@@ -1,0 +1,8 @@
+{
+ "content": [
+  {
+   "type": "text",
+   "text": "{\n  \"mediaIds\": [\n    \"88fba10a-c934-436d-be9f-bf0319c92fbf\",\n    \"178980dd-888f-48d8-83d7-138265956497\",\n    \"fa9e15d3-9840-48dd-ad3d-44849ee4d618\",\n    \"ff3ac6af-089c-4396-ab95-9ee449c49fae\"\n  ],\n  \"files\": [\n    \"E:\\\\Library\\\\01-Workspace\\\\Fortune\\\\fortune-reels\\\\reels\\\\014-nov14-roar\\\\flow\\\\K5\\\\88fba10a-c934-436d-be9f-bf0319c92fbf.png\",\n    \"E:\\\\Library\\\\01-Workspace\\\\Fortune\\\\fortune-reels\\\\reels\\\\014-nov14-roar\\\\flow\\\\K5\\\\178980dd-888f-48d8-83d7-138265956497.png\",\n    \"ERROR Error: no URL yet\",\n    \"E:\\\\Library\\\\01-Workspace\\\\Fortune\\\\fortune-reels\\\\reels\\\\014-nov14-roar\\\\flow\\\\K5\\\\ff3ac6af-089c-4396-ab95-9ee449c49fae.mp4\"\n  ],\n  \"approval\": \"none\",\n  \"reply\": \"\"\n}"
+  }
+ ]
+}
