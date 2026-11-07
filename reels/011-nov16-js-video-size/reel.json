@@ -1,0 +1,18 @@
+{
+  "slug": "nov16-js-video-size",
+  "title": "Nov 16: JavaScript 2.2 MB to 1.2 MB, background video 2 MB to 613 KB",
+  "created": "2026-11-07",
+  "status": "delivered",
+  "speed": 1.0,
+  "voice": {
+    "id": "hKxOF1e0PGHjtctJDcOl",
+    "model": "eleven_v3",
+    "text": "script.txt (plain Gulf, no tashkeel)",
+    "pick": "B2"
+  },
+  "keyword": "انطباع",
+  "sources": [
+    "November 2026 plan + BRIEF rule 3: JS 2.2 MB -> 1.2 MB, background video 2 MB -> 613 KB (client withheld)",
+    "FACTS_BANK: 53% of mobile visits abandoned over 3 s, Google/DoubleClick 2016"
+  ]
+}
