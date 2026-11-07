@@ -1,0 +1,2 @@
+replace: script=['والفيديو'] heard=['وإن', 'فيديو']
+replace: script=['ستمية', 'وثلاثة', 'عشر'] heard=['613']

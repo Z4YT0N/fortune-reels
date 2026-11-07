@@ -1,0 +1,27 @@
+{
+ "S1": {
+  "start": "b0cf0b73-22b8-4e0d-b464-c03e066c0557",
+  "end": "4edbf4aa-9cd8-4857-b0c0-61a5ed84c56b",
+  "prompt": "The camera slowly orbits around to the front of the man and pushes in from a slightly low angle: the heavy rough wooden crate and the big silver film reel stacked on the Saudi man's shoulders press down, he sinks lower, his knees bend, he steadies the crate with his left hand and looks at the phone in his right hand, strained and tired."
+ },
+ "S2": {
+  "start": "4edbf4aa-9cd8-4857-b0c0-61a5ed84c56b",
+  "end": "ef523bda-27ab-4b9a-b85e-b09556ba8c55",
+  "prompt": "The camera tilts down from the heavy crate and his strained face to the black smartphone in his right hand and pushes in close on the phone screen, where one green loading circle keeps spinning; the dark shadow of the crate falls across his hand."
+ },
+ "S3": {
+  "start": "ef523bda-27ab-4b9a-b85e-b09556ba8c55",
+  "end": "32ff5348-9834-4ea2-b841-871b61842ebf",
+  "prompt": "A hard narrow flashlight beam sweeps across the frame and the light goes out around it; the camera pulls back and the green loading circle on the phone becomes a brass stopwatch standing on a raw concrete pedestal, lit by one narrow spotlight on a dark charcoal paper backdrop."
+ },
+ "S4": {
+  "start": "32ff5348-9834-4ea2-b841-871b61842ebf",
+  "end": "249cb366-dd80-4cd0-96ac-abb97f8c1b50",
+  "prompt": "The narrow spotlight on the brass stopwatch flares wide and the studio lights come up: the dark charcoal backdrop brightens into light grey paper and a green paper starburst appears taped on the wall behind the concrete pedestal; the stopwatch is gone and a vintage cream scale stands on the pedestal; a pair of big steel tailor's shears snips a heavy wooden crate cleanly in half on the pedestal, one half falls away out of frame, and a small silver film reel rolls into place next to the remaining half."
+ },
+ "S5": {
+  "start": "249cb366-dd80-4cd0-96ac-abb97f8c1b50",
+  "end": "ec80f745-c6af-4a3b-b5d5-9e71e2c8e3f6",
+  "prompt": "The camera pulls back and rises smoothly: the concrete pedestal with the scale, the half crate, the shears and the small film reel sinks down out of the bottom of the frame, revealing the same Saudi man standing tall and relaxed in front of the green paper starburst, smiling, raising his phone, one white feather drifting down past his shoulder."
+ }
+}

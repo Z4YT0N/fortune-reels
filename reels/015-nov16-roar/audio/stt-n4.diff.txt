@@ -1,0 +1,1 @@
+replace: script=['لاقل'] heard=['لأقل']

@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="ar" data-resolution="portrait">
+  <!-- Reel 015, Nov 16 (ROAR): JS 2.2 MB -> 1.2 MB, background video 2 MB -> 613 KB, client not named.
+       Picture = Flow Omni film assets/video/bg.mp4 (K0..K5 chained, retimed to the voice).
+       This page is ONLY the type/overlay layer on top (ROAR small word-by-word type above the objects,
+       paper notes, hanging tags, receipt, starburst, one invert flash, end card).
+       Moves per line: «موقع شركة كبيرة» drop (paper scrap, frame 0 already moving) · «جوالك» tag + drawn arrow ·
+       «حمل ما تشوفه» blurIn + kashida stretch · JS / video tags swing in on a string + counter slam ·
+       «وش يعني هذا؟» slam + hl · phone download pill (tracked) · «قبل ما الصفحة تتحرك» paper strip drop ·
+       «٣ ثواني» zoom-out + «٥٣٪» counter · invert flash on «فاشتغلنا» · receipt prints line by line ·
+       «اخف» kashida float · question note drop · comment bar typeOn «انطباع» · end card rises.
+       Hidden state is set at build time; time-based motion is baked as TL.set per frame. build.py fills 31.04 + WORDS. -->
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1080, height=1920">
+    <title>Nov 16 JS reel ROAR</title>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/MotionPathPlugin.min.js"></script>
+    <style>
+      @font-face { font-family: "ZainL"; src: url("assets/fonts/zain-mob-long.ttf") format("truetype"); }
+      @font-face { font-family: "InterX"; src: url("assets/fonts/inter-lat-700.woff2") format("woff2"); font-weight: 700; }
+      @font-face { font-family: "InterX"; src: url("assets/fonts/inter-lat-800.woff2") format("woff2"); font-weight: 800; }
+      @font-face { font-family: "PlexA"; src: url("assets/fonts/IBMPlexSansArabic-Medium.ttf") format("truetype"); font-weight: 500; }
+      @font-face { font-family: "PlexA"; src: url("assets/fonts/IBMPlexSansArabic-SemiBold.ttf") format("truetype"); font-weight: 600; }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1080px; height: 1920px; overflow: hidden; background: #F0F1F2; }
+      #main { position: relative; width: 1080px; height: 1920px; overflow: hidden; font-family: "ZainL", sans-serif; color: #121416; }
+      #inv { position: absolute; inset: 0; }
+      #bgWrap { position: absolute; inset: 0; overflow: hidden; transform-origin: 50% 45%; }
+      #bgWrap video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+      #stage { position: absolute; inset: 0; }
+      .abs { position: absolute; }
+      .ar { direction: rtl; white-space: nowrap; line-height: 1.3; }
+      .plex { font-family: "PlexA", sans-serif; font-weight: 600; }
+      .lat { font-family: "InterX", sans-serif; font-weight: 800; direction: ltr; }
+      .scrap { position: absolute; background: #F4F5F6 url("assets/img/paper.jpg") center/cover; color: #121416;
+               box-shadow: 0 3px 3px rgba(18,20,22,.30), 0 6px 18px rgba(18,20,22,.22), 0 14px 30px rgba(18,20,22,.12); }
+      .tape { position: absolute; width: 120px; height: 38px; background: rgba(226,228,222,.78); box-shadow: 0 1px 2px rgba(0,0,0,.15); }
+      .pill { position: absolute; border-radius: 999px; direction: rtl; white-space: nowrap; display: flex; align-items: center; gap: 14px; }
+      .grain { position: absolute; inset: 0; width: 1080px; height: 1920px; mix-blend-mode: soft-light; opacity: 0; pointer-events: none; }
+      svg.draw { position: absolute; left: 0; top: 0; overflow: visible; pointer-events: none; }
+    </style>
+  </head>
+  <body>
+    <div id="main" data-composition-id="main" data-start="0" data-duration="31.04" data-width="1080" data-height="1920">
+      <div id="inv">
+        <div id="bgWrap"><video id="bg" src="assets/video/bg.mp4" data-start="0" data-duration="31.04" data-media-start="0" data-track-index="0" muted playsinline></video></div>
+        <div id="stage" class="clip" data-start="0" data-duration="31.04" data-track-index="1"></div>
+      </div>
+      <div id="grains" style="position:absolute;inset:0;pointer-events:none">
+        <img class="grain" src="assets/img/grain0.png" alt=""><img class="grain" src="assets/img/grain1.png" alt=""><img class="grain" src="assets/img/grain2.png" alt="">
+        <img class="grain" src="assets/img/grain3.png" alt=""><img class="grain" src="assets/img/grain4.png" alt=""><img class="grain" src="assets/img/grain5.png" alt="">
+      </div>
+    </div>
+    <script>
+      window.__timelines = window.__timelines || {};
+      const WORDS = [["موقع", 0.0, 0.32], ["شركة", 0.37, 0.56], ["كبيرة،", 0.64, 1.2], ["كان", 1.24, 1.36], ["يحط", 1.41, 1.6], ["على", 1.64, 1.76], ["جوالك", 1.84, 2.24], ["حمل", 2.34, 2.64], ["ما", 2.67, 2.72], ["تشوفه.", 2.77, 3.28], ["ملف", 3.36, 3.6], ["الجافاسكربت", 3.64, 4.32], ["لحاله،", 4.4, 4.88], ["فوق", 4.94, 5.12], ["الاثنين", 5.17, 5.44], ["ميجا.", 5.52, 6.0], ["وفيديو", 6.06, 6.4], ["الخلفية،", 6.42, 7.04], ["اثنين", 7.09, 7.36], ["ميجا", 7.44, 7.68], ["بعد.", 7.76, 8.16], ["وش", 8.21, 8.32], ["يعني", 8.37, 8.64], ["هذا؟", 8.7, 9.12], ["جوالك", 9.16, 9.6], ["لازم", 9.66, 9.92], ["ينزل", 10.0, 10.4], ["كل", 10.48, 10.64], ["هذا،", 10.72, 11.2], ["قبل", 11.26, 11.44], ["ما", 11.47, 11.52], ["الصفحة", 11.57, 11.92], ["تتحرك.", 11.95, 12.48], ["وقوقل", 12.53, 12.88], ["تقول:", 12.93, 13.44], ["اذا", 13.48, 13.6], ["الصفحة", 13.66, 14.0], ["اخذت", 14.08, 14.4], ["اكثر", 14.48, 14.72], ["من", 14.77, 14.88], ["ثلاث", 14.94, 15.2], ["ثواني", 15.24, 15.6], ["على", 15.62, 15.68], ["الجوال،", 15.74, 16.32], ["اكثر", 16.37, 16.64], ["من", 16.67, 16.72], ["نص", 16.8, 16.96], ["الزوار", 17.02, 17.44], ["يطلعون.", 17.48, 18.08], ["فاشتغلنا", 18.12, 18.56], ["عليه.", 18.61, 18.96], ["الجافاسكربت،", 19.02, 19.84], ["شلنا", 19.92, 20.16], ["منه", 20.24, 20.48], ["ميجا", 20.53, 20.72], ["كاملة.", 20.8, 21.28], ["والفيديو،", 21.32, 22.0], ["نزل", 22.08, 22.32], ["لاقل", 22.4, 22.8], ["من", 22.85, 22.96], ["ثلث", 23.04, 23.28], ["حجمه.", 23.34, 23.76], ["نفس", 23.82, 24.0], ["الموقع،", 24.07, 24.64], ["بس", 24.69, 24.8], ["اخف", 24.88, 25.12], ["بكثير.", 25.23, 25.76], ["تبي", 25.8, 25.92], ["تعرف", 26.0, 26.32], ["وش", 26.35, 26.4], ["اللي", 26.43, 26.56], ["مثقل", 26.61, 26.96], ["موقعك؟", 27.04, 27.52], ["اكتب", 27.57, 27.84], ["انطباع", 27.87, 28.24], ["بالتعليقات.", 28.28, 29.04]];
+      const POS = {"cut3": 12.4, "n1": [470, 270], "phone0": [800, 1120], "tagPh": [70, 1330], "load": [960, 250], "tagJS": [330, 560], "tagVid": [790, 330], "q": [960, 250], "screen": [540, 520], "strip": [130, 1262], "g": [0, 300], "wk": [0, 300], "rc": [70, 240], "light": [0, 240], "qn": [60, 236], "cb": [0, 1250]};
+      const D = 31.04, FPS = 30, F = 1 / FPS;
+      const V = i => WORDS[i][1], W = i => WORDS[i][2];
+      const K = "#121416", G = "#00DB33", DG = "#006A39", L = "#F0F1F2", GREY = "#6B7076";
+      const AR = s => String(s).replace(/\d/g, d => "٠١٢٣٤٥٦٧٨٩"[d]).replace(".", "٫");
+      const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+      const lerp = (a, b, p) => a + (b - a) * p;
+      const ramp = (t, a, b) => clamp((t - a) / (b - a));
+      const expoOut = p => (p >= 1 ? 1 : 1 - Math.pow(2, -10 * p));
+      const el = (tag, cls, parent, css = {}, html = "") => { const e = document.createElement(tag); if (cls) e.className = cls; Object.assign(e.style, css); if (html) e.innerHTML = html; parent.appendChild(e); return e; };
+      const frames = (a, b, fn) => { for (let f = Math.max(0, Math.round(a * FPS)); f <= Math.round(b * FPS); f++) fn(f * F, f); };
+      const at = t => Math.max(0, t - 0.0004);
+
+      async function build() {
+        await document.fonts.load('100px "ZainL"'); await document.fonts.load('800 20px "InterX"'); await document.fonts.load('600 40px "PlexA"'); await document.fonts.ready;
+        await Promise.all(Array.from(document.images).map(i => i.complete ? 0 : new Promise(r => { i.onload = i.onerror = r; })));
+        const TL = gsap.timeline({ paused: true });
+        const S = document.getElementById("stage"), bgWrap = document.getElementById("bgWrap"), inv = document.getElementById("inv");
+        const measure = (html, size, fam = "ZainL") => { const s = el("span", "ar", document.body, { position: "absolute", left: "-5000px", top: "0", fontSize: size + "px", fontFamily: fam }, html); const r = s.getBoundingClientRect().width; s.remove(); return r; };
+        const fit = (e, maxW) => { const w = e.getBoundingClientRect().width; if (w > maxW) e.style.fontSize = (parseFloat(e.style.fontSize) * maxW / w) + "px"; };
+        // ── shared moves ──
+        const blurIn = (e, t, d = 0.32) => { gsap.set(e, { opacity: 0, y: 14, filter: "blur(8px)" }); TL.to(e, { opacity: 1, y: 0, filter: "blur(0px)", duration: d, ease: "expo.out" }, t); };
+        const blurOut = (e, t, d = 0.38) => TL.to(e, { opacity: 0, filter: "blur(10px)", scale: 0.96, duration: d, ease: "power2.in" }, t);
+        const drop = (e, t, rot, fromY = -900, d = 0.6) => { gsap.set(e, { y: fromY, rotation: rot * 3, opacity: 1 }); TL.to(e, { y: 0, rotation: rot, duration: d, ease: "back.out(1.4)" }, t); };
+        const live = (e, t0, t1, s = 1.03) => TL.fromTo(e, { scale: 1 }, { scale: s, duration: Math.max(0.3, t1 - t0), ease: "none", immediateRender: false }, t0);
+        const scrap = (x, y, w, h, rot, tapes = 1) => { const s = el("div", "scrap", S, { left: x + "px", top: y + "px", width: w + "px", height: h + "px", clipPath: tornClip(w, h, x + y) }); const wrap = el("div", "abs", S, { left: "0", top: "0", width: "1080px", height: "1920px", pointerEvents: "none" }); s.remove(); wrap.appendChild(s); if (tapes) { el("div", "tape", wrap, { left: (x + w / 2 - 60) + "px", top: (y - 16) + "px", transform: `rotate(${-rot * 2 - 4}deg)` }); } wrap._s = s; wrap.style.transformOrigin = `${x + w / 2}px ${y}px`; return wrap; };
+        function tornClip(w, h, seed) { let r = seed * 9301 % 233280; const rnd = () => (r = (r * 9301 + 49297) % 233280) / 233280; const p = []; const n = 14;
+          for (let i = 0; i <= n; i++) p.push(`${(i / n * 100).toFixed(1)}% ${(rnd() * 3).toFixed(1)}%`);
+          for (let i = 0; i <= n; i++) p.push(`${(100 - rnd() * 2).toFixed(1)}% ${(i / n * 100).toFixed(1)}%`);
+          for (let i = n; i >= 0; i--) p.push(`${(i / n * 100).toFixed(1)}% ${(100 - rnd() * 4).toFixed(1)}%`);
+          for (let i = n; i >= 0; i--) p.push(`${(rnd() * 2).toFixed(1)}% ${(i / n * 100).toFixed(1)}%`);
+          return `polygon(${p.join(",")})`; }
+        const word = (parent, txt, css) => el("div", "abs ar", parent, css, txt);
+        const line = (x1, y1, x2, y2, t, col = G, wdt = 7) => { const sv = document.createElementNS("http://www.w3.org/2000/svg", "svg"); sv.setAttribute("class", "draw"); sv.setAttribute("width", "1080"); sv.setAttribute("height", "1920"); S.appendChild(sv);
+          const mx = (x1 + x2) / 2 + (y2 - y1) * 0.18, my = (y1 + y2) / 2 - (x2 - x1) * 0.18;
+          const p = document.createElementNS("http://www.w3.org/2000/svg", "path"); p.setAttribute("d", `M${x1} ${y1} Q${mx} ${my} ${x2} ${y2}`); p.setAttribute("fill", "none"); p.setAttribute("stroke", col); p.setAttribute("stroke-width", wdt); p.setAttribute("stroke-linecap", "round"); sv.appendChild(p);
+          const len = p.getTotalLength(); gsap.set(p, { strokeDasharray: len, strokeDashoffset: len }); TL.to(p, { strokeDashoffset: 0, duration: 0.32, ease: "power2.out" }, t);
+          const ang = Math.atan2(y2 - my, x2 - mx), hd = document.createElementNS("http://www.w3.org/2000/svg", "path"), a1 = ang + 2.6, a2 = ang - 2.6;
+          hd.setAttribute("d", `M${x2 + 30 * Math.cos(a1)} ${y2 + 30 * Math.sin(a1)} L${x2} ${y2} L${x2 + 30 * Math.cos(a2)} ${y2 + 30 * Math.sin(a2)}`); hd.setAttribute("fill", "none"); hd.setAttribute("stroke", col); hd.setAttribute("stroke-width", wdt); hd.setAttribute("stroke-linecap", "round"); hd.setAttribute("stroke-linejoin", "round"); sv.appendChild(hd);
+          gsap.set(hd, { opacity: 0 }); TL.set(hd, { opacity: 1 }, t + 0.3); return sv; };
+        // kashida stretch: one string grows tatweels after a given letter prefix
+        const kash = (e, pre, post, t0, t1, n) => { let lk = -1; frames(t0, t1, t => { const k = Math.round(n * expoOut(ramp(t, t0, t1))); if (k !== lk) { TL.set(e, { textContent: pre + "ـ".repeat(k) + post }, at(t)); lk = k; } }); };
+        // camera: one slow living push on the film, eased per beat
+        TL.fromTo(bgWrap, { scale: 1.0 }, { scale: 1.06, duration: 8.2, ease: "sine.inOut", immediateRender: false }, 0);
+        TL.to(bgWrap, { scale: 1.0, duration: 0.5, ease: "power2.inOut" }, 8.2);
+        TL.to(bgWrap, { scale: 1.05, duration: POS.cut3 - 8.7, ease: "sine.inOut" }, 8.7);
+        TL.to(bgWrap, { scale: 1.0, duration: 0.4, ease: "power2.inOut" }, POS.cut3);
+        TL.to(bgWrap, { scale: 1.05, duration: 18.1 - POS.cut3 - 0.4, ease: "sine.inOut" }, POS.cut3 + 0.4);
+        TL.to(bgWrap, { scale: 1.0, duration: 0.3, ease: "power2.out" }, 18.12);
+        TL.to(bgWrap, { scale: 1.06, duration: D - 18.5, ease: "sine.inOut" }, 18.5);
+
+                // ═══ B1 hook (K0, S1): paper scrap «موقع شركة / كبيرة،» is already dropping on frame 0 ═══
+        const n1 = scrap(POS.n1[0], POS.n1[1], 470, 236, -3);
+        const n1a = word(n1, "موقع شركة", { right: (1080 - POS.n1[0] - 470 + 34) + "px", top: (POS.n1[1] + 12) + "px", fontSize: "84px" });
+        const n1b = word(n1, "كبيرة،", { right: (1080 - POS.n1[0] - 470 + 34) + "px", top: (POS.n1[1] + 112) + "px", fontSize: "92px", color: K });
+        fit(n1a, 400);
+        gsap.set(n1, { y: -40, rotation: -8 }); TL.to(n1, { y: 0, rotation: -3, duration: 0.5, ease: "back.out(1.4)" }, 0);
+        gsap.set(n1b, { opacity: 0, filter: "blur(8px)", y: 14 }); TL.to(n1b, { opacity: 1, filter: "blur(0px)", y: 0, duration: 0.3, ease: "expo.out" }, V(2));
+        const hlK = el("div", "abs", n1, { left: (POS.n1[0] + 470 - 34 - measure("كبيرة،", 92) - 10) + "px", top: (POS.n1[1] + 196) + "px", height: "14px", width: (measure("كبيرة،", 92) + 20) + "px", background: G, transformOrigin: "100% 50%" });
+        gsap.set(hlK, { scaleX: 0 }); TL.to(hlK, { scaleX: 1, duration: 0.16, ease: "power2.out" }, V(2) + 0.22);
+        live(n1, 0.55, V(6), 1.03);
+        TL.to(n1, { x: 60, y: -40, rotation: 6, opacity: 0, filter: "blur(10px)", duration: 0.4, ease: "power2.in" }, V(7) - 0.3);
+
+        // «جوالك»: a dark tag with an arrow drawn to the phone
+        const tg = el("div", "pill plex", S, { left: POS.tagPh[0] + "px", top: POS.tagPh[1] + "px", fontSize: "40px", background: K, color: L, padding: "6px 30px 12px" }, '<span style="width:16px;height:16px;border-radius:50%;background:#00DB33;display:inline-block"></span>جوالك');
+        gsap.set(tg, { scale: 0, rotation: 8, transformOrigin: "50% 50%" }); TL.to(tg, { scale: 1, rotation: 2, duration: 0.42, ease: "back.out(1.7)" }, V(6) - 0.06);
+        const tgR = { x: POS.tagPh[0] + 60, y: POS.tagPh[1] + 70 };
+        const ar1 = line(tgR.x, tgR.y, POS.phone0[0], POS.phone0[1], V(6) + 0.12);
+        TL.to([tg, ar1], { opacity: 0, filter: "blur(8px)", duration: 0.35, ease: "power2.in" }, V(10) - 0.2);
+
+        // «حمل ما تشوفه»: type above the load, «حمل» stretches its kashida as the load sinks
+        const ld = el("div", "abs", S, { left: "0", top: POS.load[1] + "px", width: "1080px", height: "200px" });
+        const ldA = word(ld, "حمل", { right: (1080 - POS.load[0]) + "px", top: "0", fontSize: "124px", color: K });
+        const ldB = word(ld, "ما تشوفه.", { right: (1080 - POS.load[0] + measure("حمــــل", 124) + 22) + "px", top: "44px", fontSize: "72px", color: K });
+        blurIn(ldA, V(7)); blurIn(ldB, V(8) + 0.02);
+        kash(ldA, "حم", "ل", V(7) + 0.1, V(9) + 0.3, 4);
+        TL.to(ld, { y: 26, duration: 0.6, ease: "sine.inOut" }, V(9));
+        TL.to(ld, { opacity: 0, y: -40, filter: "blur(10px)", duration: 0.38, ease: "power2.in" }, V(10) - 0.15);
+
+        // ═══ B2 (S1 end / S2): hanging tags on the crate and the film reel ═══
+        const hang = (x, y, title, latin, rot) => {
+          const g = el("div", "abs", S, { left: (x - 160) + "px", top: y + "px", width: "320px", height: "240px", transformOrigin: "160px -60px" });
+          const str = el("div", "abs", g, { left: "158px", top: "-70px", width: "3px", height: "86px", background: "#5a4a38" });
+          const c = el("div", "scrap", g, { left: "0", top: "0", width: "320px", height: "230px", borderRadius: "16px", clipPath: "polygon(12% 0,88% 0,100% 14%,100% 100%,0 100%,0 14%)" });
+          el("div", "abs", g, { left: "150px", top: "18px", width: "20px", height: "20px", borderRadius: "50%", background: "#3a3d40" });
+          const tl = el("div", "abs " + (latin ? "lat" : "ar plex"), g, { left: "0", width: "320px", textAlign: "center", top: "48px", fontSize: latin ? "38px" : "36px", color: GREY }, title);
+          const num = el("div", "abs ar", g, { left: "0", width: "320px", textAlign: "center", top: "100px", fontSize: "84px", color: K }, "٠");
+          gsap.set(g, { rotation: rot * 4, y: -1100 }); g._num = num; g._rot = rot; return g;
+        };
+        const tJS = hang(POS.tagJS[0], POS.tagJS[1], "JavaScript", true, -4);
+        TL.to(tJS, { y: 0, duration: 0.5, ease: "back.out(1.3)" }, V(10) - 0.1);
+        TL.to(tJS, { rotation: tJS._rot * -1.4, duration: 0.5, ease: "sine.inOut" }, V(10) + 0.4); TL.to(tJS, { rotation: tJS._rot, duration: 0.7, ease: "sine.inOut" }, V(10) + 0.9);
+        { let l = ""; frames(V(13), W(15) - 0.1, t => { const v = (2.2 * expoOut(ramp(t, V(13), W(14)))).toFixed(1); const s = AR(v) + " ميجا"; if (s !== l) { TL.set(tJS._num, { textContent: s }, at(t)); l = s; } }); TL.set(tJS._num, { textContent: "٢٫٢ ميجا" }, W(15) - 0.08); }
+        TL.fromTo(tJS._num, { scale: 1.35 }, { scale: 1, duration: 0.4, ease: "back.out(2.2)", immediateRender: false }, V(15));
+        const tVid = hang(POS.tagVid[0], POS.tagVid[1], "فيديو الخلفية", false, 5);
+        TL.to(tVid, { y: 0, duration: 0.5, ease: "back.out(1.3)" }, V(16) - 0.1);
+        TL.to(tVid, { rotation: tVid._rot * -1.4, duration: 0.5, ease: "sine.inOut" }, V(16) + 0.4); TL.to(tVid, { rotation: tVid._rot, duration: 0.7, ease: "sine.inOut" }, V(16) + 0.9);
+        TL.set(tVid._num, { textContent: "٢ ميجا" }, V(18) - 0.05);
+        TL.fromTo(tVid._num, { scale: 1.35 }, { scale: 1, duration: 0.4, ease: "back.out(2.2)", immediateRender: false }, V(18));
+        TL.to(tJS, { y: 60, rotation: -10, duration: 0.25, ease: "power2.in" }, V(20)); TL.to(tVid, { y: 60, rotation: 12, duration: 0.25, ease: "power2.in" }, V(20) + 0.04);
+        TL.to([tJS, tVid], { y: 1500, duration: 0.55, ease: "power2.in" }, V(21) + 0.1); TL.set([tJS, tVid], { opacity: 0 }, V(21) + 0.7);
+
+        // «وش يعني هذا؟»: smear slam + green highlight
+        const q = el("div", "abs", S, { left: "0", top: POS.q[1] + "px", width: "1080px" });
+        const qb = el("div", "abs", q, { right: (1080 - POS.q[0] - 8) + "px", top: "40px", height: "120px", width: (measure("وش", 140) + 30) + "px", background: G, transformOrigin: "100% 50%" });
+        const qt = word(q, "وش يعني هذا؟", { right: (1080 - POS.q[0]) + "px", top: "0", fontSize: "140px", color: K }); fit(qt, 860); qb.style.width = (measure("وش", parseFloat(qt.style.fontSize)) + 30) + "px"; qb.style.height = (parseFloat(qt.style.fontSize) * 0.85) + "px";
+        gsap.set(qb, { scaleX: 0 }); gsap.set(qt, { opacity: 0 });
+        TL.set(qt, { opacity: 1 }, V(21) - 0.02);
+        TL.fromTo(qt, { x: 240, scaleX: 1.4, skewX: -14, filter: "blur(9px)" }, { x: 0, scaleX: 1, skewX: 0, filter: "blur(0px)", duration: 0.3, ease: "expo.out", immediateRender: false }, V(21) - 0.02);
+        TL.to(qb, { scaleX: 1, duration: 0.13, ease: "power2.out" }, V(21) + 0.3);
+        live(q, V(21) + 0.3, V(24), 1.03);
+        TL.to(q, { opacity: 0, y: -50, filter: "blur(10px)", duration: 0.38, ease: "power2.in" }, V(24) - 0.1);
+
+        // ═══ B3 (S2 end / S3 start): the phone downloads 4.2 MB and the page does not move ═══
+        const dl = el("div", "abs", S, { left: (POS.screen[0] - 230) + "px", top: (POS.screen[1] - 70) + "px", width: "460px", height: "140px", borderRadius: "34px", background: K, boxShadow: "0 20px 40px rgba(18,20,22,.35)" });
+        const dlT = el("div", "abs ar plex", dl, { right: "34px", top: "18px", fontSize: "36px", color: L }, "ينزّل…");
+        const dlN = el("div", "abs ar", dl, { left: "34px", top: "6px", fontSize: "58px", color: G }, "٤٫٢ ميجا");
+        const dlBar = el("div", "abs", dl, { left: "34px", right: "34px", bottom: "26px", height: "12px", borderRadius: "6px", background: "#2F3337" });
+        const dlFill = el("div", "abs", dlBar, { right: "0", top: "0", bottom: "0", width: "0%", borderRadius: "6px", background: G });
+        gsap.set(dl, { scale: 0, y: 40 }); TL.to(dl, { scale: 1, y: 0, duration: 0.5, ease: "back.out(1.6)" }, V(26) - 0.1);
+        TL.to(dlFill, { width: "6%", duration: 1.6, ease: "power2.out" }, V(26) + 0.3);
+        // word «جوالك» rides in on a curve and parks above the pill
+        const jw = word(S, "جوالك", { right: (1080 - POS.screen[0] - 230) + "px", top: (POS.screen[1] - 230) + "px", fontSize: "110px", color: K });
+        gsap.set(jw, { opacity: 0 });
+        TL.set(jw, { opacity: 1 }, V(24) - 0.05);
+        TL.fromTo(jw, { x: 700, y: -260, rotation: 14 }, { motionPath: { path: [{ x: 300, y: -280 }, { x: 0, y: 0 }], curviness: 1.4 }, rotation: -2, duration: 0.55, ease: "power3.out", immediateRender: false }, V(24) - 0.05);
+        TL.to(jw, { opacity: 0, filter: "blur(10px)", duration: 0.35, ease: "power2.in" }, V(29) - 0.2);
+        // «قبل ما الصفحة تتحرك» on a paper strip dropping across the top
+        const st = scrap(POS.strip[0], POS.strip[1], 820, 150, 2);
+        const stT = word(st, "قبل ما الصفحة تتحرك.", { right: (1080 - POS.strip[0] - 820 + 40) + "px", top: (POS.strip[1] + 18) + "px", fontSize: "92px" });
+        fit(stT, 740);
+        drop(st, V(29) - 0.12, 2, -1500, 0.55);
+        TL.fromTo(stT, { x: 0 }, { x: -6, duration: 0.06, repeat: 5, yoyo: true, ease: "none", immediateRender: false }, V(32) + 0.1);
+        TL.to([st, dl], { opacity: 0, filter: "blur(10px)", duration: 0.38, ease: "power2.in" }, POS.cut3 - 0.2);
+
+        // ═══ B4 dark (K3): Google, 3 s, 53 % ═══
+        const gq = el("div", "abs ar plex", S, { right: "120px", top: POS.g[1] + "px", fontSize: "38px", color: "#AEB3B8" }, "قوقل تقول:");
+        blurIn(gq, V(33));
+        const sec = el("div", "abs ar", S, { right: "120px", top: (POS.g[1] + 50) + "px", fontSize: "170px", color: G, transformOrigin: "100% 60%" }, "+٣ ثواني");
+        gsap.set(sec, { opacity: 0 }); TL.set(sec, { opacity: 1 }, V(40) - 0.02);
+        TL.fromTo(sec, { scale: 3, filter: "blur(8px)" }, { scale: 1, filter: "blur(0px)", duration: 0.3, ease: "expo.out", immediateRender: false }, V(40) - 0.02);
+        const onm = el("div", "abs ar plex", S, { right: "120px", top: (POS.g[1] + 280) + "px", fontSize: "38px", color: L }, "على الجوال");
+        blurIn(onm, V(42));
+        TL.to([gq, sec, onm], { y: -60, opacity: 0.0, filter: "blur(10px)", duration: 0.3, ease: "power2.in" }, V(44) - 0.35);
+        const pct = el("div", "abs ar", S, { right: "120px", top: (POS.g[1] + 20) + "px", fontSize: "220px", color: L, transformOrigin: "100% 60%" }, "٥٣٪");
+        const pctL = el("div", "abs ar plex", S, { right: "120px", top: (POS.g[1] + 300) + "px", fontSize: "44px", color: L }, "من الزوار <span style='color:#00DB33'>يطلعون</span>");
+        const src = el("div", "abs ar plex", S, { right: "120px", top: (POS.g[1] + 380) + "px", fontSize: "28px", color: "#8B9096" }, "المصدر: Google / DoubleClick 2016");
+        gsap.set(pct, { opacity: 0 });
+        TL.set(pct, { opacity: 1 }, V(44) + 0.05);
+        { let l = ""; frames(V(44), V(47), t => { const s = AR(Math.round(53 * expoOut(ramp(t, V(44), V(47))))) + "٪"; if (s !== l) { TL.set(pct, { textContent: s }, at(t)); l = s; } }); }
+        blurIn(pctL, V(47)); blurIn(src, V(41));
+        TL.to(pctL, { x: -40, duration: 0.5, ease: "power2.in" }, V(48));
+        TL.to([pct, pctL, src], { opacity: 0, filter: "blur(10px)", duration: 0.3, ease: "power2.in" }, V(49) - 0.25);
+
+        // ═══ invert flash on «فاشتغلنا» (the one flash of the reel) ═══
+        TL.set(inv, { filter: "invert(1)" }, V(49)); TL.set(inv, { filter: "none" }, V(49) + 2 * F);
+        const wk = word(S, "فاشتغلنا عليه.", { right: "120px", top: POS.wk[1] + "px", fontSize: "120px", color: K });
+        fit(wk, 820);
+        gsap.set(wk, { opacity: 0 }); TL.set(wk, { opacity: 1 }, V(49));
+        TL.fromTo(wk, { x: -240, scaleX: 1.4, skewX: 14, filter: "blur(9px)" }, { x: 0, scaleX: 1, skewX: 0, filter: "blur(0px)", duration: 0.3, ease: "expo.out", immediateRender: false }, V(49));
+        TL.to(wk, { opacity: 0, y: -50, filter: "blur(10px)", duration: 0.35, ease: "power2.in" }, V(51) - 0.2);
+
+        // ═══ B5 (K4): the receipt prints the before/after ═══
+        const RW = 520, RH = 610;
+        const rc = el("div", "abs", S, { left: POS.rc[0] + "px", top: POS.rc[1] + "px", width: RW + "px", height: RH + "px", transformOrigin: "50% 0" });
+        const paper = el("div", "abs", rc, { left: "0", top: "0", width: RW + "px", height: RH + "px", background: "#FBFBFA url('assets/img/paper.jpg') center/cover",
+          clipPath: "polygon(0 0,100% 0,100% 97%,95% 100%,90% 97%,85% 100%,80% 97%,75% 100%,70% 97%,65% 100%,60% 97%,55% 100%,50% 97%,45% 100%,40% 97%,35% 100%,30% 97%,25% 100%,20% 97%,15% 100%,10% 97%,5% 100%,0 97%)",
+          filter: "drop-shadow(0 8px 14px rgba(18,20,22,.3))" });
+        const rl = (txt, y, size, css = {}) => el("div", "abs ar plex", rc, Object.assign({ right: "40px", top: y + "px", fontSize: size + "px", color: K }, css), txt);
+        const rH = rl("الوزن قبل وبعد", 30, 34, { color: GREY });
+        el("div", "abs", rc, { left: "40px", right: "40px", top: "92px", borderTop: "3px dashed #B9BDC1" });
+        const r1a = el("div", "abs lat", rc, { right: "40px", top: "118px", fontSize: "38px", color: K }, "JavaScript");
+        const r1o = rl("٢٫٢ ميجا", 176, 46, { color: GREY });
+        const r1s = el("div", "abs", rc, { right: "36px", top: "214px", height: "5px", width: (measure("٢٫٢ ميجا", 46, "PlexA") + 10) + "px", background: K, transformOrigin: "100% 50%" });
+        const r1n = el("div", "abs ar", rc, { left: "36px", top: "160px", fontSize: "80px", color: K }, "١٫٢ ميجا");
+        el("div", "abs", rc, { left: "40px", right: "40px", top: "270px", borderTop: "3px dashed #B9BDC1" });
+        const r2a = rl("فيديو الخلفية", 290, 38);
+        const r2o = rl("٢ ميجا", 348, 46, { color: GREY });
+        const r2s = el("div", "abs", rc, { right: "36px", top: "386px", height: "5px", width: (measure("٢ ميجا", 46, "PlexA") + 10) + "px", background: K, transformOrigin: "100% 50%" });
+        const r2n = el("div", "abs ar", rc, { left: "36px", top: "332px", fontSize: "80px", color: K }, "٦١٣ كيلو");
+        el("div", "abs", rc, { left: "40px", right: "40px", top: "448px", borderTop: "3px dashed #B9BDC1" });
+        const stamp = el("div", "abs ar", rc, { left: "260px", top: "468px", fontSize: "54px", color: K, background: G, padding: "0 26px 8px", borderRadius: "12px" }, "أقل من الثلث");
+        // printing: the paper grows downward out of the slot (clip), lines appear as the paper passes them
+        gsap.set(rc, { clipPath: `inset(0 0 ${RH}px 0)` });
+        const pr = (h, t, d) => TL.to(rc, { clipPath: `inset(0 0 ${RH - h}px 0)`, duration: d, ease: "steps(" + Math.max(3, Math.round(d * 14)) + ")" }, t);
+        pr(250, V(51) - 0.1, 0.7); pr(430, V(56) - 0.1, 0.6); pr(RH, V(60) - 0.15, 0.4);
+        [r1s, r2s].forEach(s => gsap.set(s, { scaleX: 0 })); [r1n, r2n].forEach(s => gsap.set(s, { opacity: 0 }));
+        TL.to(r1s, { scaleX: 1, duration: 0.18, ease: "power2.out" }, V(52));
+        TL.set(r1n, { opacity: 1 }, V(54) - 0.02); TL.fromTo(r1n, { scale: 1.6, filter: "blur(6px)" }, { scale: 1, filter: "blur(0px)", duration: 0.32, ease: "expo.out", immediateRender: false }, V(54) - 0.02);
+        TL.to(r2s, { scaleX: 1, duration: 0.18, ease: "power2.out" }, V(57));
+        TL.set(r2n, { opacity: 1 }, V(58) - 0.02); TL.fromTo(r2n, { scale: 1.6, filter: "blur(6px)" }, { scale: 1, filter: "blur(0px)", duration: 0.32, ease: "expo.out", immediateRender: false }, V(58) - 0.02);
+        gsap.set(stamp, { opacity: 0, xPercent: -50, rotation: -4 }); TL.set(stamp, { opacity: 1 }, V(60)); TL.fromTo(stamp, { scale: 2.2 }, { scale: 1, duration: 0.3, ease: "back.out(1.6)", immediateRender: false }, V(60));
+        live(rc, V(51) + 0.6, V(62), 1.025);
+        // the receipt tears off and flies out with the camera pull-back
+        TL.to(rc, { x: 900, y: -200, rotation: 24, filter: "blur(6px)", duration: 0.45, ease: "power3.in" }, V(62) - 0.15); TL.set(rc, { opacity: 0 }, V(62) + 0.35);
+
+        // ═══ B6 (K5): «نفس الموقع، بس اخف» ═══
+        const same = el("div", "abs ar plex", S, { left: "70px", top: POS.light[1] + "px", fontSize: "48px", color: K }, "نفس الموقع، بس");
+        blurIn(same, V(62));
+        const lite = word(S, "اخف", { left: "70px", top: (POS.light[1] + 50) + "px", fontSize: "160px", color: K });
+        gsap.set(lite, { opacity: 0 }); TL.set(lite, { opacity: 1 }, V(65) - 0.04);
+        TL.fromTo(lite, { y: 60, filter: "blur(8px)" }, { y: 0, filter: "blur(0px)", duration: 0.4, ease: "expo.out", immediateRender: false }, V(65) - 0.04);
+        kash(lite, "اخـ", "ف", V(65) + 0.1, W(66), 3);
+        TL.to(lite, { y: -30, rotation: -2, duration: 1.0, ease: "sine.inOut" }, V(65) + 0.4);
+        const hlL = el("div", "abs", S, { left: "60px", top: (POS.light[1] + 240) + "px", height: "16px", width: "360px", background: G, transformOrigin: "0% 50%" });
+        gsap.set(hlL, { scaleX: 0 }); TL.to(hlL, { scaleX: 1, duration: 0.3, ease: "power2.out" }, V(66));
+        TL.to([same, lite, hlL], { opacity: 0, y: -60, filter: "blur(10px)", duration: 0.38, ease: "power2.in" }, V(67) - 0.15);
+
+        // ═══ B7 question note + comment bar + end card ═══
+        const qn = scrap(POS.qn[0], POS.qn[1], 360, 300, -4);
+        const QR = (1080 - POS.qn[0] - 360 + 30) + "px";
+        const qn1 = el("div", "abs ar plex", qn, { right: QR, top: (POS.qn[1] + 18) + "px", fontSize: "34px", color: GREY }, "تبي تعرف");
+        const qn2 = word(qn, "وش اللي", { right: QR, top: (POS.qn[1] + 66) + "px", fontSize: "76px" });
+        const qn3 = word(qn, "مثقل موقعك؟", { right: QR, top: (POS.qn[1] + 168) + "px", fontSize: "76px" });
+        fit(qn2, 300); fit(qn3, 300);
+        gsap.set([qn2, qn3], { opacity: 0 }); blurIn(qn2, V(69)); blurIn(qn3, V(71));
+        drop(qn, V(67) - 0.15, -4, -800, 0.55);
+        TL.to(qn, { y: 1600, rotation: -18, duration: 0.5, ease: "power2.in" }, 28.35); TL.set(qn, { opacity: 0 }, 28.9);
+        // comment bar (Instagram-like) types «انطباع»
+        const cb = el("div", "pill plex", S, { left: "100px", top: POS.cb[1] + "px", width: "860px", height: "120px", background: "#FFFFFF", boxShadow: "0 18px 40px rgba(18,20,22,.3)", padding: "0 34px", justifyContent: "space-between" });
+        const cbT = el("div", "ar", cb, { fontSize: "46px", color: K, fontFamily: "PlexA" }, "اكتب");
+        const cbS = el("div", "", cb, { width: "74px", height: "74px", borderRadius: "50%", background: G, display: "flex", alignItems: "center", justifyContent: "center" }, '<svg width="34" height="34" viewBox="0 0 24 24"><path d="M3 12 L21 4 L15 21 L11 13 Z" fill="#121416"/></svg>');
+        gsap.set(cb, { y: 500, opacity: 0 });
+        TL.to(cb, { y: 0, opacity: 1, duration: 0.45, ease: "back.out(1.4)" }, V(73) - 0.25);
+        { const full = "اكتب انطباع"; let l = ""; frames(V(74), V(74) + 0.45, t => { const n = 5 + Math.round(6 * ramp(t, V(74), V(74) + 0.4)); const s = full.slice(0, n); if (s !== l) { TL.set(cbT, { innerHTML: s.replace("انطباع", "<span style='background:#00DB33;padding:0 8px 4px;border-radius:8px'>انطباع</span>") }, at(t)); l = s; } }); }
+        TL.set(cbT, { innerHTML: "اكتب <span style='background:#00DB33;padding:0 8px 4px;border-radius:8px'>انطباع</span>" }, V(74) + 0.47);
+        TL.to(cbS, { scale: 0.8, duration: 0.06 }, V(75) - 0.05); TL.to(cbS, { scale: 1, duration: 0.25, ease: "back.out(3)" }, V(75) + 0.01);
+        // end card: the dark panel rises from the comment bar and fills the frame
+        const ec = el("div", "abs", S, { left: "0", top: "0", width: "1080px", height: "1920px", background: K, clipPath: `inset(${POS.cb[1]}px 100px ${1920 - POS.cb[1] - 120}px 100px round 60px)` });
+        gsap.set(ec, { opacity: 0 });
+        const ET = V(75) + 0.25;
+        TL.set(ec, { opacity: 1 }, ET);
+        TL.to(ec, { clipPath: "inset(0px 0px 0px 0px round 0px)", duration: 0.5, ease: "expo.inOut" }, ET);
+        TL.set(cb, { opacity: 0 }, ET + 0.05);
+        const logo = el("img", "abs", ec, { left: "290px", top: "560px", width: "500px" }); logo.src = "assets/brand/logo-white.svg";
+        const cta = word(ec, "اكتب <span style='color:#00DB33'>انطباع</span> بالتعليقات", { right: "0", width: "1080px", textAlign: "center", top: "820px", fontSize: "100px", color: L });
+        fit(cta, 840);
+        const sub = el("div", "abs ar plex", ec, { left: "0", width: "1080px", textAlign: "center", top: "990px", fontSize: "34px", color: "#AEB3B8" }, "ونرسل لك انطباعنا الأول عن موقعك");
+        const url = el("div", "abs lat", ec, { left: "0", width: "1080px", textAlign: "center", top: "1130px", fontSize: "46px", color: L }, "www.fortunecode.org");
+        const tel = el("div", "abs lat", ec, { left: "0", width: "1080px", textAlign: "center", top: "1200px", fontSize: "46px", color: G }, "+20 10 98066484");
+        [logo, cta, sub, url, tel].forEach((e, i) => blurIn(e, ET + 0.35 + i * 0.12, 0.36));
+        live(ec, ET + 0.6, D, 1.02);
+
+
+        // grain, every 2 frames
+        const grains = Array.from(document.querySelectorAll(".grain"));
+        for (let f = 0; f < D * FPS; f += 2) grains.forEach((g, i) => TL.set(g, { opacity: i === (f / 2) % 6 ? 0.45 : 0 }, f * F));
+        TL.set({}, {}, D);
+        window.__timelines["main"] = TL; TL.seek(0);
+      }
+      window.__hf = window.__hf || {}; window.__hf.buildReady = window.__hf.buildReady || {};
+      window.__hf.buildReady["main"] = build();
+    </script>
+  </body>
+</html>
