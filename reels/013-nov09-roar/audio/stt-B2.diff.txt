@@ -1,0 +1,6 @@
+replace: script=['لك:'] heard=['لك']
+replace: script=['انضبط', 'وجوجل', 'تقول:'] heard=['أنضبط', 'وقوقل', 'تقول']
+replace: script=['ثلاثه', 'وخمسين', 'بالميه'] heard=['53%']
+replace: script=['صور'] heard=['الصور']
+replace: script=['اربعه', 'وثلاثين'] heard=['34']
+replace: script=['ميه', 'واربعين'] heard=['140']

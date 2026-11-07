@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="ar" data-resolution="portrait">
+  <!-- Reel 013, Nov 9: «الموقع الفخم لازم يكون بطيء؟» in ROAR style.
+       Picture layer = ONE continuous Google Flow film (Omni frames-to-video, K0->K1->...->K6 chained), retimed to the voice in
+       assets/video/bg.mp4. This page adds only the ROAR type and paper overlays (scraps, tags, receipt, stamp), the invert flash,
+       grain and the end card. Motion is frame-baked into a paused GSAP timeline (seek-safe). build.py fills 27.3 and WORDS. -->
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1080, height=1920">
+    <title>Nov 9 premium vs slow</title>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      @font-face { font-family: "ZainL"; src: url("assets/fonts/zain-mob-long.ttf") format("truetype"); }
+      @font-face { font-family: "InterX"; src: url("assets/fonts/inter-lat-700.woff2") format("woff2"); font-weight: 700; }
+      @font-face { font-family: "InterX"; src: url("assets/fonts/inter-lat-800.woff2") format("woff2"); font-weight: 800; }
+      @font-face { font-family: "PlexA"; src: url("assets/fonts/IBMPlexSansArabic-Medium.ttf") format("truetype"); font-weight: 500; }
+      @font-face { font-family: "PlexA"; src: url("assets/fonts/IBMPlexSansArabic-SemiBold.ttf") format("truetype"); font-weight: 600; }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1080px; height: 1920px; overflow: hidden; background: #F0F1F2; }
+      #main { position: relative; width: 1080px; height: 1920px; overflow: hidden; font-family: "ZainL", sans-serif; color: #121416; }
+      #all { position: absolute; inset: 0; }
+      #bgWrap { position: absolute; inset: 0; transform-origin: 540px 900px; }
+      #bgWrap video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+      #stage { position: absolute; inset: 0; }
+      .abs { position: absolute; }
+      .ar { direction: rtl; white-space: nowrap; line-height: 1.3; }
+      .pl { font-family: "PlexA", sans-serif; font-weight: 600; }
+      .lat { font-family: "InterX", sans-serif; font-weight: 800; direction: ltr; }
+      .scrap { position: absolute; background: #F0F1F2 url("assets/img/paper.jpg") center/cover; direction: rtl; white-space: nowrap;
+               filter: drop-shadow(0 3px 3px rgba(18,20,22,0.30)) drop-shadow(0 8px 14px rgba(18,20,22,0.22));
+               display: flex; align-items: center; justify-content: center; }
+      .scrap > .in { clip-path: none; }
+      .torn { clip-path: polygon(0 6%, 9% 0, 23% 5%, 37% 1%, 54% 5%, 71% 0, 87% 5%, 100% 1%, 99% 50%, 100% 95%, 85% 100%, 66% 95%, 45% 100%, 25% 95%, 7% 100%, 0 94%, 1% 50%); }
+      .tape { position: absolute; width: 130px; height: 40px; background: rgba(240,241,242,0.78); box-shadow: 0 1px 3px rgba(18,20,22,0.18); z-index: 3; }
+      .w { display: inline-block; }
+      #cardWrap { position: absolute; inset: 0; z-index: 40; }
+      #card { position: absolute; left: 0; right: 0; top: 0; height: 1920px; background: #121416; }
+      .grain { position: absolute; inset: 0; width: 1080px; height: 1920px; mix-blend-mode: soft-light; opacity: 0; z-index: 60; pointer-events: none; }
+    </style>
+  </head>
+  <body>
+    <div id="main" data-composition-id="main" data-start="0" data-duration="27.3" data-width="1080" data-height="1920">
+      <div id="all">
+        <div id="bgWrap"><video id="bg" src="assets/video/bg.mp4" data-start="0" data-duration="27.3" data-media-start="0" data-track-index="0" muted playsinline></video></div>
+        <div id="stage" class="clip" data-start="0" data-duration="27.3" data-track-index="1"></div>
+      </div>
+      <img class="grain" src="assets/img/grain0.png" alt=""><img class="grain" src="assets/img/grain1.png" alt=""><img class="grain" src="assets/img/grain2.png" alt="">
+      <img class="grain" src="assets/img/grain3.png" alt=""><img class="grain" src="assets/img/grain4.png" alt=""><img class="grain" src="assets/img/grain5.png" alt="">
+    </div>
+    <script>
+      window.__timelines = window.__timelines || {};
+      const WORDS = [["الموقع", 0.0, 0.48], ["الفخم", 0.54, 0.96], ["لازم", 1.04, 1.36], ["يكون", 1.41, 1.6], ["بطيء؟", 1.68, 2.08], ["لا.", 2.21, 2.64], ["يقولون", 2.69, 2.96], ["لك:", 3.01, 3.2], ["لازم", 3.25, 3.44], ["تختار،", 3.48, 4.0], ["يا", 4.05, 4.16], ["فخم", 4.24, 4.56], ["يا", 4.67, 4.88], ["سريع.", 4.96, 5.44], ["بس", 5.49, 5.6], ["الفخامة", 5.64, 6.16], ["مو", 6.27, 6.48], ["هي", 6.53, 6.64], ["اللي", 6.65, 6.72], ["تبطئ", 6.77, 7.04], ["موقعك.", 7.12, 7.68], ["اللي", 7.71, 7.84], ["يبطئه", 7.88, 8.32], ["الشغل", 8.42, 8.96], ["اللي", 8.99, 9.12], ["ما", 9.17, 9.28], ["انضبط.", 9.31, 9.76], ["وجوجل", 9.84, 10.24], ["تقول:", 10.32, 10.72], ["بعد", 10.76, 10.88], ["ثلاث", 10.94, 11.2], ["ثواني،", 11.24, 11.76], ["ثلاثه", 11.81, 12.12], ["وخمسين", 12.16, 12.4], ["بالميه", 12.45, 12.8], ["من", 12.83, 12.88], ["زوار", 12.96, 13.28], ["الجوال", 13.34, 13.76], ["يطلعون.", 13.84, 14.48], ["معرض", 14.53, 14.8], ["صور", 14.88, 15.12], ["كان", 15.18, 15.36], ["اربعه", 15.4, 15.68], ["وثلاثين", 15.72, 16.08], ["ميجا،", 16.16, 16.56], ["وصار", 16.64, 16.96], ["ميه", 17.12, 17.44], ["واربعين", 17.48, 17.92], ["كيلو.", 17.98, 18.4], ["نفس", 18.48, 18.72], ["الفخامة،", 18.76, 19.36], ["ونفس", 19.44, 19.76], ["الجودة،", 19.82, 20.32], ["ويفتح", 20.4, 20.96], ["على", 21.0, 21.12], ["طول.", 21.2, 21.52], ["يعني", 21.57, 21.76], ["تقدر", 21.81, 22.0], ["تكون", 22.06, 22.32], ["فخم،", 22.44, 22.96], ["وسريع.", 23.07, 23.6], ["موقعك", 23.7, 24.16], ["ثقيل؟", 24.2, 24.56], ["اكتب", 24.67, 25.04], ["انطباع", 25.07, 25.44], ["بالتعليقات.", 25.48, 26.24]];
+      const D = 27.3, FPS = 30, F = 1 / FPS;
+      const V = i => WORDS[i][1], E = i => WORDS[i][2];
+      const K = "#121416", G = "#00DB33", DG = "#006A39", L = "#F0F1F2";
+      const AR = n => String(n).replace(/\d/g, d => "٠١٢٣٤٥٦٧٨٩"[d]);
+      const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+      const lerp = (a, b, p) => a + (b - a) * p;
+      const ramp = (t, a, b) => clamp((t - a) / (b - a));
+      const expoOut = p => (p >= 1 ? 1 : 1 - Math.pow(2, -10 * p));
+      const el = (tag, cls, parent, css = {}, html = "") => { const e = document.createElement(tag); if (cls) e.className = cls; Object.assign(e.style, css); if (html) e.innerHTML = html; parent.appendChild(e); return e; };
+      const frames = (a, b, fn) => { for (let f = Math.max(0, Math.round(a * FPS)); f <= Math.round(b * FPS); f++) fn(f * F, f); };
+      const at = t => Math.max(0, t - 0.0004);
+
+      async function build() {
+        await document.fonts.load('100px "ZainL"'); await document.fonts.load('800 20px "InterX"'); await document.fonts.load('600 40px "PlexA"'); await document.fonts.ready;
+        await Promise.all(Array.from(document.images).map(i => i.complete ? 0 : new Promise(r => { i.onload = i.onerror = r; })));
+        const TL = gsap.timeline({ paused: true });
+        const stage = document.getElementById("stage"), all = document.getElementById("all"), bgWrap = document.getElementById("bgWrap");
+        const fit = (e, maxW) => { const w = e.getBoundingClientRect().width; if (w > maxW) e.style.fontSize = (parseFloat(getComputedStyle(e).fontSize) * maxW / w) + "px"; };
+
+        // a paper scrap carrying words; words = [[text, wordIndex|null, {font, size, col, hl}]]
+        // cx/cy = centre of the scrap. Returns {s, ws}
+        const scrap = (cx, cy, rot, words, o = {}) => {
+          const s = el("div", "scrap" + (o.torn === false ? "" : " torn"), stage, { padding: o.pad || "14px 34px 26px", zIndex: o.z || 10, gap: (o.gap || 18) + "px", background: o.bg || undefined });
+          if (o.bg) s.style.backgroundImage = o.bgImg || "none";
+          const ws = words.map(([txt, wi, f = {}]) => el("span", "w " + (f.pl ? "pl" : "") + (f.lat ? " lat" : ""), s, { fontSize: (f.size || 84) + "px", color: f.col || o.col || K, lineHeight: f.lh || 1.25 }, txt));
+          const r = s.getBoundingClientRect(); s.style.left = (cx - r.width / 2) + "px"; s.style.top = (cy - r.height / 2) + "px";
+          if (o.tape !== false) { const tp = el("div", "tape", s, { left: (r.width / 2 - 65 + (o.tapeX || 0)) + "px", top: "-16px", transform: `rotate(${o.tapeR || -4}deg)` }); }
+          s._rot = rot; s._ws = ws; s._words = words;
+          gsap.set(s, { opacity: 0, rotation: rot });
+          ws.forEach((w, k) => { if (words[k][1] !== null && words[k][1] !== undefined) gsap.set(w, { opacity: 0 }); });
+          return s;
+        };
+        // drop a scrap in from off-screen on a curve (0.55 s, overshoot < 3 %)
+        const dropIn = (s, t, from = "top", dur = 0.55) => {
+          const r = s.getBoundingClientRect();
+          const off = { top: { x: 60, y: -(r.top + r.height + 80) }, left: { x: -(r.left + r.width + 60), y: -120 }, right: { x: 1080 - r.left + 60, y: -120 }, bottom: { x: -40, y: 1920 - r.top + 60 } }[from];
+          TL.set(s, { opacity: 1 }, t);
+          TL.fromTo(s, { x: off.x, y: off.y, rotation: s._rot + (from === "left" ? -14 : 14) }, { x: 0, duration: dur, ease: "power3.out", immediateRender: false }, t);
+          TL.fromTo(s, { y: off.y }, { y: 0, duration: dur, ease: "back.out(1.15)", immediateRender: false }, t);
+          TL.to(s, { rotation: s._rot, duration: dur + 0.1, ease: "back.out(1.3)" }, t);
+        };
+        // reveal a word (blurIn, 3 frames)
+        const wIn = (w, t) => { TL.fromTo(w, { opacity: 0, filter: "blur(10px)", scale: 1.12 }, { opacity: 1, filter: "blur(0px)", scale: 1, duration: 0.12, ease: "power2.out", immediateRender: false }, t); };
+        const wordsIn = s => s._ws.forEach((w, k) => { const i = s._words[k][1]; if (i !== null && i !== undefined) wIn(w, Math.max(0.001, V(i) - 0.03)); });
+        // exit: blur out together with the scene (0.4 s)
+        const out = (e, t, dx = 0, dy = -30) => TL.to(e, { opacity: 0, filter: "blur(14px)", x: "+=" + dx, y: "+=" + dy, scale: 0.94, duration: 0.4, ease: "power2.in" }, t);
+        // kashida stretch on a word element: base = word with a tatweel slot, n tatweels over [a,b]
+        const kash = (w, pre, post, n, a, b) => { let lk = -1; frames(a, b, t => { const k = Math.round(n * expoOut(ramp(t, a, b))); if (k !== lk) { TL.set(w, { textContent: pre + "ـ".repeat(k) + post }, at(t)); lk = k; } }); };
+        // camera: slow living push on the film
+        TL.fromTo(bgWrap, { scale: 1.0 }, { scale: 1.035, duration: D, ease: "none", immediateRender: true }, 0);
+
+                // ═══ B1 hook (0–2.2): a scrap on the starburst above the gold frame. «الموقع» is there on frame 1. ═══
+        const s1 = scrap(540, 330, -2.5, [["الموقع", null, { size: 104 }], ["الفخم", 1, { size: 104, col: DG }]], { pad: "6px 40px 22px" });
+        const s1b = scrap(560, 470, 2, [["لازم يكون", 2, { pl: 1, size: 50 }], ["بطيء؟", 4, { size: 100 }]], { pad: "4px 34px 20px", tape: false });
+        gsap.set(s1, { opacity: 1, y: 0 }); TL.fromTo(s1, { scale: 1.06 }, { scale: 1, duration: 0.5, ease: "power2.out", immediateRender: false }, 0.001);
+        TL.fromTo(s1._ws[0], { y: 18 }, { y: 0, duration: 0.3, ease: "power2.out", immediateRender: false }, 0.001);
+        wordsIn(s1); dropIn(s1b, V(2) - 0.12, "right", 0.5); wordsIn(s1b);
+        kash(s1b._ws[1], "بطـ", "يء؟", 7, V(4) + 0.05, E(4) + 0.12);
+        // ═══ B2 «لا.»: 1-frame invert flash, a green stamp slams, the hook is blown off ═══
+        const no = scrap(540, 860, -6, [["لا.", null, { size: 230, col: K, lh: 1.1 }]], { bg: G, pad: "0 70px 20px", tape: false, z: 20 });
+        TL.set(all, { filter: "invert(1)" }, V(5)); TL.set(all, { filter: "none" }, V(5) + 2 * F);
+        TL.set(no, { opacity: 1 }, V(5)); TL.fromTo(no, { scale: 2.1, rotation: 4 }, { scale: 1, rotation: -6, duration: 0.26, ease: "power4.out", immediateRender: false }, V(5));
+        out(s1, V(5) + 0.02, -40, -60); out(s1b, V(5) + 0.04, 40, -40);
+        out(no, V(5) + 0.9, 0, 40);
+
+        // ═══ B3 the split (2.7–5.4): a speech note on the tear; each half gets its tag ═══
+        const s3 = scrap(560, 330, 2, [["يقولون لك:", 6, { pl: 1, size: 46 }], ["لازم", 8, { pl: 1, size: 46 }], ["تختار", 9, { size: 104 }]], { pad: "6px 38px 22px" });
+        dropIn(s3, V(6) - 0.15, "top"); wordsIn(s3);
+        const tF = scrap(780, 505, 3, [["يا", 10, { pl: 1, size: 40 }], ["فخم", 11, { size: 96 }]], { pad: "0 30px 16px", tapeX: 30 });
+        const tS = scrap(285, 520, -4, [["يا", 12, { pl: 1, size: 40 }], ["سريع", 13, { size: 96 }]], { bg: G, pad: "0 30px 16px", tapeX: -30 });
+        dropIn(tF, V(10) - 0.12, "right", 0.5); wordsIn(tF);
+        dropIn(tS, V(12) - 0.12, "left", 0.5); wordsIn(tS);
+        out(s3, V(14) - 0.25, 0, -60); out(tF, V(14) + 0.25, -60, -20); out(tS, V(14) + 0.3, 60, -20);
+
+        // ═══ B4 (5.5–7.7) camera on the frame: «بس الفخامة مو هي اللي تبطئ موقعك» ═══
+        const s4 = scrap(540, 300, -1.5, [["بس", 14, { pl: 1, size: 48 }], ["الفخامة", 15, { size: 104, col: DG }]], { pad: "4px 40px 20px" });
+        const s4b = scrap(540, 438, 1.5, [["مو هي", 16, { pl: 1, size: 48 }], ["اللي", 18, { pl: 1, size: 48 }], ["تبطئ", 19, { size: 92 }], ["موقعك", 20, { pl: 1, size: 48 }]], { pad: "2px 34px 18px", tape: false });
+        dropIn(s4, V(14) - 0.15, "top"); wordsIn(s4); dropIn(s4b, V(16) - 0.15, "left", 0.5); wordsIn(s4b);
+        out(s4, V(21) + 0.05, 0, -60); out(s4b, V(21) + 0.1, 0, -60);
+        // the cause: a tag hanging between the weights
+        const s5 = scrap(540, 1285, -3, [["اللي يبطئه:", 21, { pl: 1, size: 44 }], ["الشغل", 23, { size: 96, col: K }]], { pad: "4px 36px 18px" });
+        const s5b = scrap(560, 1372, 2, [["اللي", 24, { pl: 1, size: 44 }], ["ما", 25, { pl: 1, size: 44 }], ["انضبط", 26, { size: 92, col: K }]], { bg: G, pad: "0 32px 16px", tape: false });
+        dropIn(s5, V(21) - 0.12, "top", 0.55); wordsIn(s5); dropIn(s5b, V(24) - 0.3, "right", 0.5); wordsIn(s5b);
+        // the weights yank everything down: the tags fall with them
+        [[s5, 0, 9], [s5b, 0.05, -12]].forEach(([s, dl, r]) => TL.to(s, { y: 820, rotation: r, duration: 0.5, ease: "power2.in" }, V(27) + 0.05 + dl));
+        TL.set([s5, s5b], { opacity: 0 }, V(27) + 0.7);
+
+        // ═══ B5 dark world (9.8–14.5): Google's number above the waiting man ═══
+        const chip = scrap(770, 262, 2, [["جوجل تقول:", 27, { pl: 1, size: 42 }]], { pad: "6px 28px 12px", tape: false, torn: false, z: 12 });
+        chip.style.borderRadius = "12px";
+        dropIn(chip, V(27) - 0.1, "right", 0.5); wordsIn(chip);
+        const s6 = scrap(470, 420, -2, [["بعد", 29, { pl: 1, size: 50 }], ["١", 30, { size: 140, col: K }], ["ثواني", 31, { size: 100 }]], { pad: "0 44px 16px" });
+        dropIn(s6, V(29) - 0.3, "top", 0.5); wordsIn(s6);
+        { let ln = ""; frames(V(30), E(30) + 0.35, t => { const n = Math.min(3, 1 + Math.floor(ramp(t, V(30), E(30) + 0.3) * 3)); const s = AR(n); if (s !== ln) { TL.set(s6._ws[1], { textContent: s }, at(t)); ln = s; } }); }
+        out(s6, V(32) - 0.12, -50, -30);
+        const s7 = scrap(500, 410, 2, [["٠٪", null, { size: 170, col: DG }], ["من زوار الجوال", 35, { pl: 1, size: 44 }]], { pad: "0 44px 16px" });
+        dropIn(s7, V(32) - 0.08, "left", 0.5);
+        { let ln = ""; frames(V(32), E(34), t => { const n = Math.round(53 * expoOut(ramp(t, V(32), E(34) - 0.1))); const s = AR(n) + "٪"; if (s !== ln) { TL.set(s7._ws[0], { textContent: s }, at(t)); ln = s; } }); }
+        wordsIn(s7);
+        const src = el("div", "abs ar pl", stage, { left: "60px", top: "560px", fontSize: "28px", color: "#8B9096", fontWeight: 500 }, "المصدر: Google / DoubleClick، ٢٠١٦");
+        gsap.set(src, { opacity: 0 }); TL.to(src, { opacity: 1, duration: 0.3 }, V(33));
+        // he stands up: the note and the chip fly off, «يطلعون» leaves with him
+        out(s7, 13.25, 0, -50); out(chip, 13.3, 40, -30); out(src, E(38) - 0.22, 0, -20);
+        const s8 = scrap(300, 1335, -3, [["يطلعون", 38, { size: 96 }]], { pad: "0 34px 16px", tape: false });
+        dropIn(s8, V(38) - 0.3, "left", 0.45); wordsIn(s8);
+        TL.to(s8, { x: 1100, rotation: 8, filter: "blur(10px)", duration: 0.42, ease: "power3.in" }, E(38) + 0.25);
+
+        // ═══ B6 the beam wipes to paper; a receipt prints the gallery's weight above the frame ═══
+        const rc = el("div", "abs", stage, { left: "300px", top: "230px", width: "480px", zIndex: 15,
+          filter: "drop-shadow(0 4px 4px rgba(18,20,22,0.25)) drop-shadow(0 10px 18px rgba(18,20,22,0.18))" });
+        const zig = []; for (let k = 0; k <= 20; k++) zig.push(`${100 - k * 5}% ${k % 2 ? "100%" : "calc(100% - 14px)"}`);
+        const rp = el("div", "", rc, { width: "480px", background: "#F7F8F8 url(assets/img/paper.jpg) center/cover", direction: "rtl",
+          clipPath: `polygon(0 0, 100% 0, ${zig.join(", ")})`, padding: "10px 34px 26px" });
+        // each row is a printed line: its wrapper opens from 0 height (the paper feeds out), old rows collapse away
+        const row = (html, h) => { const w = el("div", "", rp, { height: "0px", overflow: "hidden" }); el("div", "", w, { height: h + "px", display: "flex", alignItems: "center", justifyContent: "space-between", whiteSpace: "nowrap", borderBottom: "2px dashed rgba(18,20,22,0.25)" }, html); w._h = h; return w; };
+        const r0 = row('<span class="pl" style="font-size:38px">معرض صور</span><span class="pl" style="font-size:24px;color:#8B9096">الحجم</span>', 78);
+        const r1 = row('<span class="pl" style="font-size:34px;color:#5E6369">قبل</span><span style="position:relative;font-size:84px;line-height:1"><b class="n1" style="font-weight:400">٤</b> ميجا<i class="st" style="position:absolute;left:-6px;right:-6px;top:54%;height:9px;background:#121416;border-radius:4px;transform:scaleX(0);transform-origin:100% 50%"></i></span>', 112);
+        const r2 = row('<span class="pl" style="font-size:34px;color:#5E6369">بعد</span><span style="display:inline-block;font-size:84px;line-height:1;background:#00DB33;border-radius:10px;padding:0 16px 10px">١٤٠ كيلو</span>', 112);
+        const r3 = row('<span class="pl" style="font-size:34px">نفس الفخامة</span><span class="pl" style="font-size:44px;color:#006A39">✓</span>', 84);
+        const r4 = row('<span class="pl" style="font-size:34px">ونفس الجودة</span><span class="pl" style="font-size:44px;color:#006A39">✓</span>', 84);
+        r4.firstChild.style.borderBottom = "none";
+        const n1 = r1.querySelector(".n1"), st = r1.querySelector(".st"), b2 = r2.querySelector("span:last-child");
+        gsap.set(rc, { opacity: 0 });
+        const feed = (r, t) => TL.to(r, { height: r._h, duration: 0.35, ease: "power2.out" }, t);
+        const fold = (r, t) => TL.to(r, { height: 0, opacity: 0, duration: 0.3, ease: "power2.inOut" }, t);
+        TL.set(rc, { opacity: 1 }, V(39)); feed(r0, V(39) + 0.02);
+        feed(r1, V(42) - 0.06);
+        { let ln = ""; frames(V(42), E(43), t => { const n = Math.round(lerp(4, 34, expoOut(ramp(t, V(43), E(43))))); const s = AR(t < V(43) ? 4 : n); if (s !== ln) { TL.set(n1, { textContent: s }, at(t)); ln = s; } }); }
+        TL.fromTo(st, { scaleX: 0 }, { scaleX: 1, duration: 0.25, ease: "power2.out", immediateRender: false }, V(45));
+        feed(r2, V(46) - 0.06);
+        TL.fromTo(b2, { scale: 1.25 }, { scale: 1, duration: 0.4, ease: "back.out(1.2)", immediateRender: false }, V(46));
+        fold(r0, V(49) - 0.1); feed(r3, V(49) - 0.06);
+        fold(r1, V(51) - 0.1); feed(r4, V(51) - 0.06);
+        // torn off: the receipt flies up out of frame
+        TL.to(rc, { y: -700, rotation: -8, filter: "blur(8px)", duration: 0.42, ease: "power3.in" }, V(53) - 0.2);
+
+        // ═══ B7 «ويفتح على طول» (kashida on «طول»), then «فخم» and «وسريع» come back together ═══
+        const s9 = scrap(400, 330, -2, [["ويفتح", 53, { size: 100 }], ["على", 54, { pl: 1, size: 46 }], ["طول", 55, { size: 100, col: DG }]], { pad: "0 40px 18px" });
+        TL.set(s9, { opacity: 1 }, V(53) - 0.04);
+        TL.fromTo(s9, { x: 700, scaleX: 1.6, filter: "blur(10px)" }, { x: 0, scaleX: 1, filter: "blur(0px)", duration: 0.32, ease: "expo.out", immediateRender: false }, V(53) - 0.04);
+        wordsIn(s9);
+        kash(s9._ws[2], "طـ", "ول", 6, V(55), E(55) + 0.15);
+        out(s9, E(55) - 0.05, -40, -60);
+        const s10 = scrap(380, 300, 1.5, [["يعني", 56, { pl: 1, size: 46 }], ["تقدر تكون", 57, { pl: 1, size: 46 }]], { pad: "6px 34px 16px", tape: false });
+        dropIn(s10, V(56) + 0.05, "top", 0.5); wordsIn(s10);
+        const fF = scrap(330, 470, -4, [["فخم،", 59, { size: 110 }]], { pad: "0 36px 16px" });
+        const fS = scrap(760, 470, 4, [["وسريع", 60, { size: 110 }]], { bg: G, pad: "0 36px 16px", tapeX: 20 });
+        dropIn(fF, V(59) - 0.14, "left", 0.5); wordsIn(fF); dropIn(fS, V(60) - 0.14, "right", 0.5); wordsIn(fS);
+
+        // ═══ B8 end card: a dark torn sheet rises from below and carries the CTA ═══
+        const cw = document.createElement("div"); cw.id = "cardWrap"; document.getElementById("main").appendChild(cw);
+        const card = el("div", "", cw); card.id = "card";
+        card.style.clipPath = "polygon(0 2%, 7% 0.6%, 15% 1.8%, 24% 0.4%, 33% 1.6%, 44% 0.5%, 55% 1.9%, 66% 0.6%, 77% 1.7%, 88% 0.4%, 100% 1.5%, 100% 100%, 0 100%)";
+        const T0 = V(61) - 0.3;
+        gsap.set(card, { y: 1960 }); TL.to(card, { y: 0, duration: 0.5, ease: "power3.out" }, T0);
+        const qa = el("div", "abs ar", card, { left: "0", width: "1080px", textAlign: "center", top: "250px", fontSize: "130px", color: L }, "موقعك");
+        const qb = el("div", "abs ar", card, { left: "0", width: "1080px", textAlign: "center", top: "420px", fontSize: "130px", color: G }, "ثقيل؟");
+        gsap.set([qa, qb], { opacity: 0 }); wIn(qa, V(61)); wIn(qb, V(62));
+        // comment bar: «اكتب» + «انطباع» + «بالتعليقات»
+        const bar = el("div", "abs", card, { left: "90px", width: "820px", top: "660px", height: "130px", borderRadius: "65px", background: L, display: "flex", alignItems: "center", justifyContent: "flex-start", direction: "rtl", padding: "0 44px", gap: "18px" });
+        const bA = el("span", "pl", bar, { fontSize: "44px", color: "#5E6369" }, "اكتب");
+        const bK = el("span", "", bar, { fontSize: "84px", color: K, background: G, borderRadius: "14px", padding: "0 18px 10px", lineHeight: "1.1", display: "inline-block" }, "انطباع");
+        const bB = el("span", "pl", bar, { fontSize: "44px", color: "#5E6369" }, "بالتعليقات");
+        gsap.set(bar, { opacity: 0, y: 40 }); gsap.set([bA, bK, bB], { opacity: 0 });
+        TL.to(bar, { opacity: 1, y: 0, duration: 0.45, ease: "power3.out" }, V(62) + 0.15);
+        wIn(bA, V(63)); wIn(bK, V(64)); wIn(bB, V(65));
+        const logo = el("img", "abs", card, { left: "340px", top: "930px", width: "400px" }); logo.src = "assets/brand/logo-white.svg"; logo.dataset.key = "logo";
+        const web = el("div", "abs lat", card, { left: "0", width: "1080px", textAlign: "center", top: "1130px", fontSize: "50px", color: L }, "www.fortunecode.org");
+        const tel = el("div", "abs lat", card, { left: "0", width: "1080px", textAlign: "center", top: "1215px", fontSize: "50px", color: G }, "+20 10 98066484");
+        gsap.set([logo, web, tel], { opacity: 0, y: 30 });
+        TL.to(logo, { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" }, V(63));
+        TL.to(web, { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" }, V(64) + 0.1);
+        TL.to(tel, { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" }, V(65) + 0.1);
+        // the end card keeps living: a slow push on the whole sheet
+        TL.fromTo(card, { scale: 1 }, { scale: 1.035, duration: D - T0 - 0.5, ease: "none", immediateRender: false, transformOrigin: "540px 760px" }, T0 + 0.5);
+
+
+        // grain, every 2 frames
+        const grains = Array.from(document.querySelectorAll(".grain"));
+        for (let f = 0; f < D * FPS; f += 2) grains.forEach((g, i) => TL.set(g, { opacity: i === (f / 2) % 6 ? 0.38 : 0 }, f * F));
+        TL.set({}, {}, D);
+        // QA hooks for engine/tools/motion_check.py: one motion event = one overlay piece (a scrap, the receipt, the card) moving
+        const MOVE = ["x", "y", "scale", "scaleX", "scaleY", "rotation", "filter", "height"];
+        const unitOf = (e) => { while (e && e.parentElement && e.parentElement !== stage && e.parentElement.id !== "cardWrap" && e.parentElement.id !== "card") e = e.parentElement; return e; };
+        const moves = () => { const out = []; TL.getChildren(true, true, false).forEach((tw) => {
+          const s0 = tw.startTime(), e0 = s0 + tw.totalDuration(); if (e0 - s0 <= 2 * F) return;
+          const ks = Object.keys(tw.vars).filter((k) => MOVE.includes(k)); if (!ks.length) return;
+          const small = ks.every((k) => (k === "scale" || k === "scaleX" || k === "scaleY") && Math.abs((+tw.vars[k] || 1) - 1) <= 0.05);
+          if (small) return;
+          (tw.targets() || []).forEach((el) => { if (!el || el.nodeType !== 1 || el.id === "bgWrap" || el.id === "all") return; const u = unitOf(el); if (u && !(u.id === "card" && tw.vars.scale)) out.push([u, s0, e0, u === el]); }); }); return out; };
+        const MV = moves(); const uid = new Map(); let un = 0; const idOf = (u) => { if (!uid.has(u)) uid.set(u, "u" + (un++)); return uid.get(u); };
+        window.__qaMotion = (time) => {
+          const starts = {}; MV.forEach(([u, s0, e0]) => { if (time >= s0 && time < e0) { const k = idOf(u); starts[k] = Math.min(starts[k] ?? 1e9, s0); } });
+          const ss = Object.values(starts).sort((a, b) => a - b); let n = 0, last = -1e9; for (const v of ss) { if (v - last > 2 * F + 1e-6) n++; last = v; }
+          return { n, units: Object.entries(starts).map(([k, v]) => k + "@" + v.toFixed(2)) };
+        };
+        window.__qaHolds = () => { const by = new Map(); MV.forEach(([u, s0, e0, whole]) => { if (!whole) return; const k = idOf(u); if (!by.has(k)) by.set(k, []); by.get(k).push([s0, e0]); });
+          const out = []; by.forEach((mv, k) => { mv.sort((a, b) => a[0] - b[0]); let end = mv[0][1]; for (let i = 1; i < mv.length; i++) { const gap = mv[i][0] - end; if (gap > 0.001 && gap < 0.6) out.push(k + " " + end.toFixed(2) + "->" + mv[i][0].toFixed(2)); end = Math.max(end, mv[i][1]); } }); return out; };
+        window.__timelines["main"] = TL; TL.seek(0);
+      }
+      window.__hf = window.__hf || {}; window.__hf.buildReady = window.__hf.buildReady || {};
+      window.__hf.buildReady["main"] = build();
+    </script>
+  </body>
+</html>
