@@ -37,3 +37,17 @@ Add a row for each finished piece. Newest batch at the top.
 - Flow in 3 parallel tabs;
 - WhatsApp documents over 40 MB go as a lighter copy;
 - Drive upload by CDP drag-and-drop.
+
+## Alum Aman (client pitch), 2026-11-08
+- **Reel 016:** the ألمنيوم نظم أمان test reel, ROAR style, 35 s.
+  - Source: `reels/016-alumaman-test-roar/`.
+  - Desktop: `Desktop/alumaman/`.
+  - Drive: https://drive.google.com/drive/folders/1G44IqKlpxOumvl5WUCTna9tSq-lcuBdu
+- **Credits:** about 120 Flow credits.
+  - 3 shots went through flow-direct (15 each).
+  - 5 shots went through the old UI path.
+- **Sent:** to the owner only (WhatsApp 3EB0C6BEEC8D3A333000D2 and 3EB0F06FA63ADDD1EFCC21).
+- **Waiting for the owner:**
+  - his verdict;
+  - real project photos (the montage uses stock-looking site images);
+  - OK on «كل شي مكتوب بالعقد», «ونركب في المنطقة الشرقية» and the EPDM line.
