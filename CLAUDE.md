@@ -6,6 +6,8 @@ delivered, and where every lesson from the owner is kept so it is never repeated
 Owner: Mahmoud (FortuneCode). Reply to him in short Egyptian Arabic. Code, docs and commits in
 English. The reels themselves speak light Gulf (Saudi) Arabic.
 
+**Entry point for any content (reels, carousels, posts, stories, LinkedIn, delivery, Drive):** the global skill `~/.claude/skills/fortune-content-engine/` (invoke it first; hard rules in its `references/rules.md`). Knowledge base: `knowledge/content-engine/README.md`. Current default reel = ROAR look + Flow AI-video scenes (`knowledge/content-engine/14-roar-ai-video-pipeline.md`).
+
 ## Memory: read before any work (loaded below)
 @memory/LESSONS.md
 @memory/DECISIONS.md
@@ -17,14 +19,18 @@ Also read when relevant: `memory/EVIDENCE.md` (what goes viral for us), `memory/
 **Never forget:** whenever the owner reacts to a reel, gives a rule, approves a choice or shares
 results, run the `reel-lesson` skill in that same turn. A lesson that only lives in the chat is lost.
 
+## Delivery gate (mandatory)
+Before ANY reel goes to the owner, fill `rules/owner-checklist.md` into the reel's NOTE.md with evidence for every line. One FAIL = no delivery. Add every new owner instruction to that checklist in the same turn.
+
 ## Rules (authoritative, in this order)
 1. `memory/LESSONS.md` and `memory/DECISIONS.md` (the owner's own words)
-2. `rules/brand.md`, `rules/script.md`, `rules/facts.md`, `rules/motion.md`,
+2. `rules/brand.md`, `rules/script.md`, `rules/facts.md`, `rules/motion.md`, `rules/text-motion.md`,
    `rules/voice-and-sound.md`, `rules/quality-gates.md`, `rules/tech.md`
 3. Craft references: `.claude/skills/motionmaxxing`, `.claude/skills/gsap-*`, the global
    `hyperframes*` skills. They decide HOW, never against 1-2.
 
 ## Pipeline
+A reel is delivered only after render + `qa.py` pass, including `safezone_check` with 0 violations `motion_check` PASS and `overlap_check` PASS, AND `rules/owner-checklist.md` is filled into the reel's NOTE.md with every line PASS or N/A.
 Start every reel with the `reel-engine` skill (or `/new-reel <topic>`). Stages: recall -> facts ->
 script -> scaffold -> voice -> storyboard -> captions -> build -> sound -> render + QA -> deliver ->
 learn.
@@ -59,7 +65,10 @@ python engine/tools/captions.py <reel>               # template.tpl + captions.j
 python engine/tools/models.py search|fetch|link|list # 3dicons 3D models
 python engine/tools/sfx.py <reel> gen|mix            # effects + final mix.mp3
 cd reels/<reel> && npm run check && npm run render   # HyperFrames 0.8.152
-python engine/tools/qa.py <reel>                     # gates + contact sheet
+python engine/tools/qa.py <reel>                     # gates + contact sheet; includes the HARD safe-zone gate (safezone_check.py) and tick_check
+python engine/tools/safezone_check.py <reel>         # safe zone x 60-960 / y 230-1440 for text + data-key visuals (must pass before delivery)
+python engine/tools/motion_check.py <reel>           # smooth motion: <= 2 motion events at once, pieces rest >= 0.6 s (must pass before delivery)
+python engine/tools/overlap_check.py <reel>          # text over photos/phones/faces (> 5 %) or clipped text (> 0.3 s) fails (must pass before delivery)
 python engine/tools/deliver.py <reel>                # copy to Desktop, mark delivered
 ```
 
@@ -67,6 +76,7 @@ python engine/tools/deliver.py <reel>                # copy to Desktop, mark del
 | path | what |
 |---|---|
 | `rules/` | the rules every reel follows |
+| `knowledge/content-engine/` | the content-engine knowledge base: decisions, references, style, voices, tools, open items (start at its README) |
 | `memory/` | lessons, decisions, reels log, evidence, facts bank |
 | `engine/lib/` | stage3d.js (2.5D stage + timeline helpers), captions.js, brand-models.js |
 | `engine/template/template.tpl` | starter composition copied into each new reel |
