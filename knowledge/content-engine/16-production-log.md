@@ -47,7 +47,7 @@ Add a row for each finished piece. Newest batch at the top.
   - 3 shots went through flow-direct (15 each).
   - 5 shots went through the old UI path.
 - **Sent:** to the owner only (WhatsApp 3EB0C6BEEC8D3A333000D2 and 3EB0F06FA63ADDD1EFCC21).
-- **Waiting for the owner:**
-  - his verdict;
+- **Owner verdict (2026-11-08): REJECTED.** «شوية لقطات ai ملهاش علاقة ببعض وشوية Text ملوش أي علاقة والنطق… بايظ… رخيصة». Lessons are in memory `feedback-reel-016-rejected-ai-slop` and in rules.md §10.
+- **Still open:**
   - real project photos (the montage uses stock-looking site images);
   - OK on «كل شي مكتوب بالعقد», «ونركب في المنطقة الشرقية» and the EPDM line.
