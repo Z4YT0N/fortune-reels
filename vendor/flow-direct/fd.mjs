@@ -37,7 +37,7 @@ async function tab() {
 
 // Installed in the page on every call (idempotent), so a page reload never breaks us.
 const PAGE_JS = String.raw`() => {
-  if (window.__fd && window.__fd.v === 2) return;
+  if (window.__fd && window.__fd.v === 3) return;
   const w = () => window.WIZ_global_data;
   const pid = () => location.pathname.split('/project/')[1].split(/[/?#]/)[0];
   const key = () => [...document.scripts].map(s => s.src).find(s => s.includes('enterprise.js?')).match(/render=([^&]+)/)[1];
@@ -62,8 +62,8 @@ const PAGE_JS = String.raw`() => {
     return { status: r.status, permission: /ask_for_permission/.test(raw), cost: cost ? Number(cost) : null, unusual: /UNUSUAL_ACTIVITY|PUBLIC_ERROR_[A-Z_]+/.exec(raw)?.[0] || null, media, said };
   };
   const session = async () => JSON.stringify((await rpc('csbIsb', [pid(), null, crypto.randomUUID()])).data).match(/[0-9a-f-]{36}/)[0];
-  const url = async (mediaId) => { const r = await rpc('as29s', [mediaId]); const s = JSON.stringify(r.data || ''); return { url: (s.match(/https:\/\/flow-content\.google\/(?:image|video)\/[^"]+/) || [null])[0], error: r.error }; };
-  window.__fd = { v: 2, rpc, chat, session, url };
+  const url = async (mediaId) => { const r = await rpc('as29s', [mediaId]); const s = JSON.stringify(r.data || ''); return { url: (s.match(/https:\/\/flow-content\.google\/video\/[^"]+/) || s.match(/https:\/\/flow-content\.google\/image\/[^"]+/) || [null])[0], error: r.error }; };
+  window.__fd = { v: 3, rpc, chat, session, url };
 }`;
 
 const sleep = (ms) => new Promise(r => setTimeout(r, ms));
@@ -86,7 +86,8 @@ async function runJob(t, job) {
     for (let i = 0; i < 120 && !buf; i++) {
       u = (await t.ev(`__fd.url(${JSON.stringify(m)})`)).url;
       if (u) { const res = await fetch(u); const ct = res.headers.get('content-type') || '';
-        if (u.includes('/video/') && !ct.startsWith('video/')) { await res.arrayBuffer(); }
+        const wantVideo = /video/i.test(job.prompt);
+        if ((u.includes('/video/') || wantVideo) && !ct.startsWith('video/')) { await res.arrayBuffer(); }
         else { buf = Buffer.from(await res.arrayBuffer()); ext = ct.startsWith('video/') ? 'mp4' : ct.includes('jpeg') ? 'jpg' : 'png'; } }
       if (!buf) await sleep(5000);
     }
