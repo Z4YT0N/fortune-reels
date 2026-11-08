@@ -44,14 +44,14 @@ Mirror of the global skill reference `~/.claude/skills/fortune-content-engine/re
    - Write `script.txt`, then make 3 takes with `engine/tools/vo.py`.
    - Run STT on each take, diff it, and pick one. Set D = VO + about 1.3–2 s.
 2. **Transition map** in `NOTE.md`: beat by beat, how each object causes the next, plus the thread object.
-3. **Keyframes K0..Kn**, one per beat boundary:
+3. **Keyframes K0..Kn**, one per beat boundary. Generate them with `vendor/flow-direct/fd.mjs gen` (free images, parallel; the media ID is the file name). Use the MCP below only to upload LOCAL reference photos:
    - Use Flow Nano Banana Pro (free) and make 2 candidates each. Pick by eye from a contact sheet.
    - Example call:
      ```
      bash vendor/flow-locked.sh flow_agent_generate '{"project_id":"12f3c7f0-27a8-4e0f-bb43-b8a4b64a0b36","kind":"image","prompt":"...","aspect":"9:16","download_dir":"<abs>/gen/K0"}'
      ```
    - Write the prompt in a file and build the JSON in Python. Do not hand-quote Arabic or long prompts.
-4. **Shots S1..Sn:** Flow Omni frames-to-video, 5 s, 720p, `start_image_id` = Ki, `end_image_id` = Ki+1, `max_credits` 16, `wait:false`.
+4. **Shots S1..Sn:** submit all shots in ONE `fd.mjs gen` call (`att` = [Ki, Ki+1] media IDs, `maxCredits` 16, `--par 4`; prompt pattern in `vendor/flow-direct/README.md`). It is about 2 min per shot, in parallel. MCP fallback: Flow Omni frames-to-video, 5 s, 720p, `start_image_id` = Ki, `end_image_id` = Ki+1, `max_credits` 16, `wait:false`.
    - Add this suffix to every shot prompt: "One continuous camera move, no cut, no scene change, keep the exact look, colours, paper texture and lighting of the two frames; real photographic studio footage, natural physics, no text, no letters, no morphing faces."
    - Submit all shots in parallel (3 slots). Then poll `flow_video_status` and download with `flow_download_media`.
    - Look at a strip of each shot (12 frames) before using it.

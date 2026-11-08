@@ -14,3 +14,7 @@ reels/*/snap/
 reels/*/.hyperframes/
 reels/*/node_modules/
 __pycache__/
+
+# reference videos (large, restorable with yt-dlp from research/refs-2026-11/INDEX.md)
+research/refs-*/videos/
+vendor/flow-direct/test/
