@@ -51,3 +51,9 @@ Add a row for each finished piece. Newest batch at the top.
 - **Still open:**
   - real project photos (the montage uses stock-looking site images);
   - OK on «كل شي مكتوب بالعقد», «ونركب في المنطقة الشرقية» and the EPDM line.
+- **Reel 018:** Alum Aman in the reel-006 style (Fortune collage plus kinetic type).
+  - The owner approved the checkpoint: «حلو فشخ».
+  - Final: `reels/018-alumaman-collage/alumaman-collage.mp4`, 30.3 s, 120 fps render with tmix, -14.3 LUFS.
+  - 75 Flow credits, all through flow-direct.
+  - Sent to the owner (media plus a lighter document copy). Desktop copy: `Desktop/alumaman/2026-11-08-alumaman-collage.mp4`.
+  - Waiting for his verdict and his ear on the sound.
