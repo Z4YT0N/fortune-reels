@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="ar" data-resolution="portrait">
+  <!-- Style lab 007: STOMP typography intro (ref QuhVqLVzpA8). Flat two-tone (green #00DB33 / light #F0F1F2, ink #121416,
+       one black passage for the waiting), one word per beat slammed on the voice grid, every colour change arrives as a
+       wipe that grows out of the previous beat (push, cursor->panel, bars, slice strips, strike line->band, giant word
+       drag, diagonal). Vocabulary from the 12 fps study: tiny->full pop, typewriter + cursor bar, echo outline copies,
+       horizontal slice glitch (whole rendered word, Arabic-safe), vertical side label, word drum (cylinder), strike line,
+       vertical bars wipe, giant word sliding across as a wipe, diagonal wipe. build.py fills __D__ and WORDS. -->
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1080, height=1920">
+    <title>Stomp style lab</title>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      @font-face { font-family: "ZainL"; src: url("assets/fonts/zain-mob-long.ttf") format("truetype"); }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1080px; height: 1920px; overflow: hidden; background: #00DB33; }
+      #main { position: relative; width: 100%; height: 100%; overflow: hidden; font-family: "ZainL", sans-serif; color: #121416; }
+      #stage { position: absolute; inset: 0; overflow: hidden; }
+      #world { position: absolute; inset: 0; }
+      .full { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; }
+      .wd { position: absolute; direction: rtl; white-space: nowrap; line-height: 1.3; will-change: transform; }
+      .ol { color: transparent !important; }
+      .grain { position: absolute; inset: 0; width: 1080px; height: 1920px; mix-blend-mode: soft-light; opacity: 0; z-index: 90; pointer-events: none; }
+    </style>
+  </head>
+  <body>
+    <div id="main" data-composition-id="main" data-start="0" data-duration="__D__" data-width="1080" data-height="1920">
+      <div id="stage" class="clip" data-start="0" data-duration="__D__" data-track-index="1">
+        <div id="world"></div>
+        <img class="grain" src="assets/img/grain0.png" alt=""><img class="grain" src="assets/img/grain1.png" alt=""><img class="grain" src="assets/img/grain2.png" alt="">
+        <img class="grain" src="assets/img/grain3.png" alt=""><img class="grain" src="assets/img/grain4.png" alt=""><img class="grain" src="assets/img/grain5.png" alt="">
+      </div>
+      <!-- no <audio> in the page (owner's download manager). The mix is muxed with ffmpeg after the render. -->
+    </div>
+    <script>
+      const D = __D__;
+      const WORDS = /*WORDS*/[];
+      const W = (i) => WORDS[i][1];
+      const V = (i) => W(i) - 0.03;          // a word lands on its own spoken frame
+      const F = 1 / 30;
+      const G = "#00DB33", L = "#F0F1F2", K = "#121416";
+      const CX = 510, CY = 835;               // centre of the safe zone (x 60-960, y 230-1440)
+      window.__timelines = window.__timelines || {};
+      const TL = gsap.timeline({ paused: true });
+      const world = document.getElementById("world");
+
+      function div(parent, style = {}, cls = "") { const e = document.createElement("div"); if (cls) e.className = cls; Object.assign(e.style, style); (parent || world).appendChild(e); return e; }
+      function panel(color, parent) { return div(parent, { background: color }, "full"); }
+      const probe = div(document.body, { position: "absolute", left: "-9999px", top: "0", fontFamily: "ZainL", fontSize: "100px", whiteSpace: "nowrap", direction: "rtl", lineHeight: "1.3" });
+      function widthAt100(text) { probe.textContent = text; return probe.getBoundingClientRect().width; }
+      function fit(text, maxW, maxS = 900) { return Math.min(maxS, Math.floor(100 * maxW / widthAt100(text))); }
+      // a word centred on (x, y) of its parent
+      function word(parent, text, size, color, x, y, extra = {}) {
+        const e = div(parent, { fontSize: size + "px", color, left: x + "px", top: y + "px" }, "wd");
+        e.textContent = text;
+        if (extra.stroke) e.style.webkitTextStroke = extra.stroke;
+        gsap.set(e, { xPercent: -50, yPercent: -50, transformOrigin: extra.origin || "50% 50%" });
+        return e;
+      }
+      // ── entrance / motion library (hidden start states are set at BUILD time; only TL.to / fromTo with immediateRender:false after) ──
+      function pop(el, a) { gsap.set(el, { scale: 0.12, opacity: 0 }); TL.set(el, { opacity: 1 }, a); TL.to(el, { scale: 1.08, duration: 3 * F, ease: "power3.out" }, a); TL.to(el, { scale: 1, duration: 4 * F, ease: "sine.inOut" }, a + 3 * F); }
+      function slam(el, a, dx = 320) {
+        gsap.set(el, { opacity: 0 });
+        TL.fromTo(el, { opacity: 1, x: dx, skewX: -14 * Math.sign(dx), scaleX: 1.35 }, { x: -10 * Math.sign(dx), skewX: 0, scaleX: 1, duration: 3 * F, ease: "power3.out", immediateRender: false }, a);
+        TL.to(el, { x: 0, duration: 4 * F, ease: "sine.inOut" }, a + 3 * F);
+      }
+      function stomp(el, a, dy = -620) {
+        gsap.set(el, { opacity: 0 });
+        TL.fromTo(el, { opacity: 1, y: dy, scaleY: 1.4, scaleX: 0.85 }, { y: 0, scaleY: 0.8, scaleX: 1.14, duration: 3 * F, ease: "power2.in", immediateRender: false }, a);
+        TL.to(el, { scaleY: 1, scaleX: 1, duration: 6 * F, ease: "back.out(3)" }, a + 3 * F);
+      }
+      function shake(a, amp = 14) {
+        TL.to(world, { x: amp, y: -amp * 0.7, duration: F, ease: "none" }, a);
+        TL.to(world, { x: -amp * 0.6, y: amp * 0.5, duration: F, ease: "none" }, a + F);
+        TL.to(world, { x: 0, y: 0, duration: 2 * F, ease: "sine.out" }, a + 2 * F);
+      }
+      function live(el, a, b, k = 0.035) { TL.fromTo(el, { scale: 1 }, { scale: 1 + k, duration: Math.max(0.2, b - a), ease: "sine.inOut", immediateRender: false }, a); }
+      // horizontal slice: N full-frame wrappers, each clipped to a horizontal band; content is built once per wrapper
+      function slices(parent, cuts) {
+        const ys = [0, ...cuts, 1920];
+        return ys.slice(0, -1).map((y0, i) => div(parent, { clipPath: `inset(${y0}px -3000px ${1920 - ys[i + 1]}px -3000px)` }, "full"));
+      }
+      function jitter(wraps, a, frames) { frames.forEach((offs, f) => wraps.forEach((w, i) => TL.set(w, { x: offs[i] || 0 }, a + f * F))); }
+
+      async function build() {
+        await document.fonts.ready; await document.fonts.load("100px ZainL", "معرض");
+        const base = panel(G);
+
+        // ═══ A  «معرض» 0.00: tiny -> full pop on green ═══
+        const sA = fit("معرض", 720, 520);
+        const A = word(null, "معرض", sA, K, CX, CY);
+        pop(A, 0);
+        live(A, 7 * F, 0.36, 0.05);
+
+        // ═══ B  «صور» 0.40: the light panel pushes up from below carrying the word; «معرض» is pushed out the top ═══
+        const PB = panel(L);
+        gsap.set(PB, { yPercent: 100 });
+        const B = word(PB, "صور", fit("صور", 640, 600), K, CX, CY);
+        TL.to(PB, { yPercent: 0, duration: 5 * F, ease: "expo.out" }, V(1) - 3 * F);
+        TL.to(A, { y: -1500, duration: 5 * F, ease: "expo.out" }, V(1) - 3 * F);
+        TL.fromTo(B, { scale: 1.25 }, { scale: 1, duration: 5 * F, ease: "back.out(2)", immediateRender: false }, V(1) + F);
+
+        // ═══ C  «في موقع» 0.67-0.80: «صور» shrinks up; a cursor bar types the line (one growing string, right-anchored) ═══
+        TL.to(B, { scale: 0.42, y: -330, duration: 6 * F, ease: "expo.inOut" }, V(2) - 4 * F);
+        const tS = fit("في موقع", 820, 200);
+        const row = div(PB, { position: "absolute", right: "120px", top: (980 - tS * 0.65) + "px", display: "flex", flexDirection: "row", alignItems: "center", direction: "rtl", gap: "18px" });
+        const typed = div(row, { fontSize: tS + "px", lineHeight: "1.3", whiteSpace: "nowrap", direction: "rtl", color: K });
+        const cursor = div(row, { width: "16px", height: "190px", background: G });
+        typed.textContent = "في موقع";
+        const cr = cursor.getBoundingClientRect();
+        typed.textContent = "";
+        gsap.set(cursor, { opacity: 0, scaleY: 0 });
+        TL.to(cursor, { opacity: 1, scaleY: 1, duration: 3 * F, ease: "expo.out" }, V(2) - 4 * F);
+        TL.set(typed, { textContent: "في" }, V(2));
+        const rest = [..." موقع"];
+        rest.forEach((c, k) => TL.set(typed, { textContent: "في" + rest.slice(0, k + 1).join("") }, V(3) + k * 1.5 * F));
+
+        // ═══ D  «شركة» 1.18: the cursor bar becomes the next colour: full height, then sweeps wide ═══
+        const PD = panel(G);
+        const ins = (t, r, b, l) => `inset(${t}px ${r}px ${b}px ${l}px)`;
+        gsap.set(PD, { clipPath: ins(cr.top, 1080 - cr.right, 1920 - cr.bottom, cr.left) });
+        TL.to(PD, { clipPath: ins(0, 1080 - cr.right, 0, cr.left), duration: 3 * F, ease: "expo.in" }, V(4) - 7 * F);
+        TL.to(PD, { clipPath: ins(0, 0, 0, 0), duration: 4 * F, ease: "expo.out" }, V(4) - 4 * F);
+        const C4 = word(PD, "شركة", fit("شركة", 760, 560), K, CX, CY);
+        slam(C4, V(4), 300);
+
+        // ═══ E  «كبيرة» 1.51: pushes «شركة» out, then zooms through while light bars drop in (vertical bars wipe) ═══
+        const E5 = word(PD, "كبيرة", fit("كبيرة", 860, 600), K, CX, CY);
+        gsap.set(E5, { opacity: 0 });
+        TL.set(E5, { opacity: 1 }, V(5) - 2 * F);
+        TL.fromTo(E5, { x: 1200 }, { x: 0, duration: 4 * F, ease: "expo.out", immediateRender: false }, V(5) - 2 * F);
+        TL.to(C4, { x: -1300, duration: 4 * F, ease: "expo.out" }, V(5) - 2 * F);
+        TL.to(E5, { scale: 4.6, duration: 0.38, ease: "power2.in" }, 1.64);
+        const bars = [0, 1, 2].map((i) => { const b = div(null, { position: "absolute", left: (720 - 360 * i) + "px", top: "0", width: "362px", height: "1920px", background: L }); gsap.set(b, { yPercent: i % 2 ? 100 : -100 }); return b; });
+        bars.forEach((b, i) => TL.to(b, { yPercent: 0, duration: 5 * F, ease: "expo.out" }, 1.86 + i * 2 * F));
+
+        // ═══ F  «حجمه» 2.06 · «٤» 2.44 · «٣» 2.76 · «ميجا» 3.20 (side label) on light ═══
+        const PF = div(null, {}, "full");   // transparent layer: the light comes from the bars
+        const hm = div(PF, { position: "absolute", left: "0", top: "330px", width: "1080px", height: "220px", overflow: "hidden" });
+        const H6 = word(hm, "حجمه", 150, K, CX, 110);
+        gsap.set(H6, { y: 220 });
+        TL.to(H6, { y: 0, duration: 4 * F, ease: "expo.out" }, V(6));
+        // number group, built in 3 slice wrappers (bands cut through the digits) so it can glitch later
+        const NY = 960;
+        const nW = slices(PF, [860, 1030]);
+        const s4 = [], s3 = [], sm = [];
+        const nSize = 560;
+        probe.style.fontSize = nSize + "px"; probe.textContent = "٤"; const w4 = probe.getBoundingClientRect().width; probe.textContent = "٣"; const w3 = probe.getBoundingClientRect().width; probe.style.fontSize = "100px";
+        const gap = 10, labelW = 200;
+        const totalW = w3 + gap + w4 + 30 + labelW;
+        const left0 = CX - totalW / 2;                 // [label][٣][٤] laid out left -> right
+        const x3 = left0 + labelW + 30 + w3 / 2, x4 = left0 + labelW + 30 + w3 + gap + w4 / 2, xl = left0 + labelW / 2;
+        nW.forEach((w) => {
+          s4.push(word(w, "٤", nSize, G, x4, NY, { origin: "50% 85%" }));
+          s3.push(word(w, "٣", nSize, G, x3, NY, { origin: "50% 85%" }));
+          const m = word(w, "ميجا", 150, K, xl, NY + 20);
+          gsap.set(m, { rotation: 90 });
+          sm.push(m);
+        });
+        stomp(s4, V(7)); shake(V(7) + 3 * F, 16);
+        stomp(s3, V(8)); shake(V(8) + 3 * F, 16);
+        gsap.set(sm, { opacity: 0 });
+        TL.set(sm, { opacity: 1 }, V(9));
+        TL.fromTo(sm, { y: -700 }, { y: 0, duration: 4 * F, ease: "expo.out", immediateRender: false }, V(9));
+        TL.to([...s3, ...s4], { scale: 1.03, duration: 0.25, ease: "sine.inOut" }, V(9) + 4 * F);
+
+        // ═══ G  slice glitch 3.45 -> the strips fly apart sideways while green strips slide in (wipe) ═══
+        jitter(nW, 3.42, [[-90, 70, -40], [40, -120, 80], [0, 0, 0], [-60, 35, 120], [25, -70, -30], [0, 0, 0]]);
+        nW.forEach((w, i) => TL.to(w, { x: i % 2 ? 1400 : -1400, duration: 4 * F, ease: "power3.in" }, 3.58 + i * F));
+        TL.to(hm, { x: 1400, duration: 4 * F, ease: "power3.in" }, 3.58);
+        const gStrips = [[0, 860], [860, 1030], [1030, 1920]].map(([y0, y1], i) => {
+          const s = div(null, { position: "absolute", left: "0", top: y0 + "px", width: "1080px", height: (y1 - y0 + 1) + "px", background: G });
+          gsap.set(s, { xPercent: i % 2 ? -100 : 100 }); return s;
+        });
+        gStrips.forEach((s, i) => TL.to(s, { xPercent: 0, duration: 4 * F, ease: "power3.inOut" }, 3.56 + i * F));
+
+        // ═══ H  «عميلك» 3.73 with echo copies, then a word drum rolls «يفتحه» «من» «جواله» ═══
+        const PH = div(null, {}, "full");   // transparent layer: the green comes from the strips
+        const drumWords = ["عميلك", "يفتحه", "من", "جواله"];
+        const dSize = Math.min(...drumWords.map((t) => fit(t, 800, 340)));
+        const persp = div(PH, { position: "absolute", left: "0", top: "0", width: "1080px", height: "1920px", perspective: "1600px", perspectiveOrigin: `${CX}px ${CY}px` });
+        const drum = div(persp, { position: "absolute", left: CX + "px", top: CY + "px", width: "0", height: "0", transformStyle: "preserve-3d" });
+        const TH = 40, R = Math.round((dSize * 0.62) / Math.tan((TH / 2) * Math.PI / 180));
+        const faces = drumWords.map((t, i) => {
+          const h = div(drum, { position: "absolute", left: "0", top: "0", width: "0", height: "0", transform: `rotateX(${-i * TH}deg) translateZ(${R}px)`, backfaceVisibility: "hidden" });
+          const f = word(h, t, dSize, i ? "transparent" : K, 0, 0, { stroke: `5px ${K}` });
+          return f;
+        });
+        // drum pivot sits R behind the front face, so the front face renders exactly like a flat word
+        gsap.set(drum, { z: -R });
+        gsap.set(persp, { opacity: 0 });
+        TL.set(persp, { opacity: 1 }, V(10) + F);
+        // the gstrip wipe already covers; «عميلك» slams onto the green
+        TL.fromTo(faces[0], { scale: 1.6, opacity: 0 }, { scale: 1, opacity: 1, duration: 3 * F, ease: "power3.out", immediateRender: false }, V(10) + F);
+        gsap.set(faces.slice(1), { opacity: 0 });
+        // echo copies (outline) step out above and below the solid word
+        const echoes = [-1, 1, -2, 2].map((k) => { const e = word(PH, "عميلك", dSize, "transparent", CX, CY, { stroke: `5px ${K}` }); gsap.set(e, { opacity: 0 }); return [e, k]; });
+        echoes.forEach(([e, k], j) => {
+          TL.set(e, { opacity: 1 }, V(10) + (3 + j) * F);
+          TL.fromTo(e, { y: 0 }, { y: k * dSize * 0.95, duration: 4 * F, ease: "expo.out", immediateRender: false }, V(10) + (3 + j) * F);
+          TL.to(e, { y: 0, opacity: 0, duration: 3 * F, ease: "expo.in" }, V(11) - 5 * F);
+        });
+        TL.set(faces.slice(1), { opacity: 1 }, V(11) - 3 * F);
+        [1, 2, 3].forEach((i) => {
+          const a = V(10 + i) - 2 * F;
+          TL.to(drum, { rotationX: i * TH, duration: 6 * F, ease: "back.out(1.6)" }, a);
+          TL.to(faces[i - 1], { color: "transparent", duration: 2 * F, ease: "none" }, a);
+          TL.to(faces[i], { color: K, duration: 2 * F, ease: "none" }, a + 2 * F);
+        });
+        TL.to(faces[0], { opacity: 0, duration: 3 * F }, V(13));
+        live(drum, V(13) + 6 * F, 5.05, 0.04);
+
+        // ═══ I  strike line through «جواله» 5.0 -> the line thickens into the black band «ويستنى» 5.28 ═══
+        const PI = panel(K);
+        gsap.set(PI, { clipPath: ins(CY - 9, 120, 1920 - CY - 9, 958) });
+        TL.to(PI, { clipPath: ins(CY - 9, 120, 1920 - CY - 9, 60), duration: 5 * F, ease: "power3.out" }, 4.98);
+        TL.to(PI, { clipPath: ins(CY - 9, 0, 1920 - CY - 9, 0), duration: 2 * F, ease: "power2.out" }, V(14) - 5 * F);
+        TL.to(PI, { clipPath: ins(0, 0, 0, 0), duration: 4 * F, ease: "expo.inOut" }, V(14) - 3 * F);
+
+        // ═══ J  «ويستنى» ×2: outline echo rows fill the waiting; the second «ويستنى» scrolls the stack one row ═══
+        const sW = fit("ويستنى", 780, 300);
+        const rowH = Math.round(sW * 1.05);
+        const box = div(PI, { position: "absolute", left: "0", top: "230px", width: "1080px", height: "1210px", overflow: "hidden" });
+        const stack = div(box, { position: "absolute", left: "0", top: "0", width: "1080px", height: "1210px" });
+        const lc = CY - 230;
+        const rows = [];
+        for (let k = -4; k <= 5; k++) {
+          const r = word(stack, "ويستنى،".replace("،", ""), sW, "transparent", CX, lc + k * rowH, { stroke: `4px ${G}` });
+          gsap.set(r, { opacity: 0 }); rows.push([r, k]);
+        }
+        const solid = word(box, "ويستنى", sW, G, CX, lc);
+        TL.fromTo(solid, { scale: 1.5, opacity: 0 }, { scale: 1, opacity: 1, duration: 3 * F, ease: "power3.out", immediateRender: false }, V(14));
+        gsap.set(solid, { opacity: 0 });
+        // first wait: rows step out from the solid word, one ring per ~0.13 s
+        rows.forEach(([r, k]) => {
+          const ring = Math.abs(k);
+          if (ring === 0 || ring > 3 || k === 4) return;
+          const a = V(14) + 0.24 + (ring - 1) * 0.13;
+          TL.set(r, { opacity: 1 }, a);
+          TL.fromTo(r, { y: -k * rowH }, { y: 0, duration: 5 * F, ease: "expo.out", immediateRender: false }, a);
+        });
+        // second «ويستنى»: the stack scrolls up one row (row +4 enters from below), the solid word re-slams
+        rows.forEach(([r, k]) => { if (k === 4 || k === 5 || k === 0) TL.set(r, { opacity: 1 }, V(15) - 3 * F); });
+        TL.to(stack, { y: -rowH, duration: 6 * F, ease: "expo.inOut" }, V(15) - 3 * F);
+        TL.fromTo(solid, { scale: 1.3 }, { scale: 1, duration: 4 * F, ease: "power3.out", immediateRender: false }, V(15) + 2 * F);
+        TL.to(stack, { y: -rowH * 1.6, duration: 0.75, ease: "none" }, V(15) + 3 * F);
+        live(solid, V(15) + 6 * F, 7.05, 0.05);
+
+        // ═══ K  «ويطلع» 7.15: rows split out sideways; a giant word slides across dragging the light colour behind it ═══
+        rows.forEach(([r, k]) => TL.to(r, { x: (k % 2 ? 1 : -1) * 1400, duration: 5 * F, ease: "power3.in" }, 7.02 + Math.abs(k) * F * 0.5));
+        TL.to(solid, { x: -1400, duration: 5 * F, ease: "power3.in" }, 7.04);
+        const gW = 1450;
+        const gSize = fit("ويطلع", gW, 900);
+        probe.style.fontSize = gSize + "px"; probe.textContent = "ويطلع"; const gw = probe.getBoundingClientRect().width; probe.style.fontSize = "100px";
+        const GK = div(null, { position: "absolute", left: "0", top: "0", width: "1080px", height: "1920px" });
+        const gWord = word(GK, "ويطلع", gSize, G, 540, CY);
+        const trail = div(GK, { position: "absolute", left: (540 + gw / 2 + 30) + "px", top: "0", width: "4000px", height: "1920px", background: L });
+        const x0 = 540 + gw / 2 + 60, x9 = -(600 + gw / 2);
+        gsap.set(GK, { x: x0 });
+        TL.to(GK, { x: 170, duration: 6 * F, ease: "expo.out" }, V(16) - 3 * F);
+        TL.to(GK, { x: -150, duration: 0.4, ease: "none" }, V(16) + 3 * F);
+        TL.to(GK, { x: x9, duration: 6 * F, ease: "expo.in" }, V(16) + 3 * F + 0.4);
+
+        // ═══ L  «لا تدور على» 7.87-8.36 on light; diagonal green wipe; «صور» slice-in 8.54; «أقل» stomp 8.80; strike ═══
+        const PL = panel(L);
+        gsap.set(PL, { opacity: 0 });
+        TL.set(PL, { opacity: 1 }, V(16) + 3 * F + 0.4 + 6 * F);
+        const diag = div(null, { position: "absolute", left: (540 - 1700) + "px", top: (960 - 1700) + "px", width: "3400px", height: "3400px", background: G });
+        gsap.set(diag, { rotation: 35, x: 2900, y: 2900 });
+        const l1s = fit("لا تدور على", 840, 190);
+        const l1 = div(null, { position: "absolute", left: "0", top: (430 - l1s * 0.65) + "px", width: "1080px", display: "flex", justifyContent: "center", direction: "rtl", gap: (l1s * 0.2) + "px", fontSize: l1s + "px", lineHeight: "1.3", color: K });
+        const t1 = ["لا", "تدور", "على"].map((t) => { const s = document.createElement("span"); s.textContent = t; s.style.display = "inline-block"; s.style.transformOrigin = "50% 85%"; l1.appendChild(s); return s; });
+        gsap.set(l1, { x: CX - 540 });
+        stomp(t1[0], V(17) - 3 * F, -420); shake(V(17), 10);
+        slam(t1[1], V(18), -320);
+        pop(t1[2], V(19));
+        TL.to(diag, { x: 0, y: 0, duration: 6 * F, ease: "expo.inOut" }, V(20) - 6 * F);
+        // «صور» in 3 slice wrappers (bands cut through the word) so it can arrive as a slice glitch
+        const SY = 790, AY = 1190;
+        const sS = fit("صور", 760, 430), aS = fit("أقل", 820, 430);
+        const l2W = slices(null, [SY - 50, SY + 40]);
+        const sw = l2W.map((w) => word(w, "صور", sS, K, CX, SY));
+        gsap.set(sw, { opacity: 0 });
+        TL.set(sw, { opacity: 1 }, V(20));
+        jitter(l2W, V(20), [[-170, 130, -90], [90, -80, 150], [-40, 30, -25], [0, 0, 0]]);
+        const aq = word(null, "أقل", aS, K, CX, AY, { origin: "50% 85%" });
+        stomp(aq, V(21), -560); shake(V(21) + 3 * F, 14);
+        const strike = div(null, { position: "absolute", left: "60px", top: (AY - 12 - aS * 0.36) + "px", width: "900px", height: "24px", background: K, transformOrigin: "100% 50%" });
+        gsap.set(strike, { scaleX: 0 });
+        TL.to(strike, { scaleX: 1, duration: 5 * F, ease: "power3.out" }, 9.02);
+        live(l1, V(21) + 8 * F, D, 0.02);
+        live(aq, 9.1, D, 0.03);
+
+        const grains = Array.from(document.querySelectorAll(".grain"));
+        for (let f = 0; f < D * 30; f += 2) grains.forEach((g, i) => TL.set(g, { opacity: i === (f / 2) % 6 ? 0.4 : 0 }, f * F));
+        probe.remove();
+        window.__timelines["main"] = TL; TL.seek(0);
+      }
+      window.__hf = window.__hf || {}; window.__hf.buildReady = window.__hf.buildReady || {};
+      window.__hf.buildReady["main"] = build();
+    </script>
+  </body>
+</html>

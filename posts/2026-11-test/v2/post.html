@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8">
+<link rel="stylesheet" href="common.css">
+<style>
+html,body { width:1080px; height:1350px; }
+#hero { left:0; top:-205px; width:1080px; }
+.vign { inset:0; background: linear-gradient(180deg, rgba(18,20,22,.0) 0, rgba(18,20,22,0) 62%, rgba(18,20,22,.85) 76%, #121416 88%); }
+.tag { background:#1b1e21; border:2px solid rgba(255,255,255,.35); border-radius:14px; padding:8px 28px 14px; font-size:76px; line-height:1.15; font-weight:700; box-shadow:0 18px 40px rgba(0,0,0,.6); }
+.tag .lbl { display:block; font-size:28px; font-weight:500; color:var(--mute); margin-bottom:2px; word-spacing:4px; }
+</style></head>
+<body>
+<img id="hero" class="abs" src="gen/p1_laptop.png">
+<div class="abs vign"></div>
+<div id="screen"></div>
+<svg class="marks" width="1080" height="1350" style="z-index:30"><defs><filter id="rough"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="4"/><feDisplacementMap in="SourceGraphic" scale="3"/></filter></defs><g id="mk"></g></svg>
+
+<div class="frame" style="left:40px; top:40px; width:1000px; height:1140px"></div>
+<img class="logo" src="assets/logo-en-h-primary-white.svg" style="left:50%; top:82px; transform:translateX(-50%)">
+
+<div class="t" style="top:150px; font-size:104px">ما حذفنا <span class="g">ولا صورة.</span></div>
+<div class="t mute" style="top:282px; font-size:40px">نفس الصور، نفس الجودة، والمعرض يفتح قبل ما ترمش.</div>
+
+<div id="tag" class="abs tag" style="right:84px; top:338px; transform:rotate(4deg); z-index:25"><span class="lbl">معرض الصور كان</span><bdi>٣٤ ميجا</bdi></div>
+
+<div class="t" id="big" style="top:888px; font-size:170px; line-height:1.0"><span style="font-size:48px; color:#fff; vertical-align:middle">صار</span> <span class="g" style="text-shadow:0 0 40px rgba(0,219,51,.35)"><bdi>١٤٠ كيلو</bdi></span></div>
+
+<div class="t" style="top:1092px; font-size:44px">اكتب <span style="background:var(--g); color:var(--bg); border-radius:12px; padding:0 18px">فحص</span> بالتعليقات ونفحص موقعك مجانًا</div>
+
+<script src="footer.js"></script><script src="gallery.js"></script>
+<script>
+// screen quad of p1_laptop.png (896x1200) scaled to 1080 wide, offset -170
+const k = 1080/896, oy = -205, Q = [[178,473],[718,473],[723,812],[172,812]].map(([x,y]) => [x*k, y*k+oy]);
+const g = galleryUI(1280, 796); g.style.transform = quadTransform(1280, 796, Q); g.style.zIndex = 5; document.getElementById('screen').appendChild(g);
+// screen glass sheen
+const sh = document.createElement('div'); sh.className = 'abs'; sh.style.cssText = `left:0;top:0;width:1280px;height:796px;transform-origin:0 0;transform:${quadTransform(1280,796,Q)};background:linear-gradient(115deg, rgba(255,255,255,.10), rgba(255,255,255,0) 40%); z-index:6`; document.getElementById('screen').appendChild(sh);
+foot(66, 1208, 948);
+const M = document.getElementById('mk');
+const P = (d, cls='mk', st='') => M.insertAdjacentHTML('beforeend', `<path class="${cls}" d="${d}" style="${st}"/>`);
+document.fonts.ready.then(() => {
+  fitLines('.t', 900);
+  // strike through the 34 MB tag and arrow down to 140 KB
+  const r = document.getElementById('tag').getBoundingClientRect();
+  P(`M${r.left+6},${r.top + r.height*0.78} C ${r.left+r.width*.4},${r.top+r.height*.68} ${r.left+r.width*.7},${r.top+r.height*.72} ${r.right-8},${r.top+r.height*.66}`, 'mk', 'stroke-width:12');
+  const b = document.getElementById('big').getBoundingClientRect();
+  const ex = b.right + 14, ey = b.top + b.height*0.45;
+  P(`M${r.left+r.width*0.62},${r.bottom+14} C ${r.left+r.width*0.95},${r.bottom+200} ${1010},${ey-200} ${ex},${ey}`);
+  P(`M${ex+8},${ey-46} L${ex},${ey} L${ex+46},${ey+16}`);
+  document.body.dataset.ready = 1;
+});
+</script>
+</body></html>

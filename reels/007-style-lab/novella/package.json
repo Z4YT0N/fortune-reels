@@ -1,0 +1,2 @@
+{ "name": "style-lab-novella", "private": true, "type": "module",
+  "scripts": { "render": "npx --yes hyperframes@0.8.152 render --output renders/novella.mp4" } }

@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8">
+<link rel="stylesheet" href="common.css">
+<style>
+html,body { width:1080px; height:1350px; }
+body { background: radial-gradient(ellipse 70% 40% at 50% 52%, rgba(0,219,51,.10), rgba(18,20,22,0) 70%), #121416; }
+.st { font-size:210px; line-height:1.02; }
+.hl { color:var(--g); text-shadow: 0 0 30px rgba(0,219,51,.55), 0 0 90px rgba(0,219,51,.35); }
+.rule { position:absolute; left:50%; transform:translateX(-50%); height:4px; width:120px; border-radius:2px; background:var(--g); box-shadow:0 0 20px rgba(0,219,51,.7); }
+.cta { font-size:42px; }
+.kw { background:var(--g); color:var(--bg); border-radius:12px; padding:0 18px; }
+</style></head>
+<body>
+<div class="frame" style="left:40px; top:40px; width:1000px; height:1140px"></div>
+<img class="logo" src="assets/logo-en-h-primary-white.svg" style="left:50%; top:82px; transform:translateX(-50%)">
+
+<div class="t st" style="top:236px">موقعك</div>
+<div class="t st hl" style="top:488px">أول موظف</div>
+<div class="t st" style="top:716px">يقابل عميلك.</div>
+
+<div class="rule" style="top:968px"></div>
+<div class="t cta mute" style="top:1010px">اكتب <span class="kw">انطباع</span> بالتعليقات</div>
+<div class="t cta mute" style="top:1074px">ونقيّم لك موقعك مجانًا.</div>
+
+<script src="footer.js"></script>
+<script>
+foot(66, 1208, 948);
+document.fonts.ready.then(() => { fitLines('.st', 900); fitLines('.cta', 900); document.body.dataset.ready = 1; });
+</script>
+</body></html>

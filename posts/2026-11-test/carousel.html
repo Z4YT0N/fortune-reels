@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<style>
+@font-face { font-family: Zain; src: url(assets/zain-mob-long.ttf); }
+:root { --paper:#F1F0EB; --ink:#121416; --g:#00DB33; --dg:#006A39; --grey:#3a3c3e; }
+* { margin:0; padding:0; box-sizing:border-box; }
+html,body { width:7560px; height:1350px; overflow:hidden; background:var(--paper); }
+body { font-family:Zain, 'Segoe UI', Arial, sans-serif; font-weight:400; color:var(--ink); position:relative; }
+.abs { position:absolute; }
+.t { position:absolute; white-space:nowrap; line-height:1.05; }
+.r { text-align:right; }
+.grey { color:var(--grey); }
+.hl { position:relative; display:inline-block; padding:0 12px; z-index:0; }
+.hl::before { content:''; position:absolute; inset:10% -4px 4% -4px; background:var(--g); z-index:-1; transform:skew(-4deg); }
+.scrap { position:absolute; background:#fff; padding:14px 26px 8px; box-shadow:3px 4px 0 rgba(0,0,0,.22); white-space:nowrap;
+  clip-path: polygon(0 6%,8% 0,22% 5%,40% 0,58% 4%,76% 0,92% 5%,100% 0,98% 50%,100% 100%,84% 95%,64% 100%,44% 96%,24% 100%,6% 95%,0 100%,2% 50%); }
+.tape { position:absolute; background:rgba(212,198,160,.78); box-shadow: inset 0 0 14px rgba(120,100,60,.28);
+  clip-path: polygon(0 4%,3% 0,6% 6%,9% 0,100% 0,97% 100%,94% 94%,91% 100%,0 100%,2% 50%); }
+.cut { position:absolute; filter: drop-shadow(3px 5px 0 rgba(0,0,0,.14)); }
+/* riso green print: silhouette in green, photo multiplied on top */
+.riso { position:absolute; }
+.riso .ink { position:absolute; inset:0; background:var(--g); -webkit-mask-size:100% 100%; }
+.riso .off { position:absolute; inset:0; background:var(--dg); -webkit-mask-size:100% 100%; transform:translate(-14px,12px); }
+.riso img { position:absolute; inset:0; width:100%; height:100%; mix-blend-mode:multiply; filter:contrast(1.15); }
+.badge { position:absolute; width:150px; height:150px; display:flex; align-items:center; justify-content:center; font-size:120px; line-height:1; padding-top:14px; }
+svg.marks { position:absolute; left:0; top:0; width:7560px; height:1350px; overflow:visible; pointer-events:none; }
+.mk { fill:none; stroke:var(--g); stroke-width:10; stroke-linecap:round; stroke-linejoin:round; filter:url(#rough); }
+.mkd { fill:none; stroke:var(--g); stroke-width:6; stroke-dasharray:22 16; stroke-linecap:round; }
+.hdl { fill:#f8f7f2; stroke:var(--g); stroke-width:5; }
+#grain { position:absolute; inset:0; background:url(assets/grain0.png); background-size:540px 960px; mix-blend-mode:multiply; opacity:.16; z-index:50; }
+#grain2 { position:absolute; inset:0; background:url(assets/grain3.png); background-size:540px 960px; mix-blend-mode:screen; opacity:.08; z-index:50; }
+.strip { position:absolute; top:1108px; height:112px; background:#fbfaf6; filter:drop-shadow(0 3px 0 rgba(0,0,0,.12));
+  clip-path: polygon(0 10%,2% 0,5% 8%,9% 2%,14% 9%,19% 1%,25% 7%,31% 0,37% 8%,44% 2%,51% 9%,58% 1%,65% 7%,72% 0,79% 8%,86% 2%,93% 9%,100% 3%,100% 92%,95% 100%,89% 93%,82% 100%,75% 94%,67% 100%,60% 92%,52% 100%,45% 94%,37% 100%,30% 93%,22% 100%,15% 92%,8% 100%,3% 93%,0 100%); }
+.lbl { font-size:30px; color:#555; }
+</style>
+</head>
+<body>
+<div id="stage"></div>
+<svg class="marks" id="marks" style="z-index:30">
+  <defs>
+    <filter id="rough"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="4"/><feDisplacementMap in="SourceGraphic" scale="3.2"/></filter>
+  </defs>
+</svg>
+<div id="grain"></div><div id="grain2"></div>
+<script>
+const W = 1080, S = (i, x) => (i - 1) * W + x;       // slide i (1-based), local x -> global x
+const stage = document.getElementById('stage'), marks = document.getElementById('marks');
+function el(html, z = 10) { const d = document.createElement('div'); d.innerHTML = html.trim(); const n = d.firstChild; n.style.zIndex = n.style.zIndex || z; stage.appendChild(n); return n; }
+// right-aligned text: right edge at local x = 1000 by default
+function txt(i, top, html, size, opt = {}) {
+  const right = opt.right ?? 80, cls = opt.cls ?? '';
+  return el(`<div class="t r ${cls}" data-max="${opt.max ?? 920}" style="right:${7560 - S(i, W - right)}px; top:${top}px; font-size:${size}px; ${opt.style ?? ''}">${html}</div>`, opt.z ?? 20);
+}
+function img(src, x, y, h, opt = {}) {
+  return el(`<img class="cut" src="${src}" style="left:${x}px; top:${y}px; height:${h}px; ${opt.rot ? `transform:rotate(${opt.rot}deg);` : ''} ${opt.style ?? ''}">`, opt.z ?? 10);
+}
+function riso(src, x, y, w, h, opt = {}) {
+  const m = `-webkit-mask-image:url(${src});`;
+  return el(`<div class="riso" style="left:${x}px; top:${y}px; width:${w}px; height:${h}px; ${opt.rot ? `transform:rotate(${opt.rot}deg);` : ''}">
+    <div class="off" style="${m}"></div><div class="ink" style="${m}"></div><img src="${src}"></div>`, opt.z ?? 12);
+}
+function tape(x, y, w, rot, z = 25) { return el(`<div class="tape" style="left:${x}px; top:${y}px; width:${w}px; height:46px; transform:rotate(${rot}deg)"></div>`, z); }
+function path(d, cls = 'mk', style = '') { const p = document.createElementNS('http://www.w3.org/2000/svg', 'path'); p.setAttribute('d', d); p.setAttribute('class', cls); if (style) p.setAttribute('style', style); marks.appendChild(p); return p; }
+function arrowHead(x, y, ang, len = 46) { // tip at (x,y), pointing at angle ang (deg)
+  const a = ang * Math.PI / 180, s = 0.55;
+  const p1 = [x - len * Math.cos(a - s), y - len * Math.sin(a - s)], p2 = [x - len * Math.cos(a + s), y - len * Math.sin(a + s)];
+  path(`M${p1} L${x},${y} L${p2}`);
+}
+function selBox(x, y, w, h) {
+  path(`M${x},${y} H${x + w} V${y + h} H${x} Z`, 'mkd');
+  for (const [hx, hy] of [[x, y], [x + w, y], [x, y + h], [x + w, y + h]]) {
+    const r = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+    Object.entries({ x: hx - 12, y: hy - 12, width: 24, height: 24, class: 'hdl' }).forEach(([k, v]) => r.setAttribute(k, v)); marks.appendChild(r);
+  }
+}
+function cursor(x, y, z = 40) { return el(`<svg class="abs" style="left:${x}px; top:${y}px" width="46" height="62" viewBox="0 0 22 30"><path d="M2 2 L2 24 L8 18 L12 28 L16 26 L12 17 L20 17 Z" fill="#fff" stroke="#121416" stroke-width="2" stroke-linejoin="round"/></svg>`, z); }
+function badge(i, n, top = 70) {
+  el(`<div class="badge" style="left:${S(i, W - 80 - 150)}px; top:${top}px">${n}</div>`, 21);
+  const cx = S(i, W - 80 - 75), cy = top + 78;
+  path(`M${cx + 62},${cy - 20} C ${cx + 70},${cy + 60} ${cx - 50},${cy + 84} ${cx - 72},${cy + 10} C ${cx - 90},${cy - 60} ${cx + 10},${cy - 92} ${cx + 66},${cy - 40}`);
+}
+
+/* ================= persistent weight bar (slides 1-6) ================= */
+el(`<div class="strip" style="left:${S(1, 50)}px; width:${S(6, 560) - S(1, 50)}px"></div>`, 14);
+// bar thickness steps down after each fix; global x positions of the steps
+const bx0 = S(1, 110), st1 = S(2, 560), st2 = S(3, 560), st3 = S(4, 560), bx1 = S(6, 470), cy = 1164;
+const seg = (x0, x1, h, fill) => el(`<div class="abs" style="left:${x0}px; top:${cy - h / 2}px; width:${x1 - x0}px; height:${h}px; background:${fill}; border-radius:${Math.min(h / 2, 8)}px"></div>`, 15);
+seg(bx0, st1, 60, 'var(--ink)'); seg(st1, st2, 40, 'var(--ink)'); seg(st2, st3, 22, 'var(--ink)'); seg(st3, bx1, 8, 'var(--g)');
+// labels on the strip
+el(`<div class="t" style="left:${S(1, 560)}px; top:${cy - 22}px; font-size:34px; color:#F1F0EB">وزن المعرض →</div>`, 16);
+// step marks: green check ticks with numbers
+for (const [x, n] of [[st1, '١'], [st2, '٢'], [st3, '٣']]) {
+  path(`M${x - 30},${cy - 58} L${x - 6},${cy - 32} L${x + 40},${cy - 96}`, 'mk', 'stroke-width:12');
+}
+
+/* ================= slide 1 — hook ================= */
+txt(1, 70, '<span style="color:var(--ink); font-size:60px">٣ أشياء</span> نزّلت معرض صور في موقع شركة من', 46, { cls: 'grey' });
+txt(1, 126, '<bdi>٣٤ ميجا</bdi>', 236, { style: 'letter-spacing:-2px' });
+txt(1, 372, 'إلى <span class="hl"><bdi>١٤٠ كيلو</bdi></span>', 92);
+txt(1, 484, 'ونفس الصور بالضبط.', 46, { cls: 'grey' });
+// weight (green) sitting on the bar, with a selection box
+img('cut/g2_weight_riso.png', S(1, 110), 668, 466, { z: 17 });
+selBox(S(1, 92), 630, 360, 520);
+el(`<div class="scrap" style="left:${S(1, 96)}px; top:582px; font-size:32px; transform:rotate(-2deg)">معرض الصور</div>`, 31);
+img('cut/g1_man_wait.png', S(1, 520), 560, 560, { z: 13 });
+// open loop: arrow leaves slide 1 toward slide 2
+txt(1, 600, 'أولها؟', 40, { right: 30, style: 'color:#555' });
+path(`M${S(1, 960)},${700} C ${S(1, 1040)},${640} ${S(2, 20)},${640} ${S(2, 90)},${700}`);
+arrowHead(S(2, 96), 708, 52);
+tape(S(1, 1010), 220, 150, -8);
+
+/* ================= slide 2 — size ================= */
+badge(2, '١');
+txt(2, 84, 'الصور بمقاس الكاميرا', 84, { right: 250, max: 750 });
+txt(2, 250, 'كل صورة مرفوعة بحجمها الأصلي من الكاميرا،', 40, { cls: 'grey' });
+txt(2, 300, 'والجوال يعرضها بعرض كف اليد.', 40, { cls: 'grey' });
+img('cut/g3_scissors.png', S(2, 150), 360, 640, { z: 12, rot: -3 });
+el(`<div class="scrap" style="right:${7560 - S(2, 1000)}px; top:980px; font-size:46px; transform:rotate(-1.5deg)">الحل: <span class="hl">قصّيناها على مقاس الشاشة</span></div>`, 31);
+tape(S(2, 1000), 470, 160, 12);
+
+/* ================= slide 3 — format ================= */
+badge(3, '٢');
+txt(3, 84, 'صيغة ملف ثقيلة', 84, { right: 250, max: 750 });
+txt(3, 250, 'صور <bdi>PNG</bdi> و<bdi>JPG</bdi> محفوظة بإعدادات الطباعة،', 40, { cls: 'grey' });
+txt(3, 300, 'مو بإعدادات الويب.', 40, { cls: 'grey' });
+img('cut/g4_press.png', S(3, 170), 370, 640, { z: 12, rot: 2 });
+el(`<div class="scrap" style="right:${7560 - S(3, 1000)}px; top:980px; font-size:46px; transform:rotate(1deg)">الحل: <span class="hl">حوّلناها لـ<bdi>WebP</bdi></span> بنفس الشكل</div>`, 31);
+tape(S(3, 1010), 760, 150, -14);
+
+/* ================= slide 4 — all at once ================= */
+badge(4, '٣');
+txt(4, 84, 'كل الصور تنزل مرة وحدة', 84, { right: 250, max: 750 });
+txt(4, 250, 'الصفحة تحمّل حتى الصور اللي تحت،', 40, { cls: 'grey' });
+txt(4, 300, 'وأنت لسا ما وصلت لها.', 40, { cls: 'grey' });
+img('cut/g5_dolly.png', S(4, 250), 350, 660, { z: 12, rot: 7 });
+el(`<div class="scrap" style="right:${7560 - S(4, 1000)}px; top:980px; font-size:46px; transform:rotate(-1deg)">الحل: <span class="hl">كل صورة تنزل لما توصلها</span></div>`, 31);
+
+path(`M${S(4, 900)},${780} C ${S(4, 1010)},${720} ${S(5, 0)},${700} ${S(5, 70)},${760}`);
+arrowHead(S(5, 76), 768, 50);
+/* ================= slide 5 — quality objection ================= */
+txt(5, 84, 'طيب، الجودة نزلت؟', 84);
+txt(5, 180, '<span class="hl">لا.</span>', 210, { style: 'color:var(--ink)' });
+img('cut/g8_falcon.png', S(5, 560), 440, 540, { z: 12, rot: 3 });
+img('cut/g8_falcon.png', S(5, 110), 440, 540, { z: 12, rot: -3 });
+el(`<div class="scrap" style="left:${S(5, 700)}px; top:400px; font-size:42px; transform:rotate(4deg)">قبل</div>`, 31);
+el(`<div class="scrap" style="left:${S(5, 230)}px; top:400px; font-size:42px; transform:rotate(-3deg)">بعد</div>`, 31);
+txt(5, 1010, 'حط الصورتين جنب بعض، وش الفرق؟', 44, { cls: 'grey' });
+tape(S(5, 1000), 560, 170, 9);
+
+/* ================= slide 6 — result ================= */
+txt(6, 84, 'النتيجة:', 52, { cls: 'grey' });
+txt(6, 150, '<bdi>٣٤ ميجا</bdi>', 120, { style: 'color:#6b6d6f' });
+txt(6, 290, '<span class="hl"><bdi>١٤٠ كيلو</bdi></span>', 170);
+txt(6, 560, 'نفس الصور،', 54, { max: 460 }); txt(6, 630, 'ونفس الجودة،', 54, { max: 460 }); txt(6, 740, 'والمعرض يفتح', 54, { cls: 'grey', max: 460 }); txt(6, 810, 'قبل ما ترمش.', 54, { cls: 'grey', max: 460 });
+path(`M${S(6, 740)},236 C ${S(6, 820)},222 ${S(6, 900)},246 ${S(6, 996)},226`); // strike 34
+img('cut/g6_phone.png', S(6, 110), 500, 650, { z: 16, rot: -4 });
+
+/* ================= slide 7 — CTA ================= */
+txt(7, 84, 'تبي تعرف وش اللي مثقّل موقعك؟', 50, { cls: 'grey' });
+txt(7, 150, 'اكتب', 70);
+txt(7, 250, '<span class="hl">فحص</span>', 330, { style: 'line-height:1' });
+txt(7, 640, 'في التعليقات، ونرسل لك', 52);
+txt(7, 706, 'فحص مجاني لموقعك.', 52);
+img('cut/g7_man_happy.png', S(7, 70), 620, 600, { z: 12 });
+el(`<div class="scrap" style="right:${7560 - S(7, 1000)}px; top:1080px; font-size:40px; transform:rotate(-1.5deg); display:flex; gap:14px; align-items:center">
+  <svg width="30" height="40" viewBox="0 0 30 40"><path d="M3 3 H27 V37 L15 27 L3 37 Z" fill="none" stroke="#121416" stroke-width="4" stroke-linejoin="round"/></svg>احفظ البوست عشان ترجع له</div>`, 31);
+// cursor path from slide 6 into the CTA word
+path(`M${S(6, 900)},${960} C ${S(7, 60)},${760} ${S(7, 200)},${640} ${S(7, 425)},${480}`, 'mkd');
+cursor(S(7, 430), 470);
+tape(S(6, 1000), 1010, 160, -6);
+
+/* fit lines that overflow */
+document.fonts.ready.then(() => {
+  for (const n of document.querySelectorAll('.t[data-max], .scrap')) {
+    const max = +(n.dataset.max || 920); let fs = parseFloat(n.style.fontSize);
+    while (n.getBoundingClientRect().width > max && fs > 18) { fs -= 1; n.style.fontSize = fs + 'px'; }
+  }
+  document.body.dataset.ready = '1';
+});
+</script>
+</body>
+</html>

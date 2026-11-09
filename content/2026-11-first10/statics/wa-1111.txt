@@ -1,0 +1,13 @@
+لينكدإن، ١١ نوفمبر، ٩ الصبح (ستاتيك إنجليزي): «النطاق في الشات = انحراف». الفكرة: رسايل شات بتتفكك وتقع (صفحة كمان؟ نفس السعر؟ الإطلاق الأسبوع الجاي؟) قدام ورقة عقد موقّعة فيها: النطاق، السعر، المدة ثابتين.
+
+الكابشن المقترح:
+Drift starts when scope lives in a chat thread.
+
+"One more page?" "Same price, right?" "Launch next week?"
+Each message sounds small. Together they become a different project, with no agreed price and no agreed finish line.
+
+So we fix scope, price and timeline in the contract before we build. Then "done" is not a feeling. It is what both sides signed.
+
+How do you handle change requests on your projects?
+
+#ProjectManagement #SoftwareDevelopment #FortuneCode

@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8">
+<link rel="stylesheet" href="common.css">
+<style>
+html,body { width:1080px; height:1350px; }
+#hero { left:0; top:-205px; width:1080px; }
+.vign { inset:0; background: linear-gradient(180deg, rgba(18,20,22,.0) 0, rgba(18,20,22,0) 60%, rgba(18,20,22,.85) 72%, #121416 84%); z-index:2; }
+.site { position:absolute; left:0; top:0; width:1280px; height:796px; overflow:hidden; direction:rtl; transform-origin:0 0; font-family:Plex; z-index:5; }
+.site * { position:absolute; }
+.chip { position:absolute; background:#1b1e21; border:2px solid rgba(255,255,255,.3); border-radius:14px; padding:2px 24px 8px; font-size:40px; font-weight:600; white-space:nowrap; box-shadow:0 14px 30px rgba(0,0,0,.55); z-index:30; }
+.chip b { color:var(--g); font-weight:inherit; }
+.prog { position:absolute; left:50%; transform:translateX(-50%); display:flex; gap:14px; z-index:30; direction:rtl; }
+.prog i { width:120px; height:10px; border-radius:5px; background:rgba(255,255,255,.18); }
+.prog i.on { background:var(--g); box-shadow:0 0 14px rgba(0,219,51,.7); }
+.kw { color:var(--g); text-shadow:0 0 30px rgba(0,219,51,.55), 0 0 80px rgba(0,219,51,.3); }
+</style></head>
+<body>
+<img id="hero" class="abs" src="gen/p1_laptop.png">
+<div class="abs vign"></div>
+<div id="screen"></div>
+<div class="frame" style="left:40px; top:40px; width:1000px; height:1140px; z-index:40"></div>
+<img class="logo" src="assets/logo-en-h-primary-white.svg" style="left:50%; top:82px; transform:translateX(-50%); z-index:40">
+<div id="txt"></div>
+<script src="footer.js"></script>
+<script>
+const s = +(new URLSearchParams(location.search).get('s') || 1);
+const stage = Math.min(s, 4);
+const k = 1080/896, oy = -205, Q = [[178,473],[718,473],[723,812],[172,812]].map(([x,y]) => [x*k, y*k+oy]);
+// the room glow grows with the build: dim the photo's green halo on early frames
+document.getElementById('hero').style.filter = ['', 'saturate(.15) brightness(.55)', 'saturate(.45) brightness(.7)', 'saturate(.8) brightness(.85)', ''][stage];
+
+const A = { // geometry shared by every stage (1280 x 796, RTL)
+  nav: [0,0,1280,72], logo:[1090,22,150,28], links:[[60,30],[160,30],[260,30],[360,30]],
+  h1a:[700,150,540,70], h1b:[700,232,540,70], p:[760,330,480,30], p2:[860,372,380,30], btn:[1000,430,240,64],
+  img:[40,110,560,420], cards:[[40,566,380,190],[450,566,380,190],[860,566,380,190]] };
+const box = ([x,y,w,h], st='') => `<div style="left:${x}px; top:${y}px; width:${w}px; height:${h}px; ${st}"></div>`;
+function site(st) {
+  const d = document.createElement('div'); d.className = 'site'; let h = '';
+  if (st === 1) { // wireframe: light paper, grey dashed boxes with X
+    d.style.background = '#F2F3F4';
+    const wf = 'border:3px dashed #9aa0a6; border-radius:8px;';
+    const X = ([x,y,w,hh]) => `<svg style="left:${x}px; top:${y}px" width="${w}" height="${hh}"><path d="M4 4 L${w-4} ${hh-4} M${w-4} 4 L4 ${hh-4}" stroke="#b7bcc1" stroke-width="3"/></svg>`;
+    h += box(A.nav, 'border-bottom:3px dashed #9aa0a6;') + box(A.logo, wf);
+    h += A.links.map(([x,y]) => box([x,y,70,12], 'background:#c9ccd0; border-radius:6px')).join('');
+    for (const r of [A.h1a, A.h1b]) h += box([r[0]+80,r[1]+14,r[2]-80,r[3]-28], 'background:#c9ccd0; border-radius:10px');
+    h += box([A.p[0]+20,A.p[1]+8,A.p[2]-20,14], 'background:#d6d9dc; border-radius:7px') + box([A.p2[0],A.p2[1]+8,A.p2[2],14], 'background:#d6d9dc; border-radius:7px');
+    h += box(A.btn, wf);
+    h += box(A.img, wf) + X(A.img);
+    h += A.cards.map(c => box(c, wf) + X(c)).join('');
+  }
+  if (st === 2) { // layout: dark theme, solid blocks in place
+    d.style.background = '#16191b';
+    h += box(A.nav, 'background:#1d2124;') + box(A.logo, 'background:#3a3f44; border-radius:6px');
+    h += A.links.map(([x,y]) => box([x,y,70,12], 'background:#3a3f44; border-radius:6px')).join('');
+    for (const r of [A.h1a, A.h1b]) h += box([r[0]+60,r[1]+10,r[2]-60,r[3]-20], 'background:#4a5056; border-radius:10px');
+    h += box([A.p[0],A.p[1]+8,A.p[2],14], 'background:#33383d; border-radius:7px') + box([A.p2[0],A.p2[1]+8,A.p2[2],14], 'background:#33383d; border-radius:7px');
+    h += box(A.btn, 'background:#4a5056; border-radius:32px');
+    h += box(A.img, 'background:#25292d; border-radius:18px');
+    h += A.cards.map(c => box(c, 'background:#202427; border-radius:16px')).join('');
+  }
+  if (st >= 3) { // content (3) and final polish (4)
+    const fin = st === 4;
+    d.style.background = fin ? 'radial-gradient(ellipse 60% 70% at 20% 40%, rgba(0,219,51,.16), rgba(0,0,0,0) 70%), #101213' : '#16191b';
+    h += box(A.nav, fin ? 'background:rgba(255,255,255,.03); border-bottom:1px solid rgba(255,255,255,.08)' : 'background:#1d2124;');
+    h += `<div style="right:40px; top:14px; font-size:36px; color:#fff; line-height:1.2">شعارك</div>`;
+    h += ['الرئيسية','الخدمات','أعمالنا','تواصل'].map((t,i) => `<div style="left:${60+i*110}px; top:20px; font-size:26px; color:${fin && i===0 ? '#00DB33' : '#bbbdbf'}">${t}</div>`).join('');
+    h += `<div style="right:40px; top:128px; font-size:66px; line-height:1.15; color:#fff; white-space:nowrap">مساحات عمل</div>`;
+    h += `<div style="right:40px; top:210px; font-size:66px; line-height:1.15; white-space:nowrap; color:${fin ? '#00DB33' : '#fff'}; ${fin ? 'text-shadow:0 0 30px rgba(0,219,51,.5)' : ''}">تليق بفريقك.</div>`;
+    h += `<div style="right:40px; top:308px; font-size:30px; color:#bbbdbf; white-space:nowrap">نجهّز مكتبك من الفكرة للتسليم.</div>`;
+    h += fin ? `<div style="right:40px; top:410px; height:70px; padding:6px 44px 0; border-radius:35px; background:#00DB33; color:#121416; font-size:38px; box-shadow:0 0 40px rgba(0,219,51,.55)">احجز زيارة</div>`
+             : `<div style="right:40px; top:410px; height:64px; padding:6px 40px 0; border:2px solid #bbbdbf; border-radius:8px; color:#fff; font-size:34px">احجز زيارة</div>`;
+    h += box(A.img, `background:url(gen/p5_photo_a.png) 50% 45%/cover; border-radius:${fin ? 24 : 4}px; ${fin ? 'box-shadow:0 30px 60px rgba(0,0,0,.6), 0 0 0 2px rgba(0,219,51,.5)' : ''}`);
+    const ct = ['مكاتب','اجتماعات','استقبال'], pos = ['30% 50%','80% 70%','20% 80%'];
+    h += A.cards.map((c,i) => box(c, `background:url(gen/${i%2 ? 'p5_photo_a' : 'p6_photo_b'}.png) ${pos[i]}/220%; border-radius:${fin ? 18 : 4}px; ${fin ? 'box-shadow:0 0 0 1px rgba(255,255,255,.12)' : ''}`)
+      + `<div style="left:${c[0]}px; top:${c[1]+c[3]-62}px; width:${c[2]}px; height:62px; background:${fin ? 'linear-gradient(0deg, rgba(16,18,19,.95), rgba(16,18,19,0))' : '#16191b'}; border-radius:0 0 ${fin ? 18 : 0}px ${fin ? 18 : 0}px"></div>`
+      + `<div style="right:${1280-c[0]-c[2]+20}px; top:${c[1]+c[3]-54}px; font-size:32px; color:#fff">${ct[i]}</div>`).join('');
+  }
+  d.innerHTML = h; return d;
+}
+const g = site(stage); g.style.transform = quadTransform(1280, 796, Q); document.getElementById('screen').appendChild(g);
+const sh = document.createElement('div'); sh.className = 'abs'; sh.style.cssText = `left:0;top:0;width:1280px;height:796px;transform-origin:0 0;transform:${quadTransform(1280,796,Q)};background:linear-gradient(115deg, rgba(255,255,255,.08), rgba(255,255,255,0) 40%); z-index:6`; document.getElementById('screen').appendChild(sh);
+
+const T = document.getElementById('txt');
+const t = (top, size, html, cls='', st='') => T.insertAdjacentHTML('beforeend', `<div class="t ${cls}" style="top:${top}px; font-size:${size}px; z-index:30; ${st}">${html}</div>`);
+const HEAD = [null,
+  ['موقعك ينبني', 'قدّام عيونك'],
+  ['كل قطعة', 'في مكانها'],
+  ['كلامك وصورك', 'تدخل الصورة'],
+  ['وهنا يبدأ', '<span class="kw">الانطباع.</span>']];
+const STEP = [null, ['١','المخطط'], ['٢','الهيكل'], ['٣','المحتوى'], ['٤','النسخة النهائية']];
+if (s <= 4) {
+  t(140, 80, HEAD[s][0]); t(236, 80, HEAD[s][1], s === 4 ? '' : 'g');
+  T.insertAdjacentHTML('beforeend', `<div class="chip" style="left:50%; top:900px; transform:translateX(-50%) rotate(${s%2?2:-2}deg)"><b>${STEP[s][0]}</b> ${STEP[s][1]}</div>`);
+  T.insertAdjacentHTML('beforeend', `<div class="prog" style="top:1100px">${[1,2,3,4].map(i => `<i class="${i <= s ? 'on' : ''}"></i>`).join('')}</div>`);
+  if (s === 1) t(1000, 40, 'اضغط على النقاط واسحب', 'mute');
+  if (s === 4) t(1000, 40, 'من مخطط على ورقة… لموقع يشتغل.', 'mute');
+} else {
+  t(140, 72, 'وش أول <span class="g">انطباع</span>'); t(236, 72, 'يعطيه موقعك لعميلك؟');
+  t(878, 44, 'اكتب', '', 'font-weight:600');
+  t(930, 128, 'انطباع', 'kw', 'line-height:1');
+  t(1090, 36, 'بالتعليقات ونقيّم موقعك مجانًا.', '', 'font-weight:600');
+}
+foot(66, 1208, 948);
+document.fonts.ready.then(() => { fitLines('.t', 900); document.body.dataset.ready = 1; });
+</script>
+</body></html>

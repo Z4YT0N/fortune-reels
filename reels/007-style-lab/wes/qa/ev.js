@@ -1,0 +1,1 @@
+(() => { const lns=[...document.querySelectorAll('.title .ln')]; return lns.map(l=>({gap:getComputedStyle(l).columnGap, w:[...l.children].map(c=>{const r=c.getBoundingClientRect(); return [c.textContent, Math.round(r.left), Math.round(r.right), c.style.marginLeft, c.style.marginRight]})})); })()

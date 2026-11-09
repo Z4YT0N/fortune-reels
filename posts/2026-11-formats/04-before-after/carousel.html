@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8">
+<link rel="stylesheet" href="common.css">
+<style>
+html,body { width:4320px; height:1350px; }
+.dev { position:absolute; -webkit-mask-image: radial-gradient(ellipse 52% 50% at 50% 50%, #000 60%, transparent 100%); }
+.chip { position:absolute; background:#1b1e21; border:2px solid rgba(255,255,255,.3); border-radius:16px; padding:4px 22px 0; font-size:40px; white-space:nowrap; box-shadow:0 14px 30px rgba(0,0,0,.6); }
+.lbl { position:absolute; border-radius:18px; padding:2px 30px 0; font-size:54px; white-space:nowrap; }
+.lbl.b { background:#2a2d31; color:#BBBDBF; border:2px solid #44484d; }
+.lbl.a { background:var(--g); color:var(--bg); box-shadow:0 0 40px rgba(0,219,51,.45); }
+.win { position:absolute; border-radius:22px; overflow:hidden; border:2px solid rgba(255,255,255,.18); box-shadow:0 30px 60px rgba(0,0,0,.6); }
+.pill { display:inline-block; background:var(--g); color:var(--bg); border-radius:14px; padding:0 22px; }
+.note { position:absolute; display:flex; align-items:center; gap:16px; font-size:40px; font-weight:600; white-space:nowrap; }
+.note i { font-style:normal; width:52px; height:52px; border-radius:50%; background:var(--g); color:var(--bg); display:flex; align-items:center; justify-content:center; font-size:34px; box-shadow:0 0 20px rgba(0,219,51,.5); }
+.cold { filter: grayscale(1) brightness(.8) contrast(1.05); }
+/* Plex: room under the baseline for pills/chips/labels */
+.pill { line-height:1.28; padding-bottom:6px; }
+.chip { padding-bottom:10px; font-weight:600; }
+.lbl { padding-bottom:10px; font-weight:700; }
+</style></head>
+<body>
+<div id="stage"></div>
+<svg class="marks" width="4320" height="1350" style="z-index:40"><defs><filter id="rough"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="4"/><feDisplacementMap in="SourceGraphic" scale="3"/></filter></defs><g id="mk"></g></svg>
+<script src="footer.js"></script><script src="gallery.js"></script>
+<script>
+const W = 1080, S = (i, x) => (i - 1) * W + x;
+const stage = document.getElementById('stage'), M = document.getElementById('mk');
+function el(html, z = 10) { const d = document.createElement('div'); d.innerHTML = html.trim(); const n = d.firstChild; if (!n.style.zIndex) n.style.zIndex = z; stage.appendChild(n); return n; }
+const P = (d, cls = 'mk', st = '') => M.insertAdjacentHTML('beforeend', `<path class="${cls}" d="${d}" style="${st}"/>`);
+function arrowHead(x, y, ang, len = 40) { const a = ang * Math.PI / 180, s = .55; P(`M${x - len * Math.cos(a - s)},${y - len * Math.sin(a - s)} L${x},${y} L${x - len * Math.cos(a + s)},${y - len * Math.sin(a + s)}`); }
+function ct(i, top, html, size, st = '', cls = '') { return el(`<div class="t ${cls}" style="left:${S(i, 540)}px; top:${top}px; font-size:${size}px; ${st}">${html}</div>`, 30); }
+function glow(cx, cy, r, a = 1) { el(`<div class="glow" style="left:${cx - r}px; top:${cy - r}px; width:${2 * r}px; height:${2 * r}px; opacity:${a}"></div>`, 1); }
+const LAP_Q = [[178,473],[718,473],[723,812],[172,812]];
+function laptop(i, top, width, cls = '') { const k = width / 896, left = S(i, 540) - 448 * k;
+  el(`<img class="dev ${cls}" src="gen/p1_laptop.png" style="left:${left}px; top:${top}px; width:${width}px">`, 5);
+  return LAP_Q.map(([x, y]) => [left + x * k, top + y * k]); }
+function onScreen(node, w, h, Q, z = 6) { node.style.transform = quadTransform(w, h, Q); node.style.zIndex = z; stage.appendChild(node); return node; }
+// slow page: browser bar crawling, grey cells, one photo half painted, spinner
+function slowUI(w, h) {
+  const g = galleryUI(w, h, { cellStyle: i => i === 0 ? '' : 'background:#d5d8dc' });
+  g.insertAdjacentHTML('beforeend', `
+    <div class="abs" style="right:40px; top:${150 + (w - 116) / 3 * .68 * .45}px; width:${(w - 116) / 3}px; height:${(w - 116) / 3 * .68 * .55}px; background:#d5d8dc; border-radius:0 0 10px 10px"></div>
+    <div class="abs" style="left:0; top:62px; height:8px; width:18%; background:#8d9195"></div>
+    <div class="abs" style="left:${w / 2 - 60}px; top:${h / 2 + 10}px; width:120px; height:120px; border-radius:50%; border:13px solid #c3c6ca; border-top-color:#5c6064"></div>`);
+  return g;
+}
+
+/* frames, logos, footers */
+for (let i = 1; i <= 4; i++) {
+  el(`<div class="frame" style="left:${S(i, 40)}px; top:40px; width:1000px; height:1140px"></div>`, 50);
+  el(`<img class="logo" src="assets/logo-en-h-primary-white.svg" style="left:${S(i, 540)}px; top:82px; transform:translateX(-50%)">`, 50);
+  foot(S(i, 66), 1208, 948);
+}
+
+/* ===== 1: the split ===== */
+glow(S(1, 540), 980, 460, .9);
+ct(1, 150, 'نفس الصور. نفس الجودة.', 74);
+ct(1, 246, 'واحد يفتح… والثاني <span class="g">يطيّر الزائر</span>', 52);
+{ const w = el(`<div class="win cold" style="left:${S(1, 150)}px; top:360px; width:780px; height:350px"></div>`, 10); const g = slowUI(1280, 574); g.style.transform = 'scale(.609)'; w.appendChild(g);
+  el(`<div class="lbl b" style="left:${S(1, 690)}px; top:330px; transform:rotate(3deg)">قبل</div>`, 31);
+  el(`<div class="chip" style="left:${S(1, 110)}px; top:640px; transform:rotate(-4deg)"><bdi>٣٤ ميجا</bdi></div>`, 31); }
+{ const w = el(`<div class="win" style="left:${S(1, 150)}px; top:760px; width:780px; height:350px; border-color:rgba(0,219,51,.7); box-shadow:0 0 60px rgba(0,219,51,.35), 0 30px 60px rgba(0,0,0,.6)"></div>`, 10); const g = galleryUI(1280, 574); g.style.transform = 'scale(.609)'; w.appendChild(g);
+  el(`<div class="lbl a" style="left:${S(1, 700)}px; top:730px; transform:rotate(-3deg)">بعد</div>`, 31);
+  el(`<div class="chip" style="left:${S(1, 110)}px; top:1040px; transform:rotate(3deg); color:var(--g)"><bdi>١٤٠ كيلو</bdi></div>`, 31); }
+
+/* ===== 2: before ===== */
+ct(2, 150, '<span class="mute">قبل:</span> معرض يتعب الزائر', 80);
+ct(2, 262, 'كل صورة تنزل بحجمها الأصلي، حتى اللي ما يشوفها.', 40, '', 'mute');
+{ const Q = laptop(2, -40, 1000, 'cold'); onScreen(slowUI(1280, 796), 1280, 796, Q).classList.add('cold'); }
+el(`<div class="chip" style="left:${S(2, 540)}px; top:362px; transform:translateX(-50%) rotate(-3deg); font-size:46px">حجم المعرض: <bdi>٣٤ ميجا</bdi></div>`, 31);
+el(`<div class="chip mute" style="right:${4320 - S(2, 960)}px; top:860px; transform:rotate(-3deg)">يحمّل… يحمّل…</div>`, 31);
+ct(2, 1080, 'والزائر على الجوال؟ <span class="g">ما ينتظر.</span>', 50);
+
+/* ===== 3: after ===== */
+glow(S(3, 540), 700, 540, 1);
+ct(3, 150, '<span class="g">بعد:</span> نفس المعرض، أخف بكثير', 80);
+ct(3, 262, 'ما حذفنا ولا صورة. غيّرنا طريقة تحميلها بس.', 40, '', 'mute');
+{ const Q = laptop(3, -40, 1000); onScreen(galleryUI(1280, 796), 1280, 796, Q); }
+el(`<div class="chip" style="left:${S(3, 540)}px; top:362px; transform:translateX(-50%) rotate(3deg); font-size:46px; border-color:rgba(0,219,51,.7)">حجم المعرض: <span class="g"><bdi>١٤٠ كيلو</bdi></span></div>`, 31);
+const notes = [['١', 'كل صورة بمقاس الشاشة'], ['٢', 'صيغة <bdi>WebP</bdi> الخفيفة'], ['٣', 'تنزل الصورة لما توصلها']];
+notes.forEach(([n, t], k) => el(`<div class="note" style="right:${4320 - S(3, 940)}px; top:${948 + k * 70}px"><i>${n}</i>${t}</div>`, 31));
+
+/* ===== 4: result + CTA ===== */
+glow(S(4, 540), 560, 500, .9);
+glow(S(4, 540), 1120, 420, .6);
+ct(4, 150, 'النتيجة', 52, '', 'mute');
+const s34 = ct(4, 220, '<bdi>٣٤ ميجا</bdi>', 120, 'color:#8d9195');
+ct(4, 352, '<bdi>١٤٠ كيلو</bdi>', 210, 'line-height:1; color:var(--g); text-shadow:0 0 50px rgba(0,219,51,.4)');
+ct(4, 596, 'نفس الصور، ونفس الجودة.', 56);
+ct(4, 700, 'ليش يهمك؟', 36, '', 'mute');
+ct(4, 752, '<span class="g"><bdi>٥٣٪</bdi></span> من زوار الجوال يطلعون', 44);
+ct(4, 814, 'لو الصفحة تأخرت فوق ٣ ثواني.', 44);
+ct(4, 884, 'المصدر: <bdi>Google / DoubleClick (2016)</bdi>', 24, '', 'mute');
+ct(4, 990, 'اكتب <span class="pill">انطباع</span> بالتعليقات', 64);
+ct(4, 1086, 'ونقولك وش مثقّل موقعك', 42);
+
+document.fonts.ready.then(() => {
+  fitLines('.t', 900);
+  const r = s34.getBoundingClientRect();
+  P(`M${r.left - 20},${r.top + r.height * .68} C ${r.left + r.width * .4},${r.top + r.height * .56} ${r.left + r.width * .7},${r.top + r.height * .64} ${r.right + 20},${r.top + r.height * .5}`, 'mk', 'stroke-width:13');
+  // swipe cue on slide 1: green arrow crossing into slide 2
+  P(`M${S(1, 960)},1110 C ${S(1, 1030)},1060 ${S(2, 0)},1050 ${S(2, 70)},1100`); arrowHead(S(2, 76), 1106, 40);
+  document.body.dataset.ready = 1;
+});
+</script>
+</body></html>

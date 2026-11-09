@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8">
+<link rel="stylesheet" href="common.css">
+<style>
+html,body { width:1080px; height:1350px; }
+#tbl { position:absolute; left:84px; top:350px; width:912px; }
+.r { display:grid; grid-template-columns: 172px 220px 220px 300px; height:112px; align-items:center; border-bottom:1px solid rgba(255,255,255,.10); }
+.r.h { height:104px; border-bottom:2px solid rgba(255,255,255,.18); }
+.r:last-child { border-bottom:0; }
+.c { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; text-align:center; white-space:nowrap; }
+.lab { align-items:flex-start; font-size:38px; font-weight:700; color:#fff; padding-right:4px; }
+.hd { font-size:36px; color:var(--mute); }
+.hd.fc { color:var(--g); font-size:38px; font-weight:700; }
+.note { font-size:25px; line-height:1; color:rgba(255,255,255,.55); }
+.fc .note { color:#fff; }
+.ic { width:44px; height:44px; border-radius:50%; display:flex; align-items:center; justify-content:center; }
+.ic svg { width:26px; height:26px; }
+.yes { background:var(--g); box-shadow:0 0 20px rgba(0,219,51,.5); }
+.no { border:2px solid rgba(255,255,255,.28); }
+.mid { border:2px dashed rgba(255,255,255,.28); }
+.yes.dim { background:transparent; border:2px solid rgba(0,219,51,.6); box-shadow:none; }
+#col { position:absolute; border:2.5px solid var(--g); border-radius:26px; background:linear-gradient(180deg, rgba(0,219,51,.16), rgba(0,219,51,.05)); box-shadow:0 0 50px rgba(0,219,51,.35), inset 0 0 40px rgba(0,219,51,.10); }
+</style></head>
+<body>
+<div class="glow" style="left:-260px; top:300px; width:900px; height:1000px; opacity:.45"></div>
+<div class="glow" style="left:200px; top:-300px; width:700px; height:500px; opacity:.3"></div>
+
+<div class="frame" style="left:40px; top:40px; width:1000px; height:1140px"></div>
+<img class="logo" src="assets/logo-en-h-primary-white.svg" style="left:50%; top:82px; transform:translateX(-50%)">
+
+<div class="t" style="top:150px; font-size:84px; line-height:1.05">قالب جاهز <span class="mute" style="font-family:Plex; font-size:56px">×</span> مستقل <span class="mute" style="font-family:Plex; font-size:56px">×</span> <span class="g">فورتشن كود</span></div>
+<div class="t mute" style="top:262px; font-size:42px">قبل ما تختار، قارن بعينك.</div>
+
+<div id="col"></div>
+<div id="tbl"></div>
+
+<div class="t" style="top:1092px; font-size:38px">محتار؟ <span class="g">راسلنا واتساب</span> ونقولك وش الأنسب لك</div>
+
+<script src="footer.js"></script>
+<script>
+const SV = {
+  yes: '<svg viewBox="0 0 24 24" fill="none" stroke="#121416" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>',
+  dim: '<svg viewBox="0 0 24 24" fill="none" stroke="#00DB33" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>',
+  no:  '<svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.55)" stroke-width="2.6" stroke-linecap="round"><path d="M7 7l10 10M17 7L7 17"/></svg>',
+  mid: '<svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.55)" stroke-width="2.6" stroke-linecap="round"><path d="M6 12h12"/></svg>',
+};
+const icon = k => `<span class="ic ${k === 'dim' ? 'yes dim' : k}">${SV[k]}</span>`;
+// [label, template, freelancer, fortunecode]  each cell: [icon, note]
+const rows = [
+  ['السرعة',   ['dim', 'أسرع بداية'],      ['mid', 'حسب وقته'],       ['yes', 'موعد تسليم بالعقد']],
+  ['الدعم',    ['no',  'تذاكر عامة'],       ['mid', 'إذا كان متاح'],    ['yes', 'دعم فني سريع']],
+  ['الملكية',  ['no',  'اشتراك شهري'],      ['mid', 'حسب الاتفاق'],     ['yes', 'الكود لك بعد السداد']],
+  ['الضمان',   ['no',  'ما فيه'],           ['mid', 'نادرًا مكتوب'],      ['yes', 'ضمان التسليم بموعده']],
+  ['التوسّع',  ['no',  'حدود القالب'],      ['mid', 'حسب خبرته'],      ['yes', 'متجر، نظام، تطبيق']],
+];
+const T = document.getElementById('tbl');
+T.innerHTML = `<div class="r h"><div class="c lab"></div><div class="c hd">قالب جاهز</div><div class="c hd">مستقل</div><div class="c hd fc">فورتشن كود</div></div>` +
+  rows.map(([l, a, b, c]) => `<div class="r"><div class="c lab">${l}</div>${[a, b, c].map(([k, n], i) => `<div class="c ${i === 2 ? 'fc' : ''}">${icon(k)}<span class="note">${n}</span></div>`).join('')}</div>`).join('');
+foot(66, 1208, 948);
+document.fonts.ready.then(() => {
+  fitLines('.t', 900); fitLines('.note', 280);
+  const fc = T.querySelectorAll('.fc'), a = fc[0].getBoundingClientRect(), b = fc[fc.length - 1].getBoundingClientRect();
+  const col = document.getElementById('col');
+  Object.assign(col.style, { left: (a.left - 6) + 'px', top: (a.top - 12) + 'px', width: (a.width + 12) + 'px', height: (b.bottom - a.top + 24) + 'px' });
+  document.body.dataset.ready = 1;
+});
+</script>
+</body></html>

@@ -47,3 +47,39 @@ the global `hyperframes*` skills) fill in HOW. Where motionmaxxing contradicts a
 - All text and key visuals between y 230 and y 1440.
 - Keep the right ~120 px free of anything that must be read (like/comment buttons); captions run
   x 60-1020 and stay centred.
+
+## Eye-trace cutting (liveairprod, owner reference 2026-11-06)
+- At the cut, the next shot's point of focus starts exactly where the viewer's eye was at the end of the
+  previous shot. Move the gaze inside the shot (a moving object, a word), then cut from there.
+- Before every cut, check: where is the eye in the last frame? Where is the focus in the next first frame? They must match.
+
+## Frame within a frame (visualsby_ashraf, owner reference 2026-11-06)
+- Put the subject inside a frame in the shot: a picture frame, a mirror, a door, a screen, foreground
+  leaves or objects (soft blurred foreground). It reads as cinematic and stands out in the feed.
+- In collage scenes, place the character inside a laptop screen, phone, photo print or window cut-out
+  instead of floating on the paper. Change the angle often: top-down, low, through objects.
+- Captions in the same reel: ONE Arabic word at a time, big display Arabic face, yellow or white, centred
+  low. Key phrases are assembled letter-block by letter-block. Use the Arabic-safe methods in text-motion.md.
+
+## From the editing study (2026-11-06, research/youtube-learning/01-editing-retention.md)
+- Plan before you build: every script line gets a scene type and an asset, approved before rendering.
+- A new point is a plain caption, and the visual shows what it describes. Nouns and numbers trigger their visual on the exact spoken word.
+- Captions are at most 5 words. 1-2 key words are bold, centred and in the second font; the rest are smaller around them. Reveal word by word with a slow drift.
+- Cut silences with the word timestamps, keeping 30 ms of padding.
+- Flash bursts of 2-3 frames as accents at builds, aligned to a fixed centre. A "keyword flash" holds one term in place while 10-20 screens change behind it.
+
+## Smooth motion (owner 2026-11-06: «متكهرب أوي، الحركة صعبة جامد ومش smooth»). These override the on-twos and boil rules above.
+- **Camera:** full frame rate, no shake. One slow eased drift per beat (scale 1.00 → 1.03), never stop-start.
+- **Frame rate of elements:** people, the weight, prints, phones and ALL text move at full frame rate. Stepped motion is only for tiny paper scraps, if used at all.
+- **Boil:** none on text or people. On scraps at most ±0.5 px / ±0.3°, a new value every 6-8 frames.
+- **Enforced, not just written:** `engine/tools/motion_check.py` (inside qa.py) fails the reel on > 2 simultaneous motion events or a < 0.6 s hold. Helpers clamp durations (exitTo 0.38-0.45 s, slideIn >= 0.55 s), so a call site cannot sneak a harsh value in.
+- **Scene changes as one move:** every piece of a scene leaves at the same instant with the same tween, together with its text; the next scene arrives as one group once that exit has finished. A line that must stay readable (e.g. the last word) leaves with the scene, not before it.
+- **No ornaments on top:** no shake/yoyo, no blur hits, no back.out above 1.15, no 4-8 frame "pops". A check mark or a clip cut-in is an opacity fade, not a scale pop.
+- **Timing:**
+  - entrances 0.5-0.7 s, `expo.out` / `cubic-bezier(.16,1,.3,1)`;
+  - exits 0.35-0.45 s, with a fade;
+  - overshoot max 2-3 % (`back.out(1.1-1.2)`);
+  - drop-ins fall about 160 px, not from off-screen.
+- **One thing at a time:** at most 2 elements move together. A finished element holds (slow drift only) about 0.6 s before the next move. A scene leaves completely before the next scene's hero arrives.
+- **Hits:** at most 2 smear slams per reel and 1 single-frame flash/invert per reel. No blur flashes; use a soft squash instead.
+- **Morph / transitions:** 0.6-0.8 s.

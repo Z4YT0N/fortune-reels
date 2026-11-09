@@ -18,3 +18,5 @@ Score: FRONTLOAD, SPECIFICITY, STAKES, ADDRESS, BREVITY (0-100 each, averaged).
 ## Research log
 Append here after every viral-research run (`/reel-research`): date, sample size, accounts,
 formulas that over-index in the top third (with counts), new formulas. State confidence.
+
+- **2026-11-02**, web design for business owners (TikTok discover only). Sample: 30 videos, plays from discover cards, likes on 9. No account medians (profile grids need login), no Instagram, no Chinese accounts. Confidence weak to medium. Over-indexing: before and after, 14 of 30 and 4 of the top 10; perception or loss captions over beauty captions; comment or DM keyword on sales-minded videos. Same format ranged from 2,280 to 77.8K on one account, so format alone does not explain results. Details and 10 ideas: `research/2026-11-02-group-website-ideas.md`.

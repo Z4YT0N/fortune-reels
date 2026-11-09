@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<style>
+@font-face { font-family: Zain; src: url(assets/zain-mob-long.ttf); }
+:root { --paper:#F1F0EB; --ink:#121416; --g:#00DB33; --dg:#006A39; }
+* { margin:0; padding:0; box-sizing:border-box; }
+html,body { width:1080px; height:1350px; overflow:hidden; background:var(--paper); }
+body { font-family:Zain; color:var(--ink); position:relative; }
+.abs { position:absolute; }
+#plate { left:72px; top:-10px; width:936px; height:1254px; background:url(gen/post_v1.png) center/cover;
+  -webkit-mask-image: radial-gradient(ellipse 72% 70% at 50% 54%, #000 78%, transparent 100%); }
+#grain { inset:0; background:url(assets/grain0.png); background-size:540px 960px; mix-blend-mode:multiply; opacity:.16; pointer-events:none; }
+#grain2 { inset:0; background:url(assets/grain3.png); background-size:540px 960px; mix-blend-mode:screen; opacity:.08; pointer-events:none; }
+.kicker { right:80px; top:84px; font-size:42px; white-space:nowrap; line-height:1.15; color:#3a3c3e; }
+.head { right:76px; top:132px; font-size:132px; line-height:1.0; letter-spacing:-1px; white-space:nowrap; }
+.head small { font-size:56px; color:#3a3c3e; margin-left:10px; }
+.sub { right:80px; top:284px; font-size:44px; color:#3a3c3e; white-space:nowrap; }
+/* tag hanging off the weight */
+.tag { left:668px; top:446px; width:300px; height:112px; background:#f7f6f1; transform:rotate(9deg);
+  box-shadow: 2px 3px 0 rgba(0,0,0,.18), 0 0 0 1px rgba(0,0,0,.08) inset;
+  clip-path: polygon(14% 0,100% 0,100% 100%,14% 100%,0 50%); display:flex; align-items:center; justify-content:center; padding-right:6px; padding-left:36px; }
+.tag .hole { position:absolute; left:16px; top:50%; width:14px; height:14px; margin-top:-7px; border-radius:50%; background:var(--paper); box-shadow: inset 0 0 0 2px #888; }
+.tag b { font-weight:normal; font-size:60px; line-height:1; white-space:nowrap; position:relative; }
+.scrap { left:150px; top:362px; padding:10px 22px 4px; background:#f7f6f1; transform:rotate(-4deg); box-shadow: 2px 3px 0 rgba(0,0,0,.16);
+  clip-path: polygon(0 6%,8% 0,22% 5%,40% 0,58% 4%,76% 0,92% 5%,100% 0,98% 50%,100% 100%,84% 95%,64% 100%,44% 96%,24% 100%,6% 95%,0 100%,2% 50%); }
+.scrap b { font-weight:normal; font-size:66px; line-height:1.05; white-space:nowrap; position:relative; padding:0 8px; }
+.scrap b::before { content:''; position:absolute; inset:8px -2px 2px -2px; background:var(--g); z-index:-1; transform:skew(-4deg); }
+.scrap .lbl { display:block; font-size:28px; color:#555; margin-bottom:-4px; }
+.cta { right:80px; left:80px; top:1150px; height:76px; background:var(--ink); color:#F1F0EB; display:flex; align-items:center; justify-content:center; gap:14px; font-size:40px; white-space:nowrap; transform:rotate(-1deg);
+  clip-path: polygon(0 8%,10% 0,30% 6%,52% 0,74% 7%,90% 0,100% 6%,100% 92%,80% 100%,58% 94%,36% 100%,16% 93%,0 100%); }
+.cta .kw { color:var(--ink); background:var(--g); padding:0 16px; }
+.tape { background:rgba(214,200,165,.72); box-shadow: inset 0 0 12px rgba(120,100,60,.25); }
+.logo { left:80px; top:94px; width:150px; opacity:.9; }
+svg.marks { left:0; top:0; width:1080px; height:1350px; overflow:visible; }
+.mk { fill:none; stroke:var(--g); stroke-width:10; stroke-linecap:round; stroke-linejoin:round; filter:url(#rough); }
+</style>
+</head>
+<body>
+<div id="plate" class="abs"></div>
+
+<!-- string from the weight's knob to the tag -->
+<svg class="abs marks" style="z-index:2">
+  <defs>
+    <filter id="rough"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="4"/><feDisplacementMap in="SourceGraphic" scale="3.2"/></filter>
+  </defs>
+  <path d="M590 418 C 630 410, 660 440, 694 490" stroke="#2b2b2b" stroke-width="3" fill="none"/>
+</svg>
+
+<div class="abs tag" style="z-index:3"><span class="hole"></span><b><bdi>٣٤ ميجا</bdi></b></div>
+
+<div class="abs scrap" style="z-index:3"><span class="lbl">بعد ما خففناه:</span><b><bdi>١٤٠ كيلو</bdi></b></div>
+
+<svg class="abs marks" style="z-index:4">
+  <!-- strike through the 34 MB tag -->
+  <path class="mk" style="stroke-width:8" d="M712 474 C 780 490, 860 504, 938 526" />
+  <!-- arrow from the tag, over the weight, to the 140 KB scrap -->
+  <path class="mk" d="M760 446 C 720 330, 560 300, 404 386" />
+  <path class="mk" d="M446 352 L 402 388 L 456 404" />
+  <!-- small circle around the feather -->
+  <path class="mk" style="stroke-width:7" d="M392 398 C 360 380, 380 340, 430 346 C 480 352, 492 392, 462 418 C 436 440, 384 428, 378 396" />
+</svg>
+
+<!-- cursor on the tag -->
+<svg class="abs" style="left:930px; top:560px; z-index:5" width="44" height="60" viewBox="0 0 22 30"><path d="M2 2 L2 24 L8 18 L12 28 L16 26 L12 17 L20 17 Z" fill="#fff" stroke="#121416" stroke-width="2" stroke-linejoin="round"/></svg>
+
+<div class="abs kicker">معرض الصور في موقع شركة كان أثقل شي في الصفحة.</div>
+<div class="abs head">ما حذفنا ولا صورة.</div>
+<div class="abs sub">نفس الصور، ونفس الجودة، والمعرض يفتح قبل ما ترمش.</div>
+
+<div class="abs cta" style="z-index:6">اكتب <span class="kw">"فحص"</span> ونرسل لك فحص مجاني لموقعك</div>
+
+<img class="abs" src="assets/logo-ar-h-mono-black.svg" style="left:50%; top:1262px; height:40px; transform:translateX(-50%); opacity:.85">
+<div id="grain" class="abs" style="z-index:9"></div>
+<div id="grain2" class="abs" style="z-index:9"></div>
+<script>
+// shrink any line that is wider than the safe area
+document.fonts.ready.then(()=>{ for (const el of document.querySelectorAll('.kicker,.head,.sub,.cta')) {
+  const max = 920; let fs = parseFloat(getComputedStyle(el).fontSize);
+  while (el.scrollWidth > max && fs > 20) { fs -= 1; el.style.fontSize = fs + 'px'; } } });
+</script>
+</body>
+</html>

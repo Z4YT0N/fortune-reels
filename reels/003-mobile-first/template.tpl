@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="ar" data-resolution="portrait">
+  <!-- Reel 003 Mobile-first indexing. tools/captions.py fills __TITLE__, __D__, __SPEED__ and CAPS and writes
+       index.html. Edit THIS file, never index.html. Motion-graphics build (no 3D): real portfolio mockups,
+       two AI photos for the analogy, kinetic type, a real quote card from Google's docs. -->
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1080, height=1920">
+    <title>__TITLE__</title>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      @font-face { font-family: "Plex Arabic"; font-weight: 500; src: url("assets/fonts/plex-ar-500.woff2") format("woff2"); unicode-range: U+0600-06FF, U+0750-077F, U+FB50-FDFF, U+FE70-FEFF, U+200C-200F; }
+      @font-face { font-family: "Plex Arabic"; font-weight: 700; src: url("assets/fonts/plex-ar-700.woff2") format("woff2"); unicode-range: U+0600-06FF, U+0750-077F, U+FB50-FDFF, U+FE70-FEFF, U+200C-200F; }
+      @font-face { font-family: "Plex Arabic"; font-weight: 500; src: url("assets/fonts/plex-lat-500.woff2") format("woff2"); unicode-range: U+0000-00FF, U+2000-206F; }
+      @font-face { font-family: "Plex Arabic"; font-weight: 700; src: url("assets/fonts/plex-lat-700.woff2") format("woff2"); unicode-range: U+0000-00FF, U+2000-206F; }
+      @font-face { font-family: "Inter"; font-weight: 700; src: url("assets/fonts/inter-lat-700.woff2") format("woff2"); }
+      @font-face { font-family: "Inter"; font-weight: 800; src: url("assets/fonts/inter-lat-800.woff2") format("woff2"); }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1080px; height: 1920px; overflow: hidden; background: #121416; }
+      #main { position: relative; width: 100%; height: 100%; overflow: hidden; font-family: "Plex Arabic", sans-serif; color: #F0F1F2; }
+      .clip { position: absolute; inset: 0; }
+      #bg { position: absolute; inset: 0; background: #121416; }
+      #curve { position: absolute; right: -380px; top: -260px; width: 1100px; opacity: 0.07; }
+      #cam { position: absolute; inset: 0; transform-origin: 540px 700px; }
+      .abs { position: absolute; }
+      .o0 { opacity: 0; }
+      .en { font-family: "Inter", sans-serif; }
+      .rtl { direction: rtl; }
+      .ltr { direction: ltr; }
+      /* devices: mockup photos on black, lighten-blended so the black melts into Fortune Black */
+      .dev { position: absolute; mix-blend-mode: lighten; }
+      .dev img { display: block; width: 100%; }
+      #desk { left: 40px; top: 350px; width: 1000px; transform-origin: 500px 375px; filter: grayscale(0) brightness(1); }
+      #phone { left: 202px; top: 236px; width: 675px; transform-origin: 337px 450px; }
+      #xmark { position: absolute; left: 140px; top: 430px; width: 800px; height: 480px; }
+      #xmark line { stroke: #BBBDBF; stroke-width: 18; stroke-linecap: round; }
+      #brk { position: absolute; left: 330px; top: 282px; width: 420px; height: 830px; }
+      #brk path { fill: none; stroke: #00DB33; stroke-width: 10; stroke-linecap: round; }
+      #scanP { position: absolute; left: 356px; width: 368px; top: 300px; height: 6px; background: #00DB33; border-radius: 3px; }
+      #lblG { left: 0; width: 1080px; top: 236px; text-align: center; font-family: "Inter"; font-weight: 800; font-size: 96px; letter-spacing: -0.03em; color: #F0F1F2; }
+      #chipBot { left: 50%; top: 240px; transform: translateX(-50%); }
+      .chip { display: inline-flex; align-items: center; gap: 16px; padding: 14px 30px; border-radius: 999px; font-weight: 700; font-size: 40px; white-space: nowrap; }
+      .chip.g { background: #00DB33; color: #121416; }
+      .chip.d { background: #1c2023; color: #F0F1F2; border: 2px solid rgba(240, 241, 242, 0.14); }
+      .chip.l { background: #F0F1F2; color: #121416; }
+      .chip.gray { background: #BBBDBF; color: #121416; }
+      /* World C analogy cards */
+      .photo { position: absolute; border-radius: 40px; overflow: hidden; box-shadow: 0 40px 80px rgba(18, 20, 22, 0.35); }
+      .photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+      #facade { left: 170px; top: 236px; width: 740px; height: 900px; transform-origin: 370px 450px; }
+      #kitchen { left: 170px; top: 236px; width: 740px; height: 900px; transform-origin: 370px 450px; }
+      #kitchen img { filter: saturate(0.25) contrast(1.05); }
+      .tag { position: absolute; bottom: 34px; right: 34px; }
+      #okRing { position: absolute; inset: 0; border: 12px solid #00DB33; border-radius: 40px; opacity: 0; }
+      #dim { position: absolute; inset: 0; background: #121416; opacity: 0; }
+      #fStrike { position: absolute; left: 8%; top: 50%; width: 84%; height: 14px; background: #BBBDBF; border-radius: 7px; transform-origin: right center; transform: scaleX(0); }
+      #okBadge { position: absolute; top: 28px; left: 28px; width: 96px; height: 96px; border-radius: 50%; background: #00DB33; display: flex; align-items: center; justify-content: center; opacity: 0; }
+      /* kinetic type */
+      .kt { position: absolute; left: 0; width: 1080px; text-align: center; white-space: nowrap; }
+      #k1 { top: 400px; font-family: "Inter"; font-weight: 800; font-size: 140px; letter-spacing: -0.05em; line-height: 1; }
+      #k1 b { color: #00DB33; font-weight: 800; }
+      #k2 { top: 600px; font-family: "Inter"; font-weight: 800; font-size: 170px; letter-spacing: -0.05em; line-height: 1; }
+      #k2u { position: absolute; left: 190px; top: 800px; width: 700px; height: 16px; background: #00DB33; border-radius: 8px; transform-origin: left center; transform: scaleX(0); }
+      #k3 { top: 900px; font-size: 84px; font-weight: 700; color: #BBBDBF; }
+      /* Google docs quote card */
+      #doc { left: 70px; top: 250px; width: 940px; height: 880px; background: #F0F1F2; border-radius: 36px; color: #121416; padding: 44px 56px; transform-origin: 470px 520px; overflow: hidden; }
+      #doc .url { display: inline-flex; align-items: center; gap: 12px; font-family: "Inter"; font-weight: 700; font-size: 30px; color: #121416; background: #ffffff; border: 2px solid #BBBDBF; border-radius: 999px; padding: 10px 24px; }
+      #doc .url i { width: 18px; height: 18px; border-radius: 50%; background: #006A39; display: inline-block; }
+      #doc .crumb { margin-top: 34px; font-family: "Inter"; font-weight: 700; font-size: 26px; color: #6c7074; letter-spacing: 0.02em; }
+      #doc h2 { margin-top: 12px; font-family: "Inter"; font-weight: 800; font-size: 56px; line-height: 1.12; letter-spacing: -0.03em; }
+      #doc p { margin-top: 30px; font-family: "Inter"; font-weight: 700; font-size: 50px; line-height: 1.38; letter-spacing: -0.015em; }
+      #doc .mk { position: relative; display: inline-block; isolation: isolate; }
+      #doc .mk s { position: absolute; left: -6px; right: -6px; top: 8%; bottom: 4%; background: #00DB33; z-index: -1; transform-origin: left center; transform: scaleX(0); text-decoration: none; border-radius: 6px; }
+      #doc .skel { margin-top: 28px; height: 22px; border-radius: 11px; background: #BBBDBF; opacity: 0.55; }
+      /* World B */
+      #yr { top: 360px; font-family: "Inter"; font-weight: 800; font-size: 300px; letter-spacing: -0.05em; line-height: 1; direction: ltr; }
+      #yr span { display: inline-block; }
+      #land { left: 120px; width: 840px; top: 760px; direction: ltr; }
+      #land .t { font-family: "Inter"; font-weight: 800; font-size: 50px; letter-spacing: -0.02em; color: #F0F1F2; }
+      #land .bar { margin-top: 28px; height: 34px; border-radius: 17px; background: rgba(18, 20, 22, 0.35); overflow: hidden; }
+      #land .fill { height: 100%; width: 100%; background: #F0F1F2; transform-origin: left center; transform: scaleX(0); border-radius: 17px; }
+      #land .pc { margin-top: 18px; display: flex; justify-content: space-between; font-family: "Inter"; font-weight: 800; font-size: 46px; color: #F0F1F2; }
+      #land .pc em { font-style: normal; color: #BBBDBF; font-weight: 700; font-size: 34px; }
+      #bas { top: 380px; font-size: 420px; font-weight: 700; line-height: 1.2; }
+      /* wireframes: same page on desktop vs phone */
+      #wfD { left: 60px; top: 420px; width: 620px; height: 470px; background: #1c2023; border-radius: 22px; border: 2px solid rgba(240, 241, 242, 0.14); overflow: hidden; }
+      #wfD .bar { height: 40px; background: #24292d; display: flex; gap: 10px; align-items: center; padding: 0 16px; }
+      #wfD .bar i { width: 14px; height: 14px; border-radius: 50%; background: #BBBDBF; opacity: 0.6; }
+      #wfD .grid { padding: 18px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+      #wfD .hero { grid-column: 1 / 4; height: 130px; border-radius: 12px; background: #006A39; }
+      .blk { height: 110px; border-radius: 12px; background: #2b3135; position: relative; }
+      .blk::after { content: ""; position: absolute; left: 14px; right: 30%; bottom: 16px; height: 12px; border-radius: 6px; background: #BBBDBF; opacity: 0.5; }
+      .blk.ok { background: #2b3135; }
+      #wfP { left: 730px; top: 330px; width: 300px; height: 640px; background: #1c2023; border-radius: 46px; border: 2px solid rgba(240, 241, 242, 0.14); overflow: hidden; padding: 54px 16px 16px; }
+      #wfP .notch { position: absolute; left: 100px; top: 16px; width: 100px; height: 22px; border-radius: 11px; background: #121416; }
+      #wfP .hero { height: 120px; border-radius: 14px; background: #006A39; margin-bottom: 12px; }
+      #wfP .blk { height: 70px; margin-bottom: 12px; }
+      #wfP .gh { position: absolute; left: 16px; right: 16px; height: 70px; border-radius: 12px; border: 3px dashed #BBBDBF; opacity: 0; }
+      .wlab { position: absolute; font-weight: 700; font-size: 44px; text-align: center; }
+      #minus { left: 840px; top: 236px; width: 96px; height: 96px; border-radius: 50%; background: #BBBDBF; color: #121416; font-family: "Inter"; font-weight: 800; font-size: 80px; line-height: 92px; text-align: center; opacity: 0; }
+      /* traffic chart */
+      #chart { left: 70px; top: 400px; width: 940px; height: 700px; background: #1c2023; border-radius: 36px; border: 2px solid rgba(240, 241, 242, 0.12); padding: 44px 50px; transform-origin: 470px 400px; }
+      #chart .hd { display: flex; justify-content: space-between; align-items: baseline; direction: rtl; }
+      #chart .hd b { font-size: 60px; font-weight: 700; }
+      #chart .hd span { font-family: "Inter"; font-weight: 700; font-size: 30px; color: #BBBDBF; direction: ltr; }
+      #chart svg { position: absolute; left: 50px; top: 170px; }
+      #quote { left: 90px; width: 900px; top: 246px; background: #F0F1F2; color: #121416; border-radius: 28px; padding: 26px 34px; direction: ltr; font-family: "Inter"; font-weight: 800; font-size: 44px; letter-spacing: -0.02em; opacity: 0; box-shadow: 0 30px 60px rgba(0, 0, 0, 0.45); }
+      #quote small { display: block; margin-top: 6px; font-weight: 700; font-size: 26px; color: #6c7074; letter-spacing: 0; }
+      #arrow { left: 820px; top: 860px; width: 120px; height: 160px; opacity: 0; }
+      /* Fortune Code steps */
+      #step1 { left: 100px; top: 250px; }
+      #step2 { left: 640px; top: 250px; }
+      /* CTA */
+      #logo { position: absolute; left: 50%; top: 236px; width: 260px; margin-left: -130px; opacity: 0; }
+      #comment { position: absolute; left: 120px; width: 840px; top: 400px; height: 170px; border-radius: 40px; background: #1c2023; border: 2px solid rgba(240, 241, 242, 0.14); display: flex; align-items: center; gap: 28px; padding: 0 38px; direction: rtl; opacity: 0; box-shadow: 0 30px 60px rgba(0, 0, 0, 0.45); }
+      #comment .av { width: 96px; height: 96px; border-radius: 50%; background: #006A39; flex: none; display: flex; align-items: center; justify-content: center; }
+      #comment .who { font-size: 32px; color: #BBBDBF; font-weight: 500; }
+      #comment .txt { font-size: 76px; font-weight: 700; color: #00DB33; line-height: 1.1; clip-path: inset(0 0 0 100%); }
+      #check { left: 300px; top: 640px; width: 480px; height: 480px; }
+      #check .ph { position: absolute; left: 120px; top: 0; width: 240px; height: 400px; border-radius: 40px; border: 6px solid #F0F1F2; }
+      #check .ph .sc { position: absolute; left: 20px; right: 20px; top: 40px; height: 5px; background: #00DB33; border-radius: 3px; }
+      #check .pbar { position: absolute; left: 150px; width: 180px; top: 300px; height: 18px; border-radius: 9px; background: #2b3135; overflow: hidden; }
+      #check .pbar i { display: block; height: 100%; width: 100%; background: #00DB33; transform-origin: left center; transform: scaleX(0); }
+      #check .pct { position: absolute; left: 120px; width: 240px; top: 215px; text-align: center; font-family: "Inter"; font-weight: 800; font-size: 56px; }
+      #check .ok { position: absolute; left: 180px; top: 120px; width: 120px; height: 120px; border-radius: 50%; background: #00DB33; display: flex; align-items: center; justify-content: center; opacity: 0; }
+      #free { left: 50%; top: 1060px; transform: translateX(-50%); opacity: 0; }
+      /* caption zone: y 1180-1440, nothing else enters it */
+      #scrim { position: absolute; left: 0; right: 0; top: 1090px; height: 420px; background: linear-gradient(to bottom, rgba(18, 20, 22, 0), rgba(18, 20, 22, 0.85) 45%, rgba(18, 20, 22, 0.85) 80%, rgba(18, 20, 22, 0)); }
+      #cap { position: absolute; left: 60px; width: 960px; top: 1180px; height: 260px; direction: rtl; }
+      .chunk { position: absolute; inset: 0; display: flex; flex-wrap: wrap; justify-content: center; align-content: center; text-align: center; font-size: 78px; font-weight: 700; line-height: 1.3; opacity: 0; color: #F0F1F2; }
+      .chunk span { display: inline-block; margin: 0 0.12em; opacity: 0; }
+      .chunk .hl { color: #00DB33; }
+      #cap.onB .chunk .hl { color: #F0F1F2; }
+      #cap.onC .chunk { color: #121416; }
+      #cap.onC .chunk .hl { color: #006A39; }
+    </style>
+  </head>
+  <body>
+    <div id="main" data-composition-id="main" data-start="0" data-duration="__D__" data-width="1080" data-height="1920">
+      <div id="stage" class="clip" data-start="0" data-duration="__D__" data-track-index="0">
+        <div id="cam">
+          <div id="bg" style="inset:-80px;"><img id="curve" src="assets/brand/mark.svg" alt=""></div>
+          <!-- S1 hook: the desktop Google does not look at -->
+          <div id="lblG" class="abs">Google</div>
+          <div id="desk" class="dev"><img src="assets/img/desktop.webp" alt=""></div>
+          <svg id="xmark" class="o0" viewBox="0 0 800 480"><line id="x1" x1="220" y1="60" x2="580" y2="420"/><line id="x2" x1="580" y1="60" x2="220" y2="420"/></svg>
+          <!-- S2 the phone it does look at -->
+          <div id="phone" class="dev o0"><img src="assets/img/phone.webp" alt=""></div>
+          <svg id="brk" class="o0" viewBox="0 0 420 830"><path d="M10 90 V10 H90"/><path d="M330 10 H410 V90"/><path d="M410 740 V820 H330"/><path d="M90 820 H10 V740"/></svg>
+          <div id="scanP" class="o0"></div>
+          <div id="chipBot" class="abs o0"><div class="chip g en"><svg width="34" height="44" viewBox="0 0 34 44"><rect x="3" y="3" width="28" height="38" rx="6" fill="none" stroke="#121416" stroke-width="5"/><rect x="12" y="34" width="10" height="3" rx="1.5" fill="#121416"/></svg>Googlebot Smartphone</div></div>
+
+          <!-- S3-S5 analogy (World C) -->
+          <div id="facade" class="photo o0"><img src="assets/img/facade.webp" alt=""><div id="dim"></div><div id="fStrike"></div><div class="tag"><div id="tagF" class="chip l rtl">الواجهة</div></div></div>
+          <div id="kitchen" class="photo o0"><img src="assets/img/kitchen.webp" alt=""><div id="okRing"></div><div id="okBadge"><svg width="56" height="56" viewBox="0 0 56 56"><path d="M12 29 L24 40 L45 16" fill="none" stroke="#121416" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="tag"><div id="tagK" class="chip d rtl">الباب الخلفي</div></div></div>
+          <div id="mapF" class="abs o0" style="left:300px;top:900px;transform:translateX(-50%);"><div class="chip d rtl">الكمبيوتر</div></div>
+          <div id="mapK" class="abs o0" style="left:780px;top:900px;transform:translateX(-50%);"><div class="chip g rtl">الجوال</div></div>
+
+          <!-- S6 name it -->
+          <div id="k1" class="kt o0">Mobile-<b>First</b></div>
+          <div id="k2" class="kt o0">Indexing</div>
+          <div id="k2u"></div>
+          <div id="k3" class="kt rtl o0">الجوال أولاً</div>
+
+          <!-- S7 proof: Google's own words -->
+          <div id="doc" class="abs ltr o0">
+            <div class="url"><i></i>developers.google.com</div>
+            <div class="crumb">SEARCH CENTRAL &rsaquo; DOCUMENTATION</div>
+            <h2>Mobile-first indexing best practices</h2>
+            <p>Google uses the <span class="mk" id="mk1"><s></s>mobile version</span> of a site's content, crawled with the smartphone agent, for <span class="mk" id="mk2"><s></s>indexing and ranking.</span></p>
+            <div class="skel" style="width:92%"></div><div class="skel" style="width:78%"></div><div class="skel" style="width:85%"></div>
+          </div>
+
+          <!-- S8 World B: the switch is done -->
+          <div id="yr" class="kt o0"><span>2</span><span>0</span><span>2</span><span>3</span></div>
+          <div id="land" class="abs o0">
+            <div class="t">Mobile-first indexing has landed</div>
+            <div class="bar"><div class="fill"></div></div>
+            <div class="pc"><em>Google, Oct 31 2023</em><span id="pcN">0%</span></div>
+          </div>
+
+          <!-- S9 the twist -->
+          <div id="bas" class="kt rtl o0">بس</div>
+
+          <!-- S10 less content on the phone -->
+          <div id="wfD" class="abs o0"><div class="bar"><i></i><i></i><i></i></div><div class="grid"><div class="hero"></div><div class="blk"></div><div class="blk"></div><div class="blk"></div><div class="blk"></div><div class="blk"></div><div class="blk"></div></div></div>
+          <div id="wfP" class="abs o0"><div class="notch"></div><div class="hero"></div><div class="blk ok"></div><div class="blk pb"></div><div class="blk pb"></div><div class="blk pb"></div><div class="blk pb"></div>
+            <div class="gh" style="top:268px"></div><div class="gh" style="top:350px"></div><div class="gh" style="top:432px"></div><div class="gh" style="top:514px"></div></div>
+          <div id="labD" class="wlab rtl o0" style="left:60px;width:620px;top:920px;">الكمبيوتر</div>
+          <div id="labP" class="wlab rtl o0" style="left:730px;width:300px;top:1000px;color:#BBBDBF;">الجوال</div>
+          <div id="minus" class="abs">&minus;</div>
+
+          <!-- S11 traffic falls -->
+          <div id="chart" class="abs o0">
+            <div class="hd"><b>الزيارات من البحث</b><span>Search traffic</span></div>
+            <svg width="840" height="490" viewBox="0 0 840 560" preserveAspectRatio="none">
+              <g stroke="#BBBDBF" stroke-opacity="0.15" stroke-width="2"><line x1="0" y1="80" x2="840" y2="80"/><line x1="0" y1="220" x2="840" y2="220"/><line x1="0" y1="360" x2="840" y2="360"/><line x1="0" y1="500" x2="840" y2="500"/></g>
+              <polyline id="trend" points="0,120 120,100 220,130 320,110 420,150 520,250 610,320 700,410 790,470" fill="none" stroke="#BBBDBF" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+              <circle id="tdot" cx="790" cy="470" r="20" fill="#BBBDBF" opacity="0"/>
+            </svg>
+          </div>
+          <div id="quote" class="abs">&ldquo;you can expect some traffic loss&rdquo;<small>Google Search Central, mobile-first indexing</small></div>
+          <svg id="arrow" class="abs" viewBox="0 0 120 160"><path d="M60 10 V130 M18 92 L60 140 L102 92" fill="none" stroke="#BBBDBF" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/></svg>
+
+          <!-- S12 Fortune Code: phone first, then desktop -->
+          <div id="desk2" class="dev o0" style="left:10px;top:430px;width:780px;transform-origin:390px 290px;"><img src="assets/img/desktop.webp" alt=""></div>
+          <div id="phone2" class="dev o0" style="left:202px;top:236px;width:675px;transform-origin:337px 450px;"><img src="assets/img/phone.webp" alt=""></div>
+          <div id="step1" class="abs o0"><div class="chip g rtl"><span class="en">1</span> الجوال</div></div>
+          <div id="step2" class="abs o0"><div class="chip d rtl"><span class="en">2</span> الكمبيوتر</div></div>
+
+          <!-- S13 CTA -->
+          <div id="comment"><div class="av"><svg width="48" height="48" viewBox="0 0 48 48"><circle cx="24" cy="17" r="10" fill="#F0F1F2"/><path d="M6 46 C8 32 40 32 42 46" fill="#F0F1F2"/></svg></div><div><div class="who">تعليق جديد</div><div class="txt">جوال</div></div></div>
+          <div id="check" class="abs o0"><div class="ph"><div class="sc"></div></div><div class="pct"><span id="ckN">0</span>%</div><div class="pbar"><i></i></div><div class="ok"><svg width="70" height="70" viewBox="0 0 56 56"><path d="M12 29 L24 40 L45 16" fill="none" stroke="#121416" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+          <div id="free" class="abs"><div class="chip g rtl">فحص مجاني</div></div>
+        </div>
+        <img id="logo" src="assets/brand/logo-white.png" alt="">
+        <div id="scrim"></div>
+        <div id="cap"></div>
+      </div>
+      <audio id="mix" src="assets/audio/mix.mp3" data-start="0" data-duration="__D__" data-track-index="2" data-volume="1"></audio>
+    </div>
+
+    <script type="module">
+      import { mountCaptions } from "./lib/captions.js";
+      const CAPS = /*CAPS*/[];
+      const D = __D__, SPEED = __SPEED__;
+      const $ = (q) => document.querySelector(q);
+      const $$ = (q) => Array.from(document.querySelectorAll(q));
+      window.__timelines = window.__timelines || {};
+
+      async function build() {
+        await document.fonts.ready;
+        await Promise.all(["700 40px \"Plex Arabic\"", "500 40px \"Plex Arabic\"", "800 40px Inter", "700 40px Inter"].map((f) => document.fonts.load(f, "كلمة Google 2023")));
+        await Promise.all($$("img").map((im) => im.complete ? 1 : new Promise((r) => { im.onload = im.onerror = r; })));
+
+        const tl = gsap.timeline({ paused: true });
+        tl.to({}, { duration: D }, 0);
+        const T = (s) => s / SPEED, at = T;
+        const W = { bg: "#121416" };
+        const bgEl = $("#bg");
+        const world = (t, c, d = 0.15) => tl.to(W, { bg: c, duration: d, ease: "none", onUpdate: () => { bgEl.style.background = W.bg; } }, at(t));
+        // arrival: from off-frame/oversize, decelerating; exits accelerate; hide for good = off-frame AND opacity 0
+        const inn = (sel, t, from, to = {}, d = 0.45, ease = "back.out(1.5)") => tl.fromTo(sel, Object.assign({ opacity: 0 }, from), Object.assign({ opacity: 1, duration: T(d), ease, immediateRender: false }, to), at(t));
+        const out = (sel, t, to = {}, d = 0.22, ease = "power2.in") => tl.to(sel, Object.assign({ opacity: 0, duration: T(d), ease }, to), at(t));
+        const set = (sel, t, v) => tl.set(sel, v, at(t));
+        const pop = (sel, t, s0 = 1.35) => inn(sel, t, { scale: s0 }, { scale: 1 }, 0.3, "back.out(2.2)");
+
+        // camera breath on the whole stage: no picture is ever frozen
+        tl.fromTo("#cam", { scale: 1.0 }, { scale: 1.03, duration: T(2.2), ease: "sine.inOut", yoyo: true, repeat: Math.ceil(D * SPEED / 2.2), immediateRender: true }, 0);
+
+        // ── S1 HOOK 0-2.45: desktop pushes in from oversize (moving at frame 1), "Google" on top ──
+        tl.fromTo("#desk", { scale: 1.12, opacity: 1 }, { scale: 1.0, duration: T(1.1), ease: "power3.out", immediateRender: true }, 0);
+        // 1.66 "الكمبيوتر": the screen goes dead gray and gets crossed out
+        tl.to("#desk", { filter: "grayscale(1) brightness(0.45)", duration: T(0.25), ease: "power2.out" }, at(1.62));
+        set("#xmark", 1.62, { opacity: 1 });
+        tl.fromTo("#x1", { attr: { x2: 220, y2: 60 } }, { attr: { x2: 580, y2: 420 }, duration: T(0.18), ease: "power2.out", immediateRender: true }, at(1.64));
+        tl.fromTo("#x2", { attr: { x2: 580, y2: 60 } }, { attr: { x2: 220, y2: 420 }, duration: T(0.18), ease: "power2.out", immediateRender: true }, at(1.8));
+        tl.to("#desk", { x: -14, duration: T(0.05), yoyo: true, repeat: 3, ease: "none" }, at(1.66));
+        // 2.40 whip: desktop leaves left, phone arrives from the right
+        out(["#desk", "#xmark"], 2.38, { x: -1150 }, 0.2);
+        tl.to("#lblG", { opacity: 0, y: -40, duration: T(0.2), ease: "power2.in" }, at(2.4));
+        inn("#phone", 2.42, { x: 1100, rotation: 8 }, { x: 0, rotation: 0 }, 0.42, "power3.out");
+        tl.to("#phone", { rotation: -1.5, duration: T(0.12), yoyo: true, repeat: 1, ease: "sine.out" }, at(2.84)); // follow-through
+        // 3.34 "الجوال": viewfinder snaps on, scan line sweeps the screen
+        inn("#brk", 3.3, { scale: 1.25 }, { scale: 1 }, 0.22, "back.out(2)");
+        inn("#chipBot", 3.36, { y: -60 }, { y: 0 }, 0.3);
+        set("#scanP", 3.4, { opacity: 1, y: 0 });
+        tl.to("#scanP", { y: 780, duration: T(0.9), ease: "power1.inOut" }, at(3.4));
+        out("#scanP", 4.28, {}, 0.08);
+        tl.to("#phone", { scale: 1.05, duration: T(0.9), ease: "sine.inOut" }, at(3.4));
+        out(["#phone", "#brk", "#chipBot"], 4.22, { y: -300, scale: 1.4 }, 0.16);
+        set(["#phone", "#brk", "#chipBot"], 4.45, { x: 2000 });
+
+        // ── S3 World C 4.32: the restaurant with the beautiful front ──
+        world(4.3, "#F0F1F2"); set("#curve", 4.3, { opacity: 0 });
+        tl.to("#scrim", { opacity: 0, duration: T(0.15) }, at(4.3));
+        inn("#facade", 4.32, { scale: 1.3, y: 60 }, { scale: 1, y: 0 }, 0.45, "power3.out");
+        tl.to("#facade", { scale: 1.06, duration: T(1.9), ease: "sine.inOut" }, at(4.8));
+        pop("#tagF", 5.68);
+        // ── S4 6.37 "بس المفتش": whip-pan to the back door ──
+        out("#facade", 6.35, { x: 1100 }, 0.18);
+        inn("#kitchen", 6.4, { x: -1100 }, { x: 0 }, 0.35, "power3.out");
+        tl.fromTo("#kitchen", { scale: 1.0 }, { scale: 1.18, duration: T(2.6), ease: "sine.in", immediateRender: false }, at(6.75)); // walk in through the door
+        pop("#tagK", 8.28);
+        // ── S5 9.25 "يعني اللي يقيّمك": both side by side; the kitchen gets judged ──
+        set("#facade", 9.2, { x: 0 });
+        out(["#tagF", "#tagK"], 9.15, {}, 0.08);
+        tl.to("#kitchen", { x: 240, y: -106, scale: 0.6, duration: T(0.35), ease: "power3.inOut" }, at(9.2));
+        tl.fromTo("#facade", { x: -240, y: -106, scale: 0.85, opacity: 0 }, { scale: 0.6, opacity: 1, duration: T(0.35), ease: "power3.out", immediateRender: false }, at(9.25));
+        inn("#okRing", 10.55, {}, {}, 0.2, "power2.out");
+        pop("#okBadge", 10.6, 0.4);
+        tl.to("#kitchen", { scaleY: 0.56, scaleX: 0.63, duration: T(0.07), yoyo: true, repeat: 1, ease: "power2.out" }, at(10.6)); // squash on the judgement
+        // 11.49 "مو الواجهة": the beautiful front does not count
+        tl.to("#dim", { opacity: 0.55, duration: T(0.2) }, at(11.45));
+        tl.to("#fStrike", { scaleX: 1, duration: T(0.18), ease: "power2.out" }, at(11.5));
+        tl.to("#facade", { y: -80, rotation: -2, duration: T(0.3), ease: "power2.out" }, at(11.5));
+        // match-cut idea: front = desktop, kitchen = phone
+        inn("#mapF", 11.95, { y: 50 }, { y: 0 }, 0.28);
+        inn("#mapK", 12.05, { y: 50 }, { y: 0 }, 0.28);
+        out(["#facade", "#kitchen", "#mapF", "#mapK"], 12.6, { y: -900 }, 0.16);
+        set(["#facade", "#kitchen", "#mapF", "#mapK"], 12.8, { x: -2000 });
+
+        // ── S6 World A 12.64: name it ──
+        world(12.62, "#121416"); set("#curve", 12.62, { opacity: 0.07 });
+        tl.to("#scrim", { opacity: 1, duration: T(0.15) }, at(12.62));
+        inn("#k3", 12.66, { y: 80 }, { y: 0 }, 0.35, "power3.out");
+        inn("#k1", 14.0, { scale: 1.6 }, { scale: 1 }, 0.3, "back.out(1.8)");
+        tl.to("#k3", { y: 60, duration: T(0.3), ease: "power2.out" }, at(14.0));
+        inn("#k2", 15.18, { y: 140 }, { y: 0 }, 0.3, "power3.out");
+        tl.to("#k2u", { scaleX: 1, duration: T(0.3), ease: "power2.out" }, at(15.4));
+        tl.to(["#k1", "#k2", "#k3"], { scale: 1.06, duration: T(0.9), ease: "sine.inOut" }, at(15.3));
+        out(["#k1", "#k2", "#k3", "#k2u"], 16.18, { y: -500 }, 0.18);
+        set(["#k1", "#k2", "#k3", "#k2u"], 16.4, { x: 2000 });
+
+        // ── S7 16.24: Google's own documentation ──
+        inn("#doc", 16.24, { y: 900, rotation: 4 }, { y: 0, rotation: 0 }, 0.42, "power3.out");
+        tl.to("#doc", { scale: 1.16, y: -40, duration: T(2.0), ease: "sine.inOut" }, at(17.0));
+        tl.to("#mk1 s", { scaleX: 1, duration: T(0.35), ease: "power2.out" }, at(18.2));
+        tl.to("#doc", { scale: 1.28, y: -150, duration: T(1.4), ease: "power2.inOut" }, at(19.4));
+        tl.to("#mk2 s", { scaleX: 1, duration: T(0.45), ease: "power2.out" }, at(20.3));
+        out("#doc", 21.8, { y: -1200 }, 0.2);
+        set("#doc", 22.1, { x: 2000 });
+
+        // ── S8 World B 21.86: end of 2023, the switch is complete ──
+        world(21.84, "#006A39"); set("#curve", 21.84, { opacity: 0 });
+        tl.to("#scrim", { opacity: 0, duration: T(0.12) }, at(21.84));
+        set("#yr", 21.86, { opacity: 1 });
+        $$("#yr span").forEach((s, i) => tl.fromTo(s, { y: -500, opacity: 0 }, { y: 0, opacity: 1, duration: T(0.3), ease: "back.out(1.6)", immediateRender: true }, at(22.4 + i * 0.16)));
+        tl.to("#yr", { scale: 0.94, y: -30, duration: T(1.6), ease: "sine.inOut" }, at(23.3));
+        inn("#land", 24.15, { y: 80 }, { y: 0 }, 0.3, "power3.out");
+        // micro-gag: it hangs on 99% for a beat, then lands on "اكتمل" (text written by sync())
+        tl.to("#land .fill", { scaleX: 0.99, duration: T(0.9), ease: "power2.out" }, at(24.4));
+        tl.to("#land .fill", { scaleX: 1, duration: T(0.12), ease: "power2.out" }, at(25.56));
+        tl.to("#land", { scale: 1.05, duration: T(0.08), yoyo: true, repeat: 1 }, at(25.58));
+        out(["#yr", "#land"], 26.28, { x: -1100 }, 0.16);
+
+        // ── S9 World A 26.32: "بس" ──
+        world(26.3, "#121416"); set("#curve", 26.3, { opacity: 0.07 });
+        tl.to("#scrim", { opacity: 1, duration: T(0.12) }, at(26.3));
+        inn("#bas", 26.32, { scale: 2.2 }, { scale: 1 }, 0.25, "back.out(1.4)");
+        tl.to("#bas", { scale: 0.9, duration: T(1.3), ease: "sine.inOut" }, at(26.6));
+        out("#bas", 27.9, { scale: 0.3, y: -300 }, 0.18);
+        set("#bas", 28.2, { x: 2000 });
+
+        // ── S10 28.1-32.6: the same site on both screens; the phone has less ──
+        inn("#wfD", 27.95, { x: -800 }, { x: 0 }, 0.4, "power3.out");
+        inn("#wfP", 28.05, { x: 600 }, { x: 0 }, 0.4, "power3.out");
+        inn("#labD", 28.4, { y: 40 }, { y: 0 }, 0.25);
+        inn("#labP", 28.5, { y: 40 }, { y: 0 }, 0.25);
+        tl.to("#wfP", { scale: 1.08, duration: T(1.4), ease: "sine.inOut" }, at(29.2));
+        // micro-gag: the phone's sections drop out of the frame one by one, leaving dashed holes
+        $$("#wfP .pb").forEach((b, i) => {
+          const t = 30.4 + i * 0.2;
+          tl.to(b, { y: -14, duration: T(0.06), ease: "power2.out" }, at(t)); // anticipation
+          tl.to(b, { y: 1400, rotation: (i % 2 ? 14 : -12), duration: T(0.45), ease: "power2.in" }, at(t + 0.06));
+          tl.set(b, { opacity: 0 }, at(t + 0.5));
+          tl.to($$("#wfP .gh")[i], { opacity: 1, duration: T(0.15) }, at(t + 0.1));
+        });
+        pop("#minus", 31.33, 1.8);
+        tl.to("#labP", { scale: 0.8, duration: T(0.2) }, at(31.33));
+        out(["#wfD", "#wfP", "#labD", "#labP", "#minus"], 32.55, { y: -1300 }, 0.18);
+        set(["#wfD", "#wfP", "#labD", "#labP", "#minus"], 32.8, { x: 3000 });
+
+        // ── S11 32.64: Google says expect your traffic to drop ──
+        inn("#chart", 32.62, { scale: 1.25 }, { scale: 1 }, 0.3, "power3.out");
+        const trend = $("#trend"); const L = trend.getTotalLength ? trend.getTotalLength() : 1000;
+        tl.fromTo(trend, { attr: { "stroke-dasharray": L, "stroke-dashoffset": L } }, { attr: { "stroke-dashoffset": 0 }, duration: T(1.6), ease: "power1.in", immediateRender: true }, at(32.8));
+        inn("#quote", 33.3, { y: -60 }, { y: 0 }, 0.3);
+        set("#tdot", 34.4, { opacity: 1 });
+        inn("#arrow", 34.6, { y: -120 }, { y: 0 }, 0.3, "bounce.out");
+        tl.to("#chart", { x: 10, duration: T(0.05), yoyo: true, repeat: 3, ease: "none" }, at(34.66));
+        out(["#chart", "#quote", "#arrow"], 35.22, { x: 1100 }, 0.16);
+        set(["#chart", "#quote", "#arrow"], 35.5, { y: 3000 });
+
+        // ── S12 35.28: Fortune Code designs the phone first, then the desktop ──
+        inn("#phone2", 35.3, { y: 1100, rotation: -6 }, { y: 0, rotation: 0 }, 0.45, "power3.out");
+        tl.to("#phone2", { rotation: 1.2, duration: T(0.12), yoyo: true, repeat: 1, ease: "sine.out" }, at(35.75));
+        tl.to("#phone2", { scale: 1.07, duration: T(1.9), ease: "sine.inOut" }, at(36.0));
+        pop("#step1", 37.7, 1.6);
+        // 38.88 "وبعدين الكمبيوتر": phone moves aside, the desktop arrives behind it
+        tl.to("#phone2", { x: 300, y: 140, scale: 0.66, duration: T(0.4), ease: "power3.inOut" }, at(38.85));
+        inn("#desk2", 38.9, { x: -900 }, { x: 0 }, 0.42, "power3.out");
+        pop("#step2", 39.45, 1.6);
+        tl.to(["#desk2", "#phone2"], { y: "-=30", duration: T(0.9), ease: "sine.inOut" }, at(39.5));
+        out(["#phone2", "#desk2", "#step1", "#step2"], 40.3, { y: -1400 }, 0.18);
+        set(["#phone2", "#desk2", "#step1", "#step2"], 40.6, { x: 3000 });
+
+        // ── S13 CTA 40.37: type the keyword, we check your site on mobile for free ──
+        inn("#logo", 40.37, { y: -20 }, { y: 0 }, 0.25, "power2.out");
+        inn("#comment", 40.4, { y: 160, scale: 0.9 }, { y: 0, scale: 1 }, 0.4, "back.out(1.6)");
+        tl.to("#comment .txt", { clipPath: "inset(0 0 0 0%)", duration: T(0.32), ease: "steps(4)" }, at(41.0));
+        tl.to("#comment", { scale: 1.05, duration: T(0.1), yoyo: true, repeat: 1 }, at(41.35));
+        inn("#check", 42.2, { y: 300 }, { y: 0 }, 0.35, "power3.out");
+        tl.fromTo("#check .sc", { y: 0 }, { y: 320, duration: T(0.5), ease: "sine.inOut", yoyo: true, repeat: 1, immediateRender: true }, at(42.5));
+        tl.to("#check .pbar i", { scaleX: 1, duration: T(1.6), ease: "power1.inOut" }, at(42.55));
+        pop("#check .ok", 44.2, 0.4);
+        out(["#check .pct", "#check .pbar", "#check .sc"], 44.15, {}, 0.1);
+        inn("#free", 44.25, { scale: 1.5 }, { scale: 1 }, 0.3, "back.out(2)");
+
+        // ── S14 LOOP 45.12: back to frame 1 (desktop + "Google"), last frame = first frame ──
+        out(["#comment", "#check", "#free", "#logo"], 45.05, { y: -200 }, 0.16);
+        set(["#comment", "#check", "#free"], 45.3, { x: 3000 });
+        set("#desk", 45.1, { filter: "grayscale(0) brightness(1)", x: 1100, opacity: 0, scale: 1.0 });
+        tl.to("#desk", { x: 0, opacity: 1, duration: T(0.4), ease: "power3.out" }, at(45.12));
+        tl.fromTo("#lblG", { opacity: 0, y: -40 }, { opacity: 1, y: 0, duration: T(0.3), ease: "power3.out", immediateRender: false }, at(46.5));
+        tl.to("#desk", { scale: 1.12, duration: D - at(45.6), ease: "sine.inOut" }, at(45.6));
+        set("#xmark", 45.1, { opacity: 0, x: 0 });
+        tl.set("#desk", { scale: 1.12, x: 0, opacity: 1, filter: "grayscale(0) brightness(1)" }, D - 0.04);
+
+        mountCaptions(tl, CAPS, $("#cap"));
+        // state that is not a tween (counters, caption colour per world) is derived from the time, so seeking is exact
+        const cl = (x) => Math.max(0, Math.min(1, x));
+        const p2o = (x) => 1 - (1 - x) * (1 - x);
+        const p1io = (x) => x < 0.5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2;
+        const cap = $("#cap"), pcN = $("#pcN"), ckN = $("#ckN");
+        const c0 = cap.querySelector(".chunk"), s0 = c0 && c0.querySelector("span");
+        function sync() {
+          const t = tl.time();
+          if (t < 0.06 && c0) { c0.style.opacity = 1; s0.style.opacity = 1; s0.style.transform = "none"; }
+          cap.classList.toggle("onC", t >= at(4.3) && t < at(12.62));
+          cap.classList.toggle("onB", t >= at(21.84) && t < at(26.3));
+          pcN.textContent = (t >= at(25.56) ? 100 : Math.round(99 * p2o(cl((t - at(24.4)) / T(0.9))))) + "%";
+          ckN.textContent = Math.round(100 * p1io(cl((t - at(42.55)) / T(1.6))));
+        }
+        tl.eventCallback("onUpdate", sync);
+        window.addEventListener("hf-seek", sync);
+        window.__timelines["main"] = tl; tl.seek(0); sync();
+      }
+      window.__hf = window.__hf || {};
+      window.__hf.buildReady = window.__hf.buildReady || {};
+      window.__hf.buildReady["main"] = build();
+    </script>
+  </body>
+</html>

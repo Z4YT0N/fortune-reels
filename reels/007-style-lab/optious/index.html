@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="ar" data-resolution="portrait">
+  <!-- Style lab: OPTIOUS hype-reel kinetic style (ref TDC7eVrkduY).
+       Vocabulary taken from the 12 fps study (study/sheet_*.jpg):
+         marquee rows of one repeated word in opposite directions (solid / outline / accent rows) around a centred object,
+         tiny thumbnail that grows into a framed card with glitchy colour edges, pixel-block break-up into a hard black/white cut,
+         small word over a giant word that unfolds from a thin line ("make AWESOME"), zoom-through into a letter's ink,
+         small doodle icons beside small words, a giant italic word sweeping across with a dashed guide line and a tiny thumbnail,
+         a word dropping out of the baseline ("begi n ning"), the brand word placed on a real street sign.
+       All text lives inside the 60-960 x 230-1440 safe window; full-frame layers are only backgrounds and the photo. -->
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1080, height=1920">
+    <title>Optious style lab</title>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      @font-face { font-family: "ZainL"; src: url("assets/fonts/zain-mob-long.ttf") format("truetype"); }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1080px; height: 1920px; overflow: hidden; background: #121416; }
+      #main { position: relative; width: 100%; height: 100%; overflow: hidden; font-family: "ZainL", sans-serif; color: #F0F1F2; background: #121416; }
+      .full { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; }
+      .win { position: absolute; left: 60px; top: 230px; width: 900px; height: 1210px; overflow: hidden; }
+      .el { position: absolute; direction: rtl; white-space: nowrap; line-height: 1.15; will-change: transform; }
+      .row { position: absolute; left: -1300px; width: 3500px; direction: rtl; white-space: nowrap; line-height: 1; text-align: center; will-change: transform; }
+      .sW { color: #F0F1F2; } .sG { color: #00DB33; } .sD { color: #006A39; }
+      /* outline rows break on Arabic joins (text-stroke draws the overlapping contours), so the "hollow" rows are dim solids */
+      .oW { color: rgba(240,241,242,0.22); } .oG { color: #006A39; }
+      .frame { position: absolute; border: 8px solid #F0F1F2; background: #121416; }
+      .chip { position: absolute; direction: rtl; white-space: nowrap; line-height: 1.1; }
+      svg.ic { position: absolute; overflow: visible; }
+      svg.ic * { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+      .grain { position: absolute; inset: 0; width: 1080px; height: 1920px; mix-blend-mode: soft-light; opacity: 0; }
+    </style>
+  </head>
+  <body>
+    <div id="main" data-composition-id="main" data-start="0" data-duration="9.8" data-width="1080" data-height="1920">
+      <div id="stage" class="clip full" data-start="0" data-duration="9.8" data-track-index="1">
+        <div id="white" class="full" style="background:#F0F1F2;opacity:0"></div>
+        <div id="win" class="win"></div>
+        <div id="photo" class="full" style="overflow:hidden">
+          <div id="photoIn" class="full">
+            <img src="assets/img/sign.jpg" class="full" alt="">
+            <div id="plane" style="position:absolute;left:0;top:0;width:620px;height:320px;transform-origin:0 0"></div>
+          </div>
+        </div>
+        <div id="top" class="win"></div>
+        <div id="grains"></div>
+      </div>
+      <!-- no <audio> in the page (owner rule): the mix is muxed with ffmpeg after the render -->
+    </div>
+    <script>
+      const D = 9.8, F = 1 / 30;
+      const WORDS = [["معرض",0.0],["صور",0.4],["في",0.67],["موقع",0.8],["شركة",1.18],["كبيرة،",1.51],["حجمه",2.06],["اربعه",2.44],["وثلاثين",2.76],["ميجا.",3.2],["عميلك",3.73],["يفتحه",4.12],["من",4.53],["جواله،",4.69],["ويستنى،",5.28],["ويستنى،",6.19],["ويطلع.",7.15],["لا",7.87],["تدور",7.97],["على",8.36],["صور",8.54],["أقل.",8.8]];
+      const W = (i) => WORDS[i][1];
+      const V = (i) => Math.max(0, W(i) - 0.03);
+      window.__timelines = window.__timelines || {};
+      const TL = gsap.timeline({ paused: true });
+      const $ = (id) => document.getElementById(id);
+      const win = $("win"), topW = $("top");
+      const C = { k: "#121416", g: "#00DB33", d: "#006A39", w: "#F0F1F2" };
+
+      function div(parent, css, cls) { const e = document.createElement("div"); if (cls) e.className = cls; Object.assign(e.style, css || {}); parent.appendChild(e); return e; }
+      function txt(parent, text, size, x, y, css) {
+        const e = div(parent, Object.assign({ left: x + "px", top: y + "px", fontSize: size + "px" }, css || {}), "el");
+        e.textContent = text; return e;
+      }
+      // centre an element horizontally in the 900 px window at y (top)
+      function centre(e, cx = 450) { const w = e.getBoundingClientRect().width; e.style.left = (cx - w / 2) + "px"; return w; }
+      // a line of words laid out right to left as separate spans (whole words only; Arabic joins stay intact)
+      function line(parent, words, size, y, css) {
+        const e = div(parent, Object.assign({ top: y + "px", fontSize: size + "px", display: "flex", gap: (size * 0.22) + "px", alignItems: "baseline" }, css || {}), "el");
+        const sp = words.map((w) => { const s = document.createElement("span"); s.style.display = "inline-block"; if (Array.isArray(w)) { s.textContent = w[0]; Object.assign(s.style, w[1]); } else s.textContent = w; e.appendChild(s); return s; });
+        return { e, sp };
+      }
+      // Optious pop: small word snaps up from below with a hard overshoot (hidden state set at build time)
+      function pop(el, a, d = 0.24, from = {}) {
+        gsap.set(el, Object.assign({ opacity: 0, scale: 0.4, y: 26 }, from));
+        TL.to(el, { opacity: 1, scale: 1, y: 0, x: 0, rotation: 0, duration: d, ease: "back.out(2.2)" }, a);
+      }
+      // glitchy colour edges: offset solid copies of the frame in the brand colours, jumping every 2 frames
+      const GL = ["-9px 0 0 #00DB33, 9px 0 0 #006A39", "7px -5px 0 #00DB33, -7px 6px 0 #F0F1F2", "-4px 4px 0 #006A39, 11px 0 0 #00DB33", "0 0 0 #00DB33, -10px 2px 0 #00DB33", "5px 5px 0 #F0F1F2, -8px -3px 0 #00DB33"];
+      function glitch(el, a, b, every = 2) { let k = 0; for (let t = a; t < b; t += every * F) TL.set(el, { boxShadow: GL[(k++ * 3) % GL.length] }, t); TL.set(el, { boxShadow: "none" }, b); }
+      // marquee rows: one repeated word, alternate rows run in opposite directions; returns per-row drift helpers
+      function rows(parent, word, n, size, y0, gap, styles, sep = "  ·  ") {
+        const out = [];
+        for (let k = 0; k < n; k++) {
+          const r = div(parent, { top: (y0 + k * gap) + "px", fontSize: size + "px" }, "row " + styles[k % styles.length]);
+          r.textContent = (word + sep).repeat(14);
+          out.push({ r, dir: k % 2 ? 1 : -1 });
+        }
+        return out;
+      }
+      // move a row at speed v (px/s) from a to b, linear
+      function drift(R, a, b, v, ease = "none", x0) {
+        R.forEach((o, k) => { TL.to(o.r, { x: "+=" + (o.dir * v * (b - a)), duration: b - a, ease }, a); });
+      }
+      function doodle(parent, kind, x, y, s = 1, col = C.w) {
+        const NS = "http://www.w3.org/2000/svg"; const sv = document.createElementNS(NS, "svg"); sv.setAttribute("class", "ic"); sv.setAttribute("viewBox", "0 0 100 100");
+        Object.assign(sv.style, { left: x + "px", top: y + "px", width: 100 * s + "px", height: 100 * s + "px" });
+        const P = {
+          building: ["M22 92 V30 L50 14 L78 30 V92 Z", "M36 44 h8 M56 44 h8 M36 60 h8 M56 60 h8 M44 92 V76 h12 V92", "M10 92 H90"],
+          weight: ["M28 40 C28 20 72 20 72 40", "M18 44 H82 L90 90 H10 Z", "M40 66 H60"],
+          person: ["M50 18 m-14 0 a14 14 0 1 0 28 0 a14 14 0 1 0 -28 0", "M20 92 C20 60 80 60 80 92"],
+          tap: ["M44 90 V40 C44 32 56 32 56 40 V62 L74 66 C82 68 84 74 82 82 L78 92", "M30 30 C30 12 70 12 70 30", "M20 34 C18 4 82 4 80 34"],
+          eyes: ["M8 50 C8 22 44 22 44 50 C44 78 8 78 8 50 Z", "M56 50 C56 22 92 22 92 50 C92 78 56 78 56 50 Z"],
+          hour: ["M26 10 H74 M26 90 H74 M30 10 C30 40 70 40 70 50 C70 60 30 60 30 90 M70 10 C70 40 30 40 30 50 C30 60 70 60 70 90"],
+          arrow: ["M90 50 H14 M38 26 L14 50 L38 74"]
+        }[kind];
+        P.forEach((d) => { const p = document.createElementNS(NS, "path"); p.setAttribute("d", d); p.setAttribute("stroke", col); p.setAttribute("stroke-width", 8); sv.appendChild(p); });
+        if (kind === "eyes") ["26", "74"].forEach((cx) => { const c = document.createElementNS(NS, "circle"); c.setAttribute("cx", cx); c.setAttribute("cy", 54); c.setAttribute("r", 9); c.setAttribute("fill", col); c.setAttribute("class", "pupil"); c.style.fill = col; sv.appendChild(c); });
+        parent.appendChild(sv); return sv;
+      }
+      // homography: put a w x h div onto 4 image corners (TL, TR, BR, BL) with matrix3d
+      function homo(w, h, q) {
+        const s = [[0, 0], [w, 0], [w, h], [0, h]]; const A = [], B = [];
+        for (let i = 0; i < 4; i++) { const [x, y] = s[i], [u, v] = q[i];
+          A.push([x, y, 1, 0, 0, 0, -u * x, -u * y]); B.push(u); A.push([0, 0, 0, x, y, 1, -v * x, -v * y]); B.push(v); }
+        for (let i = 0; i < 8; i++) { let m = i; for (let r = i + 1; r < 8; r++) if (Math.abs(A[r][i]) > Math.abs(A[m][i])) m = r;
+          [A[i], A[m]] = [A[m], A[i]]; [B[i], B[m]] = [B[m], B[i]];
+          for (let r = 0; r < 8; r++) if (r !== i) { const f = A[r][i] / A[i][i]; for (let c = i; c < 8; c++) A[r][c] -= f * A[i][c]; B[r] -= f * B[i]; } }
+        const [a, b, c, d, e, f, g, hh] = B.map((v, i) => v / A[i][i]);
+        return `matrix3d(${a},${d},0,${g},${b},${e},0,${hh},0,0,1,0,${c},${f},0,1)`;
+      }
+
+      async function build() {
+        await document.fonts.ready; await document.fonts.load("100px ZainL", "معرض ٣٤");
+        TL.to({}, { duration: D }, 0);
+
+        // ═══ S1 (0 - 2.06): black, «معرض صور» marquee rows around a growing framed card ═══
+        const R1 = rows(win, "معرض صور", 9, 118, -10, 138, ["sW", "oG", "oW", "sG", "sW", "oW", "sG", "oG", "sW"]);
+        const order = [4, 3, 5, 2, 6, 1, 7, 0, 8]; // centre row first, then outward (as in the ref)
+        R1.forEach((o, k) => { gsap.set(o.r, { x: -o.dir * 700, opacity: 0 }); });
+        order.forEach((k, j) => { const o = R1[k]; const a = j < 1 ? 0 : 0.06 + j * 0.045;
+          TL.to(o.r, { opacity: 1, duration: 0.01 }, a);
+          TL.to(o.r, { x: -o.dir * 80, duration: 0.42, ease: "expo.out" }, a); });
+        drift(R1, 0.5, 1.5, 120); drift(R1, 1.5, 2.06, 900, "power2.in");
+        // the card: a tiny thumbnail that grows into a framed browser card with glitchy edges
+        const card = div(win, { left: "160px", top: "350px", width: "580px", height: "400px", overflow: "hidden" }, "frame");
+        const bar = div(card, { position: "absolute", left: 0, top: 0, right: 0, height: "44px", background: C.w });
+        [0, 1, 2].forEach((i) => div(bar, { position: "absolute", right: (16 + i * 26) + "px", top: "14px", width: "16px", height: "16px", borderRadius: "50%", background: i ? C.k : C.g }));
+        const ph = ["p-dunes", "p-falcon", "p-door", "p-dallah", "p-tower", "p-hall"];
+        ph.forEach((p, i) => { const im = document.createElement("img"); im.src = "assets/img/" + p + ".jpg";
+          Object.assign(im.style, { position: "absolute", width: "176px", height: "158px", objectFit: "cover", left: (12 + (i % 3) * 186) + "px", top: (58 + Math.floor(i / 3) * 168) + "px", filter: "grayscale(1) contrast(1.15)" });
+          card.appendChild(im); gsap.set(im, { opacity: 0 }); TL.to(im, { opacity: 1, duration: 0.01 }, 0.3 + i * 0.07); });
+        gsap.set(card, { scale: 0.06, rotation: -4 });
+        TL.to(card, { scale: 0.86, rotation: 0, duration: 0.55, ease: "expo.out" }, 0.04);
+        TL.to(card, { scale: 0.92, duration: 0.9, ease: "sine.inOut" }, 0.6);
+        glitch(card, 0.04, 1.94);
+        // label above: «في موقع شركة» + building doodle, small words snapping in on the voice
+        const lab = line(win, ["في", "موقع", "شركة"], 74, 214, { background: C.k, padding: "4px 26px 14px" });
+        const lw = centre(lab.e, 430); lab.sp.forEach((s, i) => pop(s, V(2 + i)));
+        const bld = doodle(win, "building", 430 - lw / 2 + lw + 6, 222, 0.78, C.g); pop(bld, V(4), 0.3, { rotation: -20 });
+        // «كبيرة» slams in green under the card; the card swells with it and the rows speed up
+        const big = txt(win, "كبيرة", 190, 0, 800, { color: C.g, background: C.k, padding: "0 36px 20px" }); centre(big);
+        gsap.set(big, { opacity: 0, scaleY: 0.08, scaleX: 1.6 });
+        TL.to(big, { opacity: 1, scaleY: 1, scaleX: 1, duration: 0.2, ease: "back.out(1.6)" }, V(5));
+        TL.to(card, { scale: 1.08, duration: 0.25, ease: "back.out(2)" }, V(5));
+        // break-up: the card shatters into pixel blocks, then a hard cut to white on «حجمه»
+        const blocks = []; const bw = 58;
+        for (let gy = 0; gy < 7; gy++) for (let gx = 0; gx < 10; gx++) {
+          const b = div(card, { position: "absolute", left: gx * bw + "px", top: gy * bw + "px", width: bw + "px", height: bw + "px", background: [C.g, C.k, C.w, C.d][(gx * 7 + gy * 3) % 4], opacity: 0 });
+          blocks.push(b); }
+        blocks.forEach((b, i) => { const t = 1.86 + ((i * 37) % 5) * F; TL.set(b, { opacity: 1 }, t); });
+        TL.to(card, { scale: 1.3, duration: 0.2, ease: "power2.in" }, 1.86);
+        TL.set([card, lab.e, bld, big, ...R1.map((o) => o.r)], { opacity: 0 }, V(6));
+
+        // ═══ S2 (2.06 - 3.73): white, «حجمه» small over a giant «٣٤» that unfolds from a line, «ميجا» chip, zoom-through ═══
+        TL.set($("white"), { opacity: 1 }, V(6));
+        const hj = txt(win, "حجمه", 92, 0, 300, { color: C.k }); const hjw = centre(hj, 470);
+        const wt = doodle(win, "weight", 470 - hjw / 2 - 92, 316, 0.74, C.k);
+        pop(hj, V(6), 0.22); pop(wt, V(6) + 0.08, 0.26, { rotation: 25, y: -40 });
+        const n34 = txt(win, "٣٤", 640, 0, 290, { color: C.k }); centre(n34);
+        gsap.set(n34, { scaleY: 0.02, scaleX: 2.2, opacity: 0 });
+        TL.set(n34, { opacity: 1 }, V(7));
+        TL.to(n34, { scaleX: 1, duration: 0.3, ease: "expo.out" }, V(7));
+        TL.to(n34, { scaleY: 1, duration: 0.34, ease: "back.out(1.4)" }, V(7) + 0.04);
+        TL.to(hj, { y: -60, scale: 0.7, duration: 0.3, ease: "expo.out" }, V(7));
+        TL.to(wt, { y: -60, x: 40, scale: 0.7, duration: 0.3, ease: "expo.out" }, V(7));
+        TL.to(n34, { scale: 1.07, duration: 0.1, ease: "power2.out" }, V(8)); TL.to(n34, { scale: 1, duration: 0.22, ease: "sine.inOut" }, V(8) + 0.1);
+        const mg = txt(win, "ميجا", 150, 0, 960, { color: C.k, background: C.g, padding: "0 40px 18px" }); centre(mg);
+        gsap.set(mg, { opacity: 0, x: 700, skewX: -18 });
+        TL.to(mg, { opacity: 1, x: -14, skewX: 0, duration: 0.14, ease: "power3.out" }, V(9)); TL.to(mg, { x: 0, duration: 0.2, ease: "sine.inOut" }, V(9) + 0.14);
+        glitch(mg, V(9), V(9) + 0.2, 1);
+        // zoom-through: the camera flies into the ink of «٤» and lands inside the black phone screen
+        // zoom origin = the thickest ink point of «٣» measured on a rendered frame (frame px 294,792), converted to the element box
+        const ZO = (294 - 60 - n34.offsetLeft) + "px " + (792 - 230 - n34.offsetTop) + "px";
+        TL.set(n34, { transformOrigin: ZO }, 3.42);
+        TL.to(n34, { scale: 46, duration: 0.3, ease: "power2.in" }, 3.42);
+        TL.to([hj, wt], { y: "-=420", opacity: 0, duration: 0.22, ease: "power2.in" }, 3.42);
+        TL.to(mg, { y: 520, opacity: 0, duration: 0.22, ease: "power2.in" }, 3.42);
+        TL.set($("white"), { opacity: 0 }, 3.6); TL.set(n34, { opacity: 0 }, V(10)); // white goes as soon as the ink covers the window
+
+        // ═══ S3 (3.73 - 5.28): black, the phone pulls back out of the ink; gallery loading; small words + doodles ═══
+        const phone = div(win, { position: "absolute", left: "245px", top: "200px", width: "410px", height: "820px", borderRadius: "58px", border: "10px solid " + C.w, background: C.k, overflow: "hidden" });
+        const notch = div(phone, { position: "absolute", left: "140px", top: "16px", width: "110px", height: "26px", borderRadius: "13px", background: C.w });
+        const tiles = [];
+        for (let i = 0; i < 8; i++) tiles.push(div(phone, { position: "absolute", left: (24 + (i % 2) * 176) + "px", top: (70 + Math.floor(i / 2) * 150) + "px", width: "164px", height: "138px", borderRadius: "14px", background: "#2a2d31" }));
+        tiles.forEach((t, i) => { for (let s = 3.9 + (i % 4) * 0.12; s < 7.1; s += 0.5) { TL.to(t, { background: "#3b3f44", duration: 0.25, ease: "sine.inOut" }, s); TL.to(t, { background: "#2a2d31", duration: 0.25, ease: "sine.inOut" }, s + 0.25); } });
+        const spin = document.createElementNS("http://www.w3.org/2000/svg", "svg"); spin.setAttribute("viewBox", "0 0 100 100");
+        Object.assign(spin.style, { position: "absolute", left: "145px", top: "300px", width: "100px", height: "100px" });
+        spin.innerHTML = '<circle cx="50" cy="50" r="38" fill="#121416" stroke="#3b3f44" stroke-width="10"/><path d="M50 12 A38 38 0 0 1 88 50" fill="none" stroke="#00DB33" stroke-width="10" stroke-linecap="round"/>';
+        phone.appendChild(spin); TL.to(spin, { rotation: 360 * 9, duration: 7.2 - 3.75, ease: "none", transformOrigin: "50% 50%" }, 3.75);
+        const pb = div(phone, { position: "absolute", left: "28px", right: "28px", top: "706px", height: "14px", borderRadius: "7px", background: "#2a2d31", overflow: "hidden" });
+        const pf = div(pb, { position: "absolute", right: 0, top: 0, bottom: 0, width: "100%", background: C.g, transformOrigin: "100% 50%" });
+        gsap.set(pf, { scaleX: 0.02 }); TL.to(pf, { scaleX: 0.16, duration: 7.1 - 3.8, ease: "power1.out" }, 3.8);
+        const pl = txt(phone, "٠٫٨ من ٣٤ ميجا", 34, 0, 730, { color: "#8a8d91" }); pl.style.left = "auto"; pl.style.right = "28px";
+        gsap.set(phone, { opacity: 0, scale: 3.4, transformOrigin: "50% 45%" });
+        TL.set(phone, { opacity: 1 }, V(10));
+        TL.to(phone, { scale: 1, duration: 0.5, ease: "expo.out" }, V(10));
+        glitch(phone, V(10), V(10) + 0.4, 1); glitch(phone, 5.25, 5.45, 1);
+        const l1 = line(win, [["عميلك", {}], ["يفتحه", {}]], 96, 40, {});
+        const l1w = centre(l1.e, 470);
+        const per = doodle(win, "person", 470 + l1w / 2 + 6, 58, 0.72, C.g);
+        pop(l1.sp[0], V(10) + 0.06); pop(per, V(10) + 0.12, 0.26, { y: -30 });
+        pop(l1.sp[1], V(11));
+        const tap = doodle(win, "tap", 520, 560, 1.1, C.g); pop(tap, V(11), 0.22, { y: 80, rotation: -12 });
+        const ring = div(win, { position: "absolute", left: "520px", top: "520px", width: "60px", height: "60px", borderRadius: "50%", border: "6px solid " + C.g, opacity: 0 });
+        TL.fromTo(ring, { opacity: 1, scale: 0.3 }, { opacity: 0, scale: 2.4, duration: 0.4, ease: "expo.out", immediateRender: false }, V(11) + 0.15);
+        TL.to(tap, { y: 300, opacity: 0, duration: 0.3, ease: "power2.in" }, 4.6);
+        const l2 = line(win, [["من", {}], ["جواله", { color: C.g }]], 104, 1060, {}); centre(l2.e);
+        pop(l2.sp[0], V(12)); pop(l2.sp[1], V(13));
+
+        // ═══ S4 (5.28 - 7.15): «ويستنى» rows fill behind the phone; on the second «ويستنى» they swap and slow to a stop ═══
+        const R2 = rows(win, "ويستنى", 9, 124, -20, 142, ["oW", "sG", "oW", "oG", "sW", "oG", "oW", "sG", "oW"], "    ");
+        win.insertBefore(phone, null); // phone stays above the rows
+        R2.forEach((o) => { win.insertBefore(o.r, phone); gsap.set(o.r, { x: -o.dir * 900, opacity: 0 }); });
+        [4, 3, 5, 2, 6, 1, 7, 0, 8].forEach((k, j) => { const o = R2[k]; const a = V(14) + j * 0.035;
+          TL.to(o.r, { opacity: 1, duration: 0.01 }, a); TL.to(o.r, { x: -o.dir * 120, duration: 0.4, ease: "expo.out" }, a); });
+        TL.to([l1.e, per], { y: -300, opacity: 0, duration: 0.25, ease: "power2.in" }, V(14) - 0.05);
+        TL.to(l2.e, { y: 300, opacity: 0, duration: 0.25, ease: "power2.in" }, V(14) - 0.05);
+        drift(R2, V(14) + 0.4, V(15), 260);
+        // second «ويستنى»: solid and outline rows trade places, then everything decelerates to a crawl
+        R2.forEach((o, k) => { const c = o.r.className; const sw = c.includes("oW") ? "row sW" : c.includes("sW") ? "row oW" : c.includes("sG") ? "row oG" : "row sG"; TL.set(o.r, { attr: { class: sw } }, V(15)); });
+        R2.forEach((o) => TL.to(o.r, { x: "+=" + (o.dir * 260 * (7.1 - V(15)) / 2), duration: 7.1 - V(15), ease: "power2.out" }, V(15)));
+        TL.to(phone, { scale: 0.96, duration: 0.12, ease: "power2.out" }, V(15)); TL.to(phone, { scale: 1, duration: 0.3, ease: "sine.inOut" }, V(15) + 0.12);
+        const hg = doodle(win, "hour", 700, 160, 0.8, C.g); pop(hg, V(15), 0.26, { rotation: 90 });
+        TL.to(hg, { rotation: 180, duration: 0.5, ease: "back.inOut(2)", transformOrigin: "50% 50%" }, 6.5);
+
+        // ═══ S5 (7.15 - 7.87): giant italic «ويطلع» sweeps across and wipes in the street ═══
+        const sw = txt(topW, "ويطلع", 470, 0, 260, { color: C.w, transform: "skewX(13deg)" });
+        sw.style.fontSize = (470 * 800 / sw.getBoundingClientRect().width) + "px";
+        const sww = sw.getBoundingClientRect().width;
+        const dash = div(topW, { position: "absolute", left: "0", top: "250px", width: "900px", height: "0", borderTop: "5px dashed " + C.w, opacity: 0 });
+        const thumb = document.createElement("img"); thumb.src = "assets/img/p-dunes.jpg"; Object.assign(thumb.style, { position: "absolute", top: "214px", left: "0", width: "70px", height: "70px", objectFit: "cover", border: "5px solid " + C.g }); topW.appendChild(thumb);
+        const X0 = 900, X1 = 70, X2 = 30, X3 = -sww - 120;
+        gsap.set(sw, { x: X0 }); gsap.set(thumb, { x: 900, opacity: 0 });
+        const clip = (x) => `inset(0px 0px 0px ${Math.max(-20, 60 + x + sww)}px)`;
+        gsap.set($("photo"), { clipPath: clip(X0) });
+        const segs = [[V(16), 0.2, X0, X1, "power3.out"], [V(16) + 0.2, 0.28, X1, X2, "none"], [V(16) + 0.48, 0.24, X2, X3, "power3.in"]];
+        segs.forEach(([a, d, xa, xb, e]) => { TL.to(sw, { x: xb, duration: d, ease: e }, a); TL.to($("photo"), { clipPath: clip(xb), duration: d, ease: e }, a); });
+        TL.set(dash, { opacity: 1 }, V(16)); TL.set(thumb, { opacity: 1 }, V(16));
+        TL.fromTo(dash, { clipPath: "inset(0 0 0 100%)" }, { clipPath: "inset(0 0 0 0%)", duration: 0.25, ease: "expo.out", immediateRender: false }, V(16));
+        TL.to(thumb, { x: 400, duration: 0.45, ease: "expo.out" }, V(16)); TL.to(thumb, { x: -120, duration: 0.25, ease: "power3.in" }, V(16) + 0.45);
+        TL.to(dash, { opacity: 0, duration: 0.15 }, V(16) + 0.55);
+        TL.to(phone, { x: -260, rotation: -8, duration: 0.5, ease: "power2.in" }, V(16) + 0.05);
+        R2.forEach((o) => TL.to(o.r, { opacity: 0.35, duration: 0.2 }, V(16)));
+        TL.set([phone, hg, ...R2.map((o) => o.r)], { opacity: 0 }, V(16) + 0.75);
+
+        // ═══ S6 (7.87 - 9.8): the street sign; «لا تدور على صور أقل» lands on it word by word; «أقل» drops off the baseline ═══
+        const Q = [[229, 849], [819, 677], [831, 1021], [208, 1150]];
+        $("plane").style.transform = homo(620, 320, Q);
+        // two lines on the sign plane (offsetWidth is layout size, unaffected by the matrix3d)
+        const sa = line($("plane"), [["لا", {}], ["تدور", {}], ["على", {}]], 118, 10, { color: C.w });
+        const sb = line($("plane"), [["صور", {}], ["أقل", { color: C.g }]], 136, 138, { color: C.w });
+        [[sa, 118, 540], [sb, 136, 500]].forEach(([L, fs, mw]) => { const f = Math.min(1, mw / L.e.offsetWidth); L.e.style.fontSize = (fs * f) + "px"; L.e.style.gap = (fs * f * 0.22) + "px"; L.e.style.left = (310 - L.e.offsetWidth / 2) + "px"; });
+        const sl = { sp: [...sa.sp, ...sb.sp] };
+        sl.sp.forEach((s, i) => pop(s, V(17 + i), 0.22, { y: 40 }));
+        const aq = sl.sp[4];
+        TL.to(aq, { y: 34, rotation: 10, duration: 0.42, ease: "bounce.out" }, V(21) + 0.42);
+        TL.to(aq, { y: 26, rotation: 7, duration: 0.5, ease: "sine.inOut" }, V(21) + 0.9);
+        gsap.set($("photoIn"), { transformOrigin: "520px 910px", scale: 1.12 });
+        TL.to($("photoIn"), { scale: 1, duration: 0.7, ease: "expo.out" }, V(16) + 0.2);
+        TL.to($("photoIn"), { scale: 1.07, duration: D - V(17), ease: "sine.inOut" }, V(17));
+        const eyes = doodle($("photoIn"), "eyes", 250, 470, 1.3, C.g); pop(eyes, V(18), 0.26, { y: 40 });
+        const pupils = eyes.querySelectorAll(".pupil");
+        [[V(18) + 0.3, -9], [V(18) + 0.7, 9], [V(19) + 0.5, -6], [V(21) + 0.4, 0]].forEach(([t, dx]) => TL.to(pupils, { x: dx, duration: 0.14, ease: "power2.out" }, t));
+        
+
+        // grain: soft-light tiles, swapped every 2 frames
+        const g = $("grains"); const gs = [0, 1, 2, 3, 4, 5].map((i) => { const im = document.createElement("img"); im.className = "grain"; im.src = "assets/img/grain" + i + ".png"; g.appendChild(im); return im; });
+        for (let f = 0; f < D * 30; f += 2) gs.forEach((im, i) => TL.set(im, { opacity: i === (f / 2) % 6 ? 0.4 : 0 }, f * F));
+        window.__timelines["main"] = TL; TL.seek(0);
+      }
+      window.__hf = window.__hf || {}; window.__hf.buildReady = window.__hf.buildReady || {};
+      window.__hf.buildReady["main"] = build();
+    </script>
+  </body>
+</html>

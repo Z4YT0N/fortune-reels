@@ -1,26 +1,130 @@
 {
-  "alarm": ["Short bright alarm clock bell ringing, metallic, cartoony, clean", 1.0],
-  "whoosh": ["Fast clean airy whoosh swipe transition, modern motion graphics", 0.6],
-  "whoosh2": ["Deep smooth cinematic whoosh passing by, clean", 0.8],
-  "bell": ["Single hotel reception service desk bell ding, clean", 0.6],
-  "pop": ["Soft cute bubble pop, UI sound, clean", 0.4],
-  "tick": ["Clock ticking, tick tock, crisp, close", 1.6],
-  "zap": ["Short electric lightning zap, energetic, clean", 0.7],
-  "error": ["Soft computer error bloop, short, minimal UI", 0.5],
-  "riser": ["Fast digital counter rolling up, ticking numbers rising, clean UI", 1.2],
-  "drop": ["Cartoon falling whistle then soft thump", 1.0],
-  "cash": ["Cash register ka-ching, clean, short", 0.8],
-  "thud": ["Heavy deep cartoon thud of something big landing, punchy", 0.7],
-  "clatter": ["Small plastic pieces dropping and bouncing on a desk", 1.0],
-  "swipe": ["Quick marker strike-through swipe sound, short", 0.4],
-  "boing": ["Short springy boing bounce, playful, clean", 0.6],
-  "chime": ["Bright positive success chime, modern UI, clean", 1.0],
-  "rocket": ["Small rocket launching whoosh, fast, clean", 1.2],
-  "click": ["Single crisp computer mouse click", 0.5],
-  "type": ["Fast soft keyboard typing on a laptop, mechanical keys, close", 2.5],
-  "shimmer": ["Bright magical shimmer chime sparkle, logo reveal, clean", 2.0],
-  "impact": ["Deep soft cinematic impact boom with airy tail, clean", 1.5],
-  "scan": ["Short futuristic digital scan beep confirmation, soft", 0.8],
-  "notify": ["Soft phone notification ping, modern, clean", 0.5],
-  "glitch": ["Short digital glitch stutter, subtle, clean", 0.5]
+ "alarm": [
+  "Short bright alarm clock bell ringing, metallic, cartoony, clean",
+  1.0
+ ],
+ "whoosh": [
+  "Fast clean airy whoosh swipe transition, modern motion graphics",
+  0.6
+ ],
+ "whoosh2": [
+  "Deep smooth cinematic whoosh passing by, clean",
+  0.8
+ ],
+ "bell": [
+  "Single hotel reception service desk bell ding, clean",
+  0.6
+ ],
+ "pop": [
+  "Soft cute bubble pop, UI sound, clean",
+  0.4
+ ],
+ "tick": [
+  "Clock ticking, tick tock, crisp, close",
+  1.6
+ ],
+ "zap": [
+  "Short electric lightning zap, energetic, clean",
+  0.7
+ ],
+ "error": [
+  "Soft computer error bloop, short, minimal UI",
+  0.5
+ ],
+ "riser": [
+  "Fast digital counter rolling up, ticking numbers rising, clean UI",
+  1.2
+ ],
+ "drop": [
+  "Cartoon falling whistle then soft thump",
+  1.0
+ ],
+ "cash": [
+  "Cash register ka-ching, clean, short",
+  0.8
+ ],
+ "thud": [
+  "Heavy deep cartoon thud of something big landing, punchy",
+  0.7
+ ],
+ "clatter": [
+  "Small plastic pieces dropping and bouncing on a desk",
+  1.0
+ ],
+ "swipe": [
+  "Quick marker strike-through swipe sound, short",
+  0.4
+ ],
+ "boing": [
+  "Short springy boing bounce, playful, clean",
+  0.6
+ ],
+ "chime": [
+  "Bright positive success chime, modern UI, clean",
+  1.0
+ ],
+ "rocket": [
+  "Small rocket launching whoosh, fast, clean",
+  1.2
+ ],
+ "click": [
+  "Single crisp computer mouse click",
+  0.5
+ ],
+ "type": [
+  "Fast soft keyboard typing on a laptop, mechanical keys, close",
+  2.5
+ ],
+ "shimmer": [
+  "Bright magical shimmer chime sparkle, logo reveal, clean",
+  2.0
+ ],
+ "impact": [
+  "Deep soft cinematic impact boom with airy tail, clean",
+  1.5
+ ],
+ "scan": [
+  "Short futuristic digital scan beep confirmation, soft",
+  0.8
+ ],
+ "notify": [
+  "Soft phone notification ping, modern, clean",
+  0.5
+ ],
+ "glitch": [
+  "Short digital glitch stutter, subtle, clean",
+  0.5
+ ],
+ "iron_impact": [
+  "Heavy cast iron weight slamming down onto a pile of wooden picture frames on a table, deep thud with glass cracking and frames rattling, close, no music",
+  1.4
+ ],
+ "paper_tear": [
+  "Fast crisp paper tearing rip, close, dry, no music",
+  0.8
+ ],
+ "marker": [
+  "Short felt-tip marker stroke drawn quickly on paper, squeaky, close",
+  0.5
+ ],
+ "ink_splash": [
+  "Wet thick ink splash burst, juicy, short, close",
+  0.7
+ ],
+ "tape_strip": [
+  "Strip of masking tape quickly pulled and pressed onto paper, short rip",
+  0.6
+ ],
+ "stretch": [
+  "Rubber band slowly stretching, creaky elastic tension, playful, close",
+  1.4
+ ],
+ "feather": [
+  "Soft airy swish of a feather floating down, gentle breath of air, delicate",
+  1.2
+ ],
+ "paper_slide": [
+  "Sheet of paper sliding quickly across a desk, short soft swish",
+  0.5
+ ]
 }

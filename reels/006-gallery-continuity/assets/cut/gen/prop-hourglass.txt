@@ -1,0 +1,5 @@
+CHROMA-KEY PLATE. The background MUST be a perfectly flat, saturated, pure green #00FF00 (RGB 0,255,0) across the entire frame: no cloth, no table, no floor, no wall texture, no gradient, no vignette, no shadow on the green, no reflections. The colour grade below applies ONLY to the subject, never to the green background. The whole subject is fully inside the frame with a wide green margin on every side.
+
+Subject: a single antique brass-and-glass hourglass standing upright, sand flowing, nothing under it, shot straight on.
+
+Subject look: real editorial studio photograph, full-frame camera, 50mm lens, Kodak Portra 400 film look, natural skin texture with pores, real fabric wrinkles, soft imperfect key light from the upper left, slightly muted natural colours on the subject, no HDR, no glossy plastic skin, no glow. No text, no letters, no logos, no watermark.

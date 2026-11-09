@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="ar" data-resolution="portrait">
+  <!-- Style lab: WES ANDERSON, symmetric all-green world (direction Y). Stills: Gemini edits of research/style-2-candidates/Y.png (gen/).
+       Shots: A room 1 (LED queue display + clock) -> whip-tilt -> B top-down table insert -> whip-pan -> C room 2 (two framed signs)
+       -> whip-pan back -> D room 1, empty chair. Text lives in the set: chapter title card, LED queue display, typed table card,
+       framed wall signs, closing chapter card in the same slot as the opening one. -->
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1080, height=1920">
+    <title>Wes style lab</title>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      @font-face { font-family: "ZainL"; src: url("assets/fonts/zain-mob-long.ttf") format("truetype"); }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1080px; height: 1920px; overflow: hidden; background: #121416; }
+      #main { position: relative; width: 100%; height: 100%; overflow: hidden; font-family: "ZainL", sans-serif; }
+      #stage { position: absolute; inset: 0; overflow: hidden; }
+      .shot { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; overflow: hidden; }
+      .cam { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; will-change: transform; }
+      .cam > img.plate { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; }
+      .hand { position: absolute; border-radius: 12px; background: #7ccb8d; box-shadow: 4px 7px 7px rgba(0, 70, 30, 0.38); }
+      .cap { position: absolute; width: 56px; height: 56px; border-radius: 50%; background: #66c37d; box-shadow: 3px 5px 6px rgba(0, 70, 30, 0.38); }
+      .led { position: absolute; display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 26px; direction: rtl; color: #00DB33; white-space: nowrap; }
+      .led span { display: inline-block; line-height: 1; }
+      .sign { position: absolute; display: flex; align-items: center; justify-content: center; direction: rtl; color: #006A39; white-space: nowrap; }
+      .sign span { display: inline-block; line-height: 1; }
+      .title { position: absolute; left: 60px; width: 900px; direction: rtl; text-align: center; color: #F0F1F2; text-shadow: 0 6px 0 #006A39; }
+      .title .ln { display: flex; flex-direction: row; justify-content: center; gap: 0.38em; white-space: nowrap; }
+      .title span { display: inline-block; line-height: 1.12; }
+      .card { position: absolute; background: #EFE9D8; box-shadow: 0 10px 18px rgba(0, 25, 10, 0.35); direction: rtl; text-align: center; color: #121416; }
+      .card .rule { position: absolute; inset: 12px; border: 3px solid #006A39; }
+      .card .ln { display: flex; flex-direction: row; justify-content: center; gap: 0.25em; white-space: nowrap; }
+      .card span { display: inline-block; line-height: 1.15; }
+      #screen { position: absolute; left: 472px; top: 1014px; width: 144px; height: 304px; border-radius: 16px; background: #F0F1F2; overflow: hidden; opacity: 0; }
+      .tile { position: absolute; width: 58px; height: 58px; border-radius: 6px; background: #d3d7d4; }
+      .grain { position: absolute; inset: 0; width: 1080px; height: 1920px; mix-blend-mode: soft-light; opacity: 0; z-index: 30; pointer-events: none; }
+    </style>
+  </head>
+  <body>
+    <div id="main" data-composition-id="main" data-start="0" data-duration="9.73" data-width="1080" data-height="1920">
+      <svg width="0" height="0" style="position:absolute">
+        <filter id="vb" x="-5%" y="-20%" width="110%" height="140%"><feGaussianBlur id="vbB" stdDeviation="0 0"/></filter>
+        <filter id="hb" x="-20%" y="-5%" width="140%" height="110%"><feGaussianBlur id="hbB" stdDeviation="0 0"/></filter>
+      </svg>
+      <div id="stage" class="clip" data-start="0" data-duration="9.73" data-track-index="1">
+        <div class="shot" id="shA"><div class="cam" id="camA"><img class="plate" src="assets/img/roomA.jpg" alt=""></div></div>
+        <div class="shot" id="shB"><div class="cam" id="camB"><img class="plate" src="assets/img/table.jpg" alt="">
+          <div id="screen"></div>
+          <img id="hand" src="assets/img/hand.png" alt="" style="position:absolute;width:234px;filter:drop-shadow(12px 22px 14px rgba(0,30,10,0.38))">
+        </div></div>
+        <div class="shot" id="shC"><div class="cam" id="camC"><img class="plate" src="assets/img/roomB.jpg" alt=""><img class="plate" id="blink" src="assets/img/roomB_blink.jpg" alt="" style="opacity:0"></div></div>
+        <div class="shot" id="shD"><div class="cam" id="camD"><img class="plate" src="assets/img/roomA_empty.jpg" alt=""></div></div>
+        <div id="titles" style="position:absolute;inset:0"></div>
+        <img class="grain" src="assets/img/grain0.png" alt=""><img class="grain" src="assets/img/grain1.png" alt=""><img class="grain" src="assets/img/grain2.png" alt="">
+        <img class="grain" src="assets/img/grain3.png" alt=""><img class="grain" src="assets/img/grain4.png" alt=""><img class="grain" src="assets/img/grain5.png" alt="">
+      </div>
+      <!-- no <audio> in the page (owner rule): the mix is muxed with ffmpeg after the render. -->
+    </div>
+    <script>
+      const D = 9.73, F = 1 / 30;
+      const WORDS = [["معرض",0.0,0.32],["صور",0.4,0.64],["في",0.67,0.72],["موقع",0.8,1.12],["شركة",1.18,1.44],["كبيرة،",1.51,2.0],["حجمه",2.06,2.4],["اربعه",2.44,2.72],["وثلاثين",2.76,3.12],["ميجا.",3.2,3.68],["عميلك",3.73,4.08],["يفتحه",4.12,4.48],["من",4.53,4.64],["جواله،",4.69,5.2],["ويستنى،",5.28,6.08],["ويستنى،",6.19,7.04],["ويطلع.",7.15,7.84],["لا",7.87,7.92],["تدور",7.97,8.32],["على",8.36,8.48],["صور",8.54,8.72],["أقل.",8.8,9.28]];
+      const W = (i) => WORDS[i][1];
+      const AR = (n) => String(n).replace(/\d/g, (d) => "٠١٢٣٤٥٦٧٨٩"[d]);
+      window.__timelines = window.__timelines || {};
+      const TL = gsap.timeline({ paused: true });
+      const $ = (id) => document.getElementById(id);
+      function el(parent, tag, cls, style, text) {
+        const e = document.createElement(tag); if (cls) e.className = cls; if (style) Object.assign(e.style, style); if (text !== undefined) e.textContent = text; parent.appendChild(e); return e;
+      }
+      // Wes title-card step: a word is simply THERE on its frame (2-frame fade so it never pops a half glyph). Hidden at build time.
+      function step(e, a, d = 2 * F) { gsap.set(e, { opacity: 0 }); TL.to(e, { opacity: 1, duration: d, ease: "none" }, a); }
+      function stepOff(e, a, d = 2 * F) { TL.to(e, { opacity: 0, duration: d, ease: "none" }, a); }
+      // Zain mob-long tails overhang the advance width: pad each title word by its measured ink overhang so gaps stay real
+      const MC = document.createElement("canvas").getContext("2d");
+      function inkPad(sp, t, s) {
+        MC.font = `${s}px ZainL`; MC.direction = "rtl"; MC.textAlign = "left"; const m = MC.measureText(t);
+        const ovL = m.actualBoundingBoxLeft, ovR = m.actualBoundingBoxRight - m.width;
+        sp.style.marginLeft = Math.max(0, ovL).toFixed(1) + "px"; sp.style.marginRight = Math.max(0, ovR).toFixed(1) + "px";
+      }
+      // a centred block of lines (title gaps are wide because Zain mob-long tails overhang the advance); each line = list of [word, size]; returns the word spans in reading order
+      function lines(parent, rows, cls, style) {
+        const box = el(parent, "div", cls, style); const out = [];
+        rows.forEach((row) => { const ln = el(box, "div", "ln"); ln.style.gap = Math.round(row[0][1] * (row[0][1] < 100 ? 0.4 : 0.22)) + "px"; row.forEach(([t, s]) => { const sp = el(ln, "span", "", { fontSize: s + "px" }, t); if (cls === "title") inkPad(sp, t, s); out.push(sp); }); });
+        return { box, words: out };
+      }
+      // raised green clock hands drawn over the hand-less clock on the plate
+      function clock(cam, cx, cy) {
+        const mk = (len, w) => { const h = el(cam, "div", "hand", { left: (cx - w / 2) + "px", top: (cy - len) + "px", width: w + "px", height: (len + 26) + "px" }); gsap.set(h, { transformOrigin: `50% ${len}px` }); return h; };
+        const hr = mk(112, 24), mn = mk(162, 18);
+        el(cam, "div", "cap", { left: (cx - 28) + "px", top: (cy - 28) + "px" });
+        return { hr, mn };
+      }
+      function setTime(c, h, m) { gsap.set(c.hr, { rotation: ((h % 12) + m / 60) * 30 }); gsap.set(c.mn, { rotation: m * 6 }); }
+      // LED queue display ("now serving"): حجمه | number | ميجا
+      function led(cam) {
+        const box = el(cam, "div", "led", { left: "262px", top: "652px", width: "546px", height: "116px" });
+        const a = el(box, "span", "", { fontSize: "50px" }, "حجمه");
+        const n = el(box, "span", "", { fontSize: "104px", minWidth: "120px", textAlign: "center" }, AR(34));
+        const b = el(box, "span", "", { fontSize: "66px" }, "ميجا");
+        return { box, a, n, b };
+      }
+      // whip pan/tilt: both shots travel together, directional blur peaks mid-move
+      function whip(outShot, inShot, a, axis, dir, d = 0.17) {
+        const P = axis === "y" ? 1920 : 1080, fid = axis === "y" ? "vb" : "hb", blur = $(fid + "B");
+        const sd = (v) => (axis === "y" ? `0 ${v}` : `${v} 0`);
+        gsap.set(inShot, { [axis]: dir * P });
+        TL.set(inShot, { visibility: "visible" }, a);
+        TL.set([outShot, inShot], { filter: `url(#${fid})` }, a);
+        TL.to(outShot, { [axis]: -dir * P, duration: d, ease: "power3.inOut" }, a);
+        TL.to(inShot, { [axis]: 0, duration: d, ease: "power3.inOut" }, a);
+        TL.fromTo(blur, { attr: { stdDeviation: sd(0) } }, { attr: { stdDeviation: sd(70) }, duration: d / 2, ease: "power2.in", immediateRender: false }, a);
+        TL.to(blur, { attr: { stdDeviation: sd(0) }, duration: d / 2, ease: "power2.out" }, a + d / 2);
+        TL.set([outShot, inShot], { filter: "none" }, a + d);
+        TL.set(outShot, { visibility: "hidden" }, a + d);
+      }
+      function dolly(cam, a, b, s0, s1, ox = 540, oy = 1000) {
+        gsap.set(cam, { scale: s0, transformOrigin: `${ox}px ${oy}px` });
+        TL.fromTo(cam, { scale: s0 }, { scale: s1, duration: b - a, ease: "none", immediateRender: false }, a);
+      }
+
+      async function build() {
+        await document.fonts.ready; await document.fonts.load("80px ZainL", "معرض ٣٤");
+        TL.to({}, { duration: D }, 0);
+        ["shB", "shC", "shD"].forEach((id) => gsap.set($(id), { visibility: "hidden" }));
+        const WA = 3.58, WB = 5.13, WC = 7.0; // whip starts
+
+        // ═══ A: room 1. Locked frame, straight dolly in. The chapter card steps on word by word. ═══
+        dolly($("camA"), 0, WA + 0.17, 1.0, 1.12);
+        const cA = clock($("camA"), 540, 362); setTime(cA, 10, 8);
+        TL.to(cA.mn, { rotation: 9 * 6, duration: 3 * F, ease: "back.out(3)" }, W(8) + 0.36); // the minute hand clicks once on the ding
+        const T1 = lines($("titles"), [[["الفصل الأول", 52]], [["معرض", 140], ["صور", 140]], [["في", 84], ["موقع", 84], ["شركة", 84], ["كبيرة،", 84]]], "title", { top: "250px" });
+        step(T1.words[0], 0); step(T1.words[1], 0);
+        [1, 2, 3, 4, 5].forEach((wi, k) => step(T1.words[2 + k], W(wi) - F));
+        // the card leaves in steps (bottom line first) as the display wakes up
+        [3, 4, 5, 6].forEach((i) => stepOff(T1.words[i], 2.0));
+        [1, 2].forEach((i) => stepOff(T1.words[i], 2.0 + 3 * F));
+        stepOff(T1.words[0], 2.0 + 6 * F);
+        const L1 = led($("camA"));
+        step(L1.box, W(6) - 0.04, F);
+        gsap.set(L1.n, { opacity: 0 }); gsap.set(L1.b, { opacity: 0 });
+        TL.set(L1.n, { opacity: 1 }, W(7) - F);
+        const N0 = W(7) - F, N1 = W(8) + 0.34;
+        for (let k = 0; k <= 17; k++) TL.set(L1.n, { textContent: AR(Math.round((34 * k) / 17)).padStart(2, "٠") }, N0 + (k * (N1 - N0)) / 17);
+        step(L1.b, W(9) - F);
+
+        // ═══ whip-tilt down into the top-down table insert ═══
+        whip($("shA"), $("shB"), WA, "y", 1);
+        // ═══ B: top-down insert. Typed card on the felt, a hand enters and taps the phone. ═══
+        dolly($("camB"), WA, WB + 0.17, 1.0, 1.2, 544, 1000);
+        const card = lines($("camB"), [[["عميلك", 132]], [["يفتحه", 66], ["من", 66], ["جواله،", 66]]], "card", { left: "250px", top: "560px", width: "590px", height: "290px", paddingTop: "30px" });
+        el(card.box, "div", "rule");
+        step(card.words[0], WA + 0.15); [11, 12, 13].forEach((wi, k) => step(card.words[1 + k], W(wi) - F));
+        const hand = $("hand"); gsap.set(hand, { left: (544 - 76) + "px", top: "1166px", y: 820 });
+        TL.to(hand, { y: 0, duration: 0.42, ease: "power3.out" }, W(11) - 0.12);
+        TL.to(hand, { scale: 0.97, y: 6, duration: 3 * F, ease: "power2.out", transformOrigin: "30% 0%" }, W(11) + 0.3);
+        TL.to(hand, { scale: 1, y: 0, duration: 5 * F, ease: "sine.inOut" }, W(11) + 0.3 + 3 * F);
+        TL.to(hand, { y: 860, duration: 0.38, ease: "power2.in" }, W(13) + 0.02);
+        // the phone wakes on the tap: a gallery of grey tiles that never loads
+        const scr = $("screen");
+        el(scr, "div", "", { position: "absolute", left: "10px", top: "16px", width: "124px", height: "14px", borderRadius: "7px", background: "#d3d7d4" });
+        const bar = el(scr, "div", "", { position: "absolute", left: "0", top: "38px", width: "144px", height: "5px", background: "#00DB33", transformOrigin: "100% 50%" });
+        for (let r = 0; r < 3; r++) for (let c = 0; c < 2; c++) el(scr, "div", "tile", { left: (10 + c * 66) + "px", top: (56 + r * 66) + "px" });
+        const sp = el(scr, "div", "", { position: "absolute", left: "52px", top: "254px", width: "40px", height: "40px", borderRadius: "50%", border: "6px solid #d3d7d4", borderTopColor: "#006A39" });
+        TL.set(scr, { opacity: 1 }, W(11) + 0.36);
+        gsap.set(bar, { scaleX: 0.03 }); TL.to(bar, { scaleX: 0.09, duration: WB - W(11), ease: "power4.out" }, W(11) + 0.4);
+        TL.fromTo(sp, { rotation: 0 }, { rotation: 900, duration: 1.8, ease: "none", immediateRender: false }, W(11) + 0.36);
+
+        // ═══ whip-pan to room 2 ═══
+        whip($("shB"), $("shC"), WB, "x", -1);
+        // ═══ C: room 2, he stares into the lens. Each «ويستنى» is lettered onto a framed sign (right first, RTL). ═══
+        dolly($("camC"), WB, WC + 0.17, 1.03, 1.11);
+        const cC = clock($("camC"), 536, 360); setTime(cC, 10, 20);
+        TL.to(cC.mn, { rotation: 120 + 720, duration: WC - WB, ease: "sine.inOut" }, WB);
+        TL.to(cC.hr, { rotation: 310 + 60, duration: WC - WB, ease: "sine.inOut" }, WB);
+        [[614, 864, 14], [219, 470, 15]].forEach(([x0, x1, wi]) => {
+          const s = el($("camC"), "div", "sign", { left: x0 + 8 + "px", top: "662px", width: (x1 - x0 - 16) + "px", height: "133px" });
+          const w = el(s, "span", "", { fontSize: "78px" }, "ويستنى،");
+          const fit = Math.min(1, (x1 - x0 - 30) / w.getBoundingClientRect().width); w.style.fontSize = (78 * fit).toFixed(1) + "px";
+          const t = Math.max(W(wi), WB + 0.18) - F;
+          gsap.set(w, { opacity: 0, scale: 1.18 });
+          TL.to(w, { opacity: 1, duration: 2 * F, ease: "none" }, t);
+          TL.to(w, { scale: 1, duration: 0.16, ease: "power3.out" }, t);
+        });
+        const bl = $("blink");
+        [[5.86, 1], [6.62, 5]].forEach(([t, hold]) => { TL.set(bl, { opacity: 0.55 }, t); TL.set(bl, { opacity: 1 }, t + F); TL.set(bl, { opacity: 0.55 }, t + (1 + hold) * F); TL.set(bl, { opacity: 0 }, t + (2 + hold) * F); });
+
+        // ═══ whip-pan back to room 1: the chair is empty ═══
+        whip($("shC"), $("shD"), WC, "x", 1);
+        dolly($("camD"), WC, D, 1.0, 1.07);
+        const cD = clock($("camD"), 540, 362); setTime(cD, 11, 40);
+        TL.to(cD.mn, { rotation: 41 * 6, duration: 3 * F, ease: "back.out(3)" }, W(21) + 0.1);
+        led($("camD"));
+        const gone = lines($("titles"), [[["ويطلع.", 170]]], "title", { top: "905px" });
+        step(gone.words[0], W(16) + 0.03);
+        stepOff(gone.words[0], W(17) - 0.06);
+        // closing chapter card in the opening card's slot (bookend)
+        const T2 = lines($("titles"), [[["لا", 84], ["تدور", 84], ["على", 84]], [["صور", 150], ["أقل.", 150]]], "title", { top: "270px" });
+        [17, 18, 19, 20, 21].forEach((wi, k) => step(T2.words[k], W(wi) - F));
+
+        const grains = Array.from(document.querySelectorAll(".grain"));
+        for (let f = 0; f < D * 30; f += 2) grains.forEach((g, i) => TL.set(g, { opacity: i === (f / 2) % 6 ? 0.5 : 0 }, f * F));
+        window.__timelines["main"] = TL; TL.seek(0);
+      }
+      window.__hf = window.__hf || {}; window.__hf.buildReady = window.__hf.buildReady || {};
+      window.__hf.buildReady["main"] = build();
+    </script>
+  </body>
+</html>

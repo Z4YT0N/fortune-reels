@@ -7,8 +7,12 @@
 | 2024: Air Canada's chatbot invented a bereavement-fare policy; the tribunal held the airline liable, about CAD 800 | Moffatt v. Air Canada, 2024 BCCRT 149 (verify the ruling page again before reuse; first used from the team's script) | (add the decision URL when re-verified) | needs re-check | Hallucination |
 | Web page visual appeal is judged within 50 ms; 50 ms ratings tallied well with longer viewing (Lindgaard et al., Carleton University, Behaviour & Information Technology 25(2), 2006) | Nature News 2006 | https://www.nature.com/news/2006/060109/full/news060109-13.html | 2026-10-29 | 50 ms first impression |
 | Users form a stay-or-leave gut feeling in under 50 ms; aesthetic judgement within 17-50 ms; simple + familiar designs preferred, high visual complexity rated less beautiful | Google Research blog 2012 + Tuch et al. IJHCS 70(11) 2012 | https://research.google/blog/users-love-simple-and-familiar-designs-why-websites-need-to-make-a-great-first-impression/ , https://research.google/pubs/pub38315/ | 2026-10-29 | 50 ms first impression |
+| Google uses the mobile version of a site's content, crawled with the smartphone agent, for indexing and ranking (mobile-first indexing) | Google Search Central docs | https://developers.google.com/search/docs/crawling-indexing/mobile/mobile-sites-mobile-first-indexing | 2026-10-31 | Mobile-first |
+| If the mobile site has less content than desktop, "you can expect some traffic loss" when mobile-first indexing is enabled | Google Search Central docs (same page) | https://developers.google.com/search/docs/crawling-indexing/mobile/mobile-sites-mobile-first-indexing | 2026-10-31 | Mobile-first |
+| Oct 31 2023: Google announced "Mobile-first indexing has landed" (move complete; a few non-mobile sites still crawled by desktop Googlebot) | Google Search Central blog | https://developers.google.com/search/blog/2023/10/mobile-first-is-here | 2026-10-31 (body read via summary) | Mobile-first |
 
 ## Rejected (do not use)
 | claim | why |
 |---|---|
+| "Sites not usable on mobile are no longer indexed" / "July 5 2024 end of desktop crawling" | not found on Google pages opened 2026-10-31; the 2023 post says such sites are still crawled with desktop Googlebot |
 | "Amazon loses 1% of sales for every 100 ms of latency" | no primary source found (2026-10-29) |

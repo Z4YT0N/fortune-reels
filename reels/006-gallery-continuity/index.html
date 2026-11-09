@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="ar" data-resolution="portrait">
+  <!-- Reel 006 test (first ~12 s), type pass 5 (visual-study vocabulary: echo stack on «صور», words flying in on curves from off-screen, ghost trails + squash on the tag, «ويستنى» marquee rows behind the man, «ويطلع» exits on a curve, «يخفف» zigzag feather path) + pass 4 (depth: «عميلك» behind the man via fg-man.webm matte; hand-to-type snap on «صور»; ROAR blur-in connectors; every group keeps breathing; tag hangs on a string; real motion blur in post: render 120 fps + tmix). Pass 2 notes follow. Owner 2026-11-07: «التكست كله في مكان واحد… كأنه كابشنز عادي مش من ضمن التصميم».
+       Every line now LIVES in its scene and reacts to it (positions measured on bg.mp4, see NOTE.md):
+       S1 the words are the design tool's own labels (frame name over the selection box, a dimension pill on its edge),
+          «٣٤ ميجا» is a tag hanging off the iron weight; the impact jolts the labels; the crack swallows the tag.
+       S2 «عميلك» is marker-written with an arrow drawn to the man; «ويستنى» lives on a tape strip across him and stretches;
+          «ويطلع» whips out with his phone.
+       S3 «لا تدور على صور أقل» arrives as a push notification on his phone (tracked to the phone), struck through in marker;
+          «دور على أحد يعرف» is typed into the phone's search bar; «يخفف» lands above the phone like the feather.
+       build_test.py fills 11.91 and WORDS. Previous column version: test-v2-column.tpl.bak -->
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1080, height=1920">
+    <title>Gallery continuity test</title>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/MotionPathPlugin.min.js"></script>
+    <style>
+      @font-face { font-family: "ZainL"; src: url("assets/fonts/zain-mob-long.ttf") format("truetype"); }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1080px; height: 1920px; overflow: hidden; background: #F0F1F2; }
+      #main { position: relative; width: 100%; height: 100%; overflow: hidden; font-family: "ZainL", sans-serif; color: #121416; }
+      #bgWrap { position: absolute; inset: 0; }
+      #bgWrap video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+      #stage { position: absolute; inset: 0; }
+      .el { position: absolute; direction: rtl; will-change: transform; }
+      .ln { display: flex; flex-direction: row; justify-content: flex-start; align-items: baseline; white-space: nowrap; }
+      .tk { position: relative; display: inline-block; margin: 0 0.06em; }
+      .m { display: inline-block; overflow: hidden; padding: 0.10em 0.14em 0.26em; margin: -0.10em -0.14em -0.26em; vertical-align: bottom; }
+      .w { display: inline-block; line-height: 1.12; }
+      .box { position: absolute; left: -0.14em; right: -0.14em; top: 0.14em; bottom: 0.04em; background: #00DB33; transform: scaleX(0); transform-origin: right center; z-index: -1; }
+      .scrap { background: #F0F1F2; box-shadow: 2px 3px 8px rgba(18,20,22,0.28), 6px 10px 26px rgba(18,20,22,0.16);
+               clip-path: polygon(0 5%, 8% 0, 22% 4%, 38% 0, 55% 4%, 72% 0, 88% 4%, 100% 0, 98% 50%, 100% 96%, 84% 100%, 64% 96%, 44% 100%, 24% 96%, 6% 100%, 0 95%, 2% 50%); }
+      .tape { position: absolute; width: 150px; height: 44px; background: rgba(226,222,206,0.85); box-shadow: 0 1px 3px rgba(18,20,22,0.15); }
+      .chip { background: #00DB33; border-radius: 10px; padding: 6px 22px 14px; }
+      svg.mk { position: absolute; overflow: visible; }
+      svg.mk path { fill: none; stroke: #00DB33; stroke-width: 12; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1; stroke-dashoffset: 1; }
+      #ph { position: absolute; left: 0; top: 0; width: 880px; height: 1540px; transform-origin: 0 0; opacity: 0; }
+      .notif { position: absolute; left: 40px; top: 96px; width: 800px; height: 112px; border-radius: 30px; background: rgba(250,250,248,0.97);
+               box-shadow: 0 6px 22px rgba(18,20,22,0.28); display: flex; align-items: center; padding: 0 26px; direction: rtl; gap: 18px; }
+      .appic { width: 64px; height: 64px; border-radius: 16px; background: #00DB33; flex: none; }
+      .search { position: absolute; left: 50px; top: 100px; width: 780px; height: 96px; border-radius: 48px; background: #ffffff; border: 4px solid #121416;
+                display: flex; align-items: center; padding: 0 30px; direction: rtl; gap: 14px; opacity: 0; }
+      .caret { width: 6px; height: 54px; background: #00DB33; opacity: 0; }
+      .echo .w { color: transparent; -webkit-text-stroke: 4px #121416; }
+      .echoG .w { color: transparent; -webkit-text-stroke: 5px #00DB33; }
+      .grain { position: absolute; inset: 0; width: 1080px; height: 1920px; mix-blend-mode: soft-light; opacity: 0; z-index: 30; }
+    </style>
+  </head>
+  <body>
+    <div id="main" data-composition-id="main" data-start="0" data-duration="11.91" data-width="1080" data-height="1920">
+      <div id="bgWrap"><video id="bg" src="assets/video/bg.mp4" data-start="0" data-duration="11.91" data-media-start="0" data-track-index="0" muted playsinline></video></div>
+      <div id="stage" class="clip" data-start="0" data-duration="11.91" data-track-index="1">
+        <div id="ph">
+          <div class="notif" id="notif"><div class="appic"></div><div id="notifTxt" style="position:relative;flex:1;height:100%"></div></div>
+          <div class="search" id="search"><svg width="46" height="46" viewBox="0 0 50 50" style="flex:none"><circle cx="21" cy="21" r="14" fill="none" stroke="#121416" stroke-width="6"/><path d="M31 31 L44 44" stroke="#121416" stroke-width="7" stroke-linecap="round"/></svg><div id="searchTxt" style="position:relative;flex:1;height:100%"></div><div class="caret" id="caret"></div></div>
+        </div>
+        <div id="behind" style="position:absolute;inset:0"></div>
+        <div id="fgWrap" style="position:absolute;inset:0;opacity:0"><video id="fg" src="assets/video/fg-man.webm" data-start="4.6" data-duration="3.1" data-media-start="0" data-track-index="3" muted playsinline style="position:absolute;inset:0;width:100%;height:100%"></video></div>
+        <div id="front" style="position:absolute;inset:0"></div>
+        <img class="grain" src="assets/img/grain0.png" alt=""><img class="grain" src="assets/img/grain1.png" alt=""><img class="grain" src="assets/img/grain2.png" alt="">
+        <img class="grain" src="assets/img/grain3.png" alt=""><img class="grain" src="assets/img/grain4.png" alt=""><img class="grain" src="assets/img/grain5.png" alt="">
+      </div>
+      <!-- no <audio> in the page: the browser fetching an mp3 from localhost made IDM pop a download (owner 2026-11-07). Audio is muxed with ffmpeg after the render. -->
+    </div>
+    <script>
+      // Type pass 3 (owner 2026-11-07: «مبتستخدمش اي حاجه من اللي اتعلمتها» + words flashed: shown plain, hidden, then animated).
+      // Flash fix: every word is put in its hidden pre-entrance state at BUILD time (clip / mask / opacity), and no TL.set ever
+      // shows a word before its entrance tween runs.
+      // Craft (rules/text-motion.md), one move per carrier:
+      //   frame label    = paper wipes in on frame 1, two-tone ink (grey -> ink), kashida tail reveal on «صور», selection box with handles, block cursor
+      //   dimension pill = Arabic typewriter (ONE growing string, joins intact) + «كبيرة» overshoot as two stacked tweens
+      //   weight tag     = object carries text (drop + rotation settle), «٣٤» smear slam on the impact, «ميجا» highlight wipe after it lands
+      //   «عميلك»        = zoom-out reveal (fills the frame, pulls back in 0.28 s); «يفتحه من جواله» overlapping masked rise, grey -> ink
+      //   «ويستنى»       = kashida stretch: the second one grows out of the first and keeps stretching until «ويطلع»
+      //   «ويطلع»        = smear slam in, anticipation + back.in whip out with the phone
+      //   notification   = spring arrival (two stacked tweens) + two-tone ink with the voice + marker strike
+      //   search bar     = typewriter at the voice's pace + blinking caret
+      //   «يخفف»         = carried down like the feather (sine sway, rotation swings) + blur-in focus pull + highlight wipe
+      const D = 11.91;
+      const WORDS = [["معرض", 0.0, 0.32], ["صور", 0.4, 0.64], ["في", 0.67, 0.72], ["موقع", 0.8, 1.12], ["شركة", 1.18, 1.44], ["كبيرة،", 1.51, 2.0], ["حجمه", 2.06, 2.4], ["اربعه", 2.44, 2.72], ["وثلاثين", 2.76, 3.12], ["ميجا.", 3.2, 3.68], ["عميلك", 3.73, 4.08], ["يفتحه", 4.12, 4.48], ["من", 4.53, 4.64], ["جواله،", 4.69, 5.2], ["ويستنى،", 5.28, 6.08], ["ويستنى،", 6.19, 7.04], ["ويطلع.", 7.15, 7.84], ["لا", 7.87, 7.92], ["تدور", 7.97, 8.32], ["على", 8.36, 8.48], ["صور", 8.54, 8.72], ["أقل.", 8.8, 9.28], ["دور", 9.36, 9.6], ["على", 9.64, 9.76], ["أحد", 9.86, 10.16], ["يعرف", 10.21, 10.48], ["يخفف", 10.52, 10.92], ["اللي", 10.93, 11.04], ["عندك.", 11.1, 11.6], ["في", 11.63, 11.68], ["فورتشن", 11.76, 12.08], ["كود،", 12.16, 12.56], ["نبدا", 12.64, 12.88], ["من", 12.91, 12.96], ["الأرقام.", 13.0, 13.6], ["وش", 13.65, 13.76], ["اللي", 13.79, 13.92], ["مبطئ", 14.0, 14.32], ["الصفحة؟", 14.38, 14.96], ["وين", 15.0, 15.2], ["يطلع", 15.24, 15.52], ["الزاير؟", 15.56, 16.08], ["وش", 16.16, 16.32], ["يحتاج", 16.36, 16.72], ["يشوف", 16.77, 17.04], ["أول؟", 17.14, 17.52], ["اشتغلنا", 17.6, 18.08], ["على", 18.12, 18.24], ["كل", 18.32, 18.48], ["صورة", 18.56, 18.8], ["في", 18.83, 18.88], ["المعرض.", 18.93, 19.44], ["نفس", 19.52, 19.76], ["الصور،", 19.8, 20.32], ["ونفس", 20.4, 20.72], ["الجودة.", 20.78, 21.36], ["والحجم", 21.42, 21.92], ["صار", 22.08, 22.32], ["ميه", 22.44, 22.64], ["واربعين", 22.72, 23.2], ["كيلو", 23.28, 23.52], ["بس.", 23.65, 24.16], ["والمعرض", 24.21, 24.64], ["يفتح", 24.68, 25.12], ["قبل", 25.22, 25.52], ["ما", 25.57, 25.68], ["ترمش.", 25.76, 26.32], ["إذا", 26.38, 26.56], ["موقعك", 26.62, 26.96], ["يبطئ", 27.0, 27.36], ["وما", 27.42, 27.6], ["تدري", 27.65, 27.84], ["ليش،", 27.88, 28.32], ["اطلب", 28.4, 28.72], ["فحص", 28.76, 28.96], ["مجاني", 29.04, 29.44], ["لموقعك،", 29.49, 30.16], ["وخل", 30.2, 30.4], ["فورتشن", 30.44, 30.8], ["كود", 30.84, 31.12], ["تقول", 31.2, 31.52], ["لك", 31.57, 31.68], ["وش", 31.76, 31.92], ["اللي", 31.95, 32.08], ["مبطئه.", 32.13, 32.88]];
+      const W = (i) => WORDS[i][1];
+      const F = 1 / 30;
+      window.__timelines = window.__timelines || {};
+      const TL = gsap.timeline({ paused: true });
+      const stage = document.getElementById("stage");
+      const ph = document.getElementById("ph");
+      function grp(parent, x, y, tokens, opt = {}) {
+        const e = document.createElement("div"); e.className = "el " + (opt.cls || ""); Object.assign(e.style, { left: x + "px", top: y + "px" }, opt.style || {});
+        if (opt.w) e.style.width = opt.w + "px";
+        const L = document.createElement("div"); L.className = "ln"; e.appendChild(L);
+        const toks = tokens.map(([text, o]) => {
+          const tk = document.createElement("span"); tk.className = "tk"; tk.style.fontSize = (o.s || 80) + "px"; if (o.col) tk.style.color = o.col;
+          if (o.hl !== undefined) { const bx = document.createElement("span"); bx.className = "box"; tk.appendChild(bx); }
+          const m = document.createElement("span"); m.className = "m"; const w = document.createElement("span"); w.className = "w"; w.textContent = text;
+          m.appendChild(w); tk.appendChild(m); L.appendChild(tk); return { tk, w, m, o, text };
+        });
+        (parent || stage).appendChild(e);
+        gsap.set(e, { rotation: opt.r || 0, transformOrigin: opt.origin || "50% 50%" });
+        return { e, toks };
+      }
+      const V = (i) => W(i) - 0.03; // a word lands on its own spoken frame, never before
+      // ── entrance library: each sets its hidden start state at build time ──
+      function rise(t, a, d = 0.36) { gsap.set(t.w, { yPercent: 115 }); TL.to(t.w, { yPercent: 0, duration: d, ease: "expo.out" }, a); }
+      function kash(t, a, d = 0.75) { gsap.set(t.w, { clipPath: "inset(-20% 0% -30% 100%)" }); TL.to(t.w, { clipPath: "inset(-20% 0% -30% 0%)", duration: d, ease: "expo.inOut" }, a); }
+      function inkIn(t, a) { gsap.set(t.tk, { color: "#a3a5a7" }); gsap.set(t.w, { yPercent: 115 }); TL.to(t.w, { yPercent: 0, duration: 0.3, ease: "expo.out" }, a); TL.to(t.tk, { color: "#121416", duration: 0.25, ease: "sine.out" }, a + 0.3); }
+      function hl(t, a) { TL.fromTo(t.tk.querySelector(".box"), { scaleX: 0 }, { scaleX: 1, duration: 4 * F, ease: "expo.out", immediateRender: false }, a); }
+      function slam(t, a, dir = 1) {
+        gsap.set(t.tk, { opacity: 0 });
+        TL.fromTo(t.tk, { x: 240 * dir, scaleX: 1.4, skewX: -10 * dir, filter: "blur(9px)", opacity: 1 }, { x: -8 * dir, scaleX: 1, skewX: 0, filter: "blur(0px)", opacity: 1, duration: 3 * F, ease: "power3.out", immediateRender: false }, a);
+        TL.to(t.tk, { x: 0, duration: 0.3, ease: "sine.inOut" }, a + 3 * F);
+      }
+      // overshoot = two stacked tweens: +k past rest, then a 50/50 settle starting 2 f before the first ends
+      function over(el, a, k = 0.07, d = 0.22) { TL.to(el, { scale: 1 + k, duration: d, ease: "power2.out" }, a); TL.to(el, { scale: 1, duration: 0.3, ease: "sine.inOut" }, a + d - 2 * F); }
+      // Arabic typewriter: ONE string grows, so the joins re-form naturally; finishes by tEnd
+      function typeOn(el, str, t0, tEnd) {
+        el.textContent = ""; const ch = [...str]; const step = Math.min(1 / 14, (tEnd - t0) / ch.length);
+        for (let k = 1; k <= ch.length; k++) TL.set(el, { textContent: ch.slice(0, k).join("") }, t0 + (k - 1) * step);
+      }
+      function mark(parent, x, y, w, h, d, a, dur = 0.5) {
+        const s = document.createElementNS("http://www.w3.org/2000/svg", "svg"); s.setAttribute("class", "mk"); s.setAttribute("viewBox", `0 0 ${w} ${h}`);
+        Object.assign(s.style, { left: x + "px", top: y + "px", width: w + "px", height: h + "px" });
+        const p = document.createElementNS("http://www.w3.org/2000/svg", "path"); p.setAttribute("d", d); p.setAttribute("pathLength", "1"); s.appendChild(p);
+        (parent || stage).appendChild(s);
+        TL.fromTo(p, { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: dur, ease: "power2.inOut", immediateRender: false }, a);
+        return s;
+      }
+      // selection box with handles around an element (design-tool language)
+      function selBox(el, a, aOff) {
+        const s = document.createElement("div"); Object.assign(s.style, { position: "absolute", left: "-14px", right: "-14px", top: "-8px", bottom: "-4px", border: "4px dashed #121416", opacity: 0, pointerEvents: "none" });
+        [["-13px", "-13px", "auto", "auto"], ["auto", "-13px", "-13px", "auto"], ["-13px", "auto", "auto", "-13px"], ["auto", "auto", "-13px", "-13px"]].forEach(([l, tp, r, b]) => { const h = document.createElement("i"); Object.assign(h.style, { position: "absolute", width: "20px", height: "20px", background: "#00DB33", border: "4px solid #121416", left: l, top: tp, right: r, bottom: b }); s.appendChild(h); });
+        el.appendChild(s);
+        TL.fromTo(s, { opacity: 0, scale: 0.9 }, { opacity: 1, scale: 1, duration: 0.3, ease: "expo.out", immediateRender: false }, a);
+        TL.to(s, { opacity: 0, duration: 0.2, ease: "power2.in" }, aOff);
+      }
+      // ROAR word entrance (12 fps study of ref 01): blur 8 px + 14 px rise + opacity, 0.32 s, word by word on the voice
+      function blurIn(t, a) { gsap.set(t.tk, { opacity: 0, y: 14, filter: "blur(8px)" }); TL.to(t.tk, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.32, ease: "power2.out" }, a); }
+      // continuous life: a group keeps breathing while it is on screen (never freezes after its entrance)
+      function live(el, a, b, k = 0.035) { TL.fromTo(el, { scale: 1 }, { scale: 1 + k, duration: Math.max(0.3, b - a), ease: "sine.inOut", immediateRender: false }, a); }
+      // hand to type (jordans.archivess ref 16): a marker scribble draws for 4 f, 1 f flash, then the clean word is there
+      function snap(parent, tok, a, flashEl) {
+        const r = tok.tk.getBoundingClientRect(), pr = parent.getBoundingClientRect();
+        const sc = mark(parent, r.left - pr.left, r.top - pr.top + r.height * 0.15, r.width, r.height * 0.7,
+          `M${r.width * 0.95} ${r.height * 0.45} C${r.width * 0.75} ${r.height * 0.05} ${r.width * 0.6} ${r.height * 0.7} ${r.width * 0.45} ${r.height * 0.3} S${r.width * 0.2} ${r.height * 0.6} ${r.width * 0.05} ${r.height * 0.25}`, a, 4 * F);
+        gsap.set(tok.w, { opacity: 0 });
+        TL.set(sc, { opacity: 0 }, a + 5 * F); TL.set(tok.w, { opacity: 1 }, a + 5 * F);
+        if (flashEl) { TL.set(flashEl, { backgroundColor: "#00DB33" }, a + 5 * F); TL.set(flashEl, { backgroundColor: "#F0F1F2" }, a + 6 * F); }
+      }
+      // ── pass 5: motion vocabulary from the VISUAL study (research/youtube-learning/visual) ──
+      // fly: a whole word (joins intact) rides a curved path in from off-screen; pts are offsets from its rest position
+      function fly(el, a, pts, d = 0.7, rot = 0) {
+        gsap.set(el, { opacity: 0 });
+        TL.set(el, { opacity: 1 }, a);
+        TL.fromTo(el, { x: pts[0].x, y: pts[0].y, rotation: rot }, { motionPath: { path: pts.slice(1).concat([{ x: 0, y: 0 }]), curviness: 1.25, fromCurrent: true }, rotation: 0, duration: d, ease: "power3.out", immediateRender: false }, a);
+      }
+      // echo stack (Campfire NEW x7): outline copies stacked above collapse down into the solid word
+      function echoStack(tok, a, n = 5, gap = 0.9, green) {
+        // clones live on the stage (outside the paper's clip-path), placed over the word's box at build time
+        const r = tok.tk.getBoundingClientRect(), sr = stage.getBoundingClientRect();
+        for (let k = 1; k <= n; k++) {
+          const c = document.createElement("div"); c.className = "el " + (green && k % 2 ? "echoG" : "echo");
+          Object.assign(c.style, { left: (r.left - sr.left) + "px", top: (r.top - sr.top) + "px", width: r.width + "px", fontSize: tok.tk.style.fontSize, lineHeight: "1.12", textAlign: "center" });
+          const w = document.createElement("span"); w.className = "w"; w.textContent = tok.text; c.appendChild(w); stage.appendChild(c);
+          gsap.set(c, { opacity: 0, y: -k * gap * r.height });
+          TL.set(c, { opacity: Math.max(0.2, 1 - k * 0.15) }, a);
+          TL.to(c, { y: 0, opacity: 0, duration: 0.42, ease: "power3.in" }, a + 0.05 + k * 2 * F);
+        }
+      }
+      // ghost trails: lagging copies behind a falling element (stylised smear)
+      function trails(el, n = 3) { const o = []; for (let k = 1; k <= n; k++) { const c = el.cloneNode(true); c.style.opacity = 0; el.parentNode.insertBefore(c, el); o.push([c, k]); } return o; }
+      // marquee rows (Campfire US US / Optious rows): repeated word rows sliding in opposite directions
+      function rows(parent, word, y0, n, size, a, b) {
+        const els = [];
+        for (let k = 0; k < n; k++) {
+          const row = document.createElement("div"); row.className = "el " + (k % 2 ? "echo" : "echoG");
+          Object.assign(row.style, { left: "-400px", top: (y0 + k * size * 1.05) + "px", width: "1900px", whiteSpace: "nowrap", fontSize: size + "px", direction: "rtl" });
+          const sp = document.createElement("span"); sp.className = "w"; sp.style.lineHeight = "1"; sp.textContent = (word + "   ").repeat(8); row.appendChild(sp);
+          parent.appendChild(row); els.push(row);
+          gsap.set(row, { opacity: 0, x: k % 2 ? -200 : 200 });
+          TL.to(row, { opacity: 1, duration: 0.25 }, a + k * 2 * F);
+          TL.to(row, { x: k % 2 ? 200 : -200, duration: b - a, ease: "none" }, a);
+        }
+        return els;
+      }
+      function out(els, a, to, d = 0.25) { els.forEach((e) => TL.to(e, Object.assign({ opacity: 0, duration: d, ease: "power2.in" }, to), a)); }
+
+      async function build() {
+        gsap.registerPlugin(MotionPathPlugin);
+        await document.fonts.ready; await document.fonts.load("80px ZainL", "معرض");
+        TL.to({}, { duration: D }, 0);
+        const IMPACT = 2.35;
+
+        // ═══ S1: design-tool labels ═══
+        const lab = grp(null, 0, 0, [["معرض", { s: 92 }], ["صور", { s: 140 }]], { cls: "scrap", origin: "100% 100%", style: { padding: "0 34px 18px" } });
+        lab.e.style.left = "auto"; lab.e.style.right = "120px"; lab.e.style.top = "250px";
+        gsap.set(lab.e, { clipPath: "inset(0% 0% 0% 100%)" });
+        TL.to(lab.e, { clipPath: "inset(0% 0% 0% 0%)", duration: 0.3, ease: "expo.out" }, 0);
+        inkIn(lab.toks[0], 0.02); snap(lab.e, lab.toks[1], V(1) - 4 * F, lab.e); echoStack(lab.toks[1], V(1) - 0.3, 5, 0.85, true); live(lab.e, 0.3, W(10) - 0.3, 0.03);
+        selBox(lab.e, V(1) + 0.45, V(5) + 0.1);
+        const cur = document.createElement("div"); Object.assign(cur.style, { position: "absolute", left: "8px", top: "34px", width: "12px", height: "120px", background: "#00DB33", opacity: 0 }); lab.e.appendChild(cur);
+        for (let t = 0.1; t < V(2) - 0.2; t += 0.4) { TL.set(cur, { opacity: 1 }, t); TL.set(cur, { opacity: 0 }, t + 0.2); }
+        // dimension pill: typed like a readout; «كبيرة» punches with a stacked overshoot
+        const pill = document.createElement("div"); pill.className = "el chip"; Object.assign(pill.style, { right: "120px", top: "418px", display: "flex", alignItems: "baseline", gap: "12px" }); stage.appendChild(pill);
+        const pA = document.createElement("span"); pA.style.fontSize = "50px"; pA.style.display = "inline-flex"; pA.style.gap = "10px"; const pB = document.createElement("span"); pB.style.fontSize = "74px"; pB.style.display = "inline-block";
+        pill.appendChild(pA); pill.appendChild(pB);
+        const pw = ["في", "موقع", "شركة"].map((t) => { const e = document.createElement("span"); e.textContent = t; e.style.display = "inline-block"; pA.appendChild(e); return e; });
+        gsap.set(pill, { opacity: 0, scaleX: 0.2, transformOrigin: "100% 50%" });
+        TL.to(pill, { opacity: 1, scaleX: 1, duration: 0.3, ease: "expo.out" }, V(2) - 0.1);
+        live(pill, V(2) + 0.3, W(10) - 0.3, 0.03); [2, 3, 4].forEach((wi, k) => fly(pw[k], V(wi) - 0.12, [{ x: 520 - k * 60, y: -330 + k * 40 }, { x: 260, y: 60 }], 0.55, -25));
+        pB.textContent = "كبيرة،"; fly(pB, V(5) - 0.12, [{ x: 600, y: 260 }, { x: 240, y: -90 }], 0.5, 18); over(pB, V(5) + 0.4, 0.12);
+        // tag: carried by the weight; «٣٤» slams on the impact; «ميجا» gets the wipe after it lands
+        const tag = document.createElement("div"); tag.className = "el scrap"; Object.assign(tag.style, { left: "250px", top: "1170px", width: "320px", height: "240px" }); stage.appendChild(tag);
+        const tg1 = grp(tag, 18, 16, [["حجمه", { s: 58 }]], { w: 290 });
+        const tg2 = grp(tag, 4, 86, [["٣٤", { s: 120 }], ["ميجا", { s: 86, hl: 1 }]], { w: 310 });
+        gsap.set(tag, { opacity: 0, y: -420, rotation: 10, transformOrigin: "80% 0%" });
+        TL.set(tag, { opacity: 1 }, IMPACT - 0.3);
+        TL.to(tag, { y: 0, rotation: -9, duration: 0.3, ease: "power3.in" }, IMPACT - 0.3);
+        TL.to(tag, { rotation: -4, duration: 0.18, ease: "power2.out" }, IMPACT); TL.to(tag, { rotation: -6, duration: 0.4, ease: "sine.inOut" }, IMPACT + 0.16);
+        blurIn(tg1.toks[0], V(6));
+        const str = document.createElementNS("http://www.w3.org/2000/svg", "svg"); Object.assign(str.style, { position: "absolute", left: "0", top: "0", width: "1080px", height: "1920px", overflow: "visible" });
+        str.innerHTML = '<path d="M648 1075 C610 1110 575 1140 548 1182" fill="none" stroke="#121416" stroke-width="5" stroke-linecap="round" pathLength="1" stroke-dasharray="1" stroke-dashoffset="1"/>'; stage.insertBefore(str, tag);
+        TL.to(str.querySelector("path"), { strokeDashoffset: 0, duration: 0.2, ease: "power2.out" }, IMPACT + 0.05); TL.to(str, { opacity: 0, duration: 0.2 }, W(10) - 0.28);
+        slam(tg2.toks[0], Math.max(V(7), IMPACT)); rise(tg2.toks[1], V(9)); hl(tg2.toks[1], V(9) + 0.3);
+        trails(tag, 3).forEach(([c, k]) => { gsap.set(c, { y: -420, rotation: 10, transformOrigin: "80% 0%" }); TL.set(c, { opacity: 0.35 - k * 0.09 }, IMPACT - 0.3); TL.to(c, { y: 0, rotation: -9, duration: 0.3, ease: "power3.in" }, IMPACT - 0.3 + k * 2 * F); TL.set(c, { opacity: 0 }, IMPACT + k * 2 * F); });
+        TL.to(tag, { scaleY: 0.82, scaleX: 1.08, duration: 3 * F, ease: "power2.out" }, IMPACT); TL.to(tag, { scaleY: 1, scaleX: 1, duration: 0.35, ease: "back.out(2)" }, IMPACT + 3 * F);
+        // the impact jolts the labels
+        [lab.e, pill].forEach((e, k) => { TL.to(e, { y: 16 + k * 6, rotation: k ? 2.5 : -2, duration: 0.08, ease: "power2.out" }, IMPACT); TL.to(e, { y: 0, rotation: k ? 1 : -1, duration: 0.5, ease: "back.out(1.4)" }, IMPACT + 0.08); });
+        // the ink burst eats S1: labels fly up, the tag is pulled into the crack (exits faster than entrances)
+        out([lab.e, pill], W(10) - 0.28, { y: -260, filter: "blur(6px)", ease: "back.in(1.3)" });
+        out([tag], W(10) - 0.28, { y: 320, rotation: 30 });
+
+        // ═══ S2 ═══
+        const cl = grp(document.getElementById("behind"), 60, 540, [["عميلك", { s: 250 }]], { w: 900, origin: "50% 50%" });
+        live(cl.e, V(10) + 0.3, 6.7, 0.05);
+        TL.to("#fgWrap", { opacity: 1, duration: 0.2, ease: "none" }, 5.4); TL.set("#fgWrap", { opacity: 0 }, 7.6);
+        gsap.set(cl.e, { opacity: 0 });
+        TL.fromTo(cl.e, { scale: 2.6, x: 0, y: 120, opacity: 1 }, { scale: 1, x: 0, y: 0, opacity: 1, duration: 0.28, ease: "expo.out", immediateRender: false }, V(10));
+        const op = grp(null, 360, 300, [["يفتحه", { s: 70 }], ["من", { s: 70 }], ["جواله،", { s: 70, hl: 1 }]], { w: 600 });
+        [11, 12, 13].forEach((wi, k) => fly(op.toks[k].tk, V(wi) - 0.1, [{ x: -760 + k * 80, y: 420 }, { x: -360, y: -120 }], 0.6, -14)); live(op.e, V(11), 6.7, 0.03);
+        hl(op.toks[2], V(13) + 0.35);
+        const ar = mark(null, 300, 400, 300, 150, "M290 8 C230 40 170 90 80 122 M80 122 L122 96 M80 122 L116 142", 4.95, 0.3);
+        // «ويستنى» strip: the second «ويستنى» grows out of the first and keeps stretching
+        const strip = document.createElement("div"); strip.className = "el scrap"; Object.assign(strip.style, { left: "60px", top: "1240px", width: "900px", height: "150px" }); stage.appendChild(strip);
+        gsap.set(strip, { rotation: -3, scaleX: 0, transformOrigin: "100% 50%" });
+        TL.to(strip, { scaleX: 1, duration: 0.35, ease: "expo.out" }, V(14) - 0.15); live(strip, V(14) + 0.3, 6.9, 0.025);
+        const w1 = grp(strip, 30, 4, [["ويستنى،", { s: 104 }]], { w: 840 });
+        rise(w1.toks[0], V(14));
+        const w2 = grp(strip, 30, 4, [["ويستنـــــــــــى،", { s: 104 }]], { w: 840 });
+        const shortW = w1.toks[0].tk.getBoundingClientRect().width, longW = w2.toks[0].tk.getBoundingClientRect().width;
+        const startPct = Math.max(0, 100 - (shortW / longW) * 100);
+        gsap.set(w2.toks[0].w, { clipPath: "inset(-20% 0% -30% 100%)" });
+        TL.set(w2.toks[0].w, { clipPath: `inset(-20% 0% -30% ${startPct.toFixed(1)}%)` }, V(15));
+        TL.set(w1.e, { opacity: 0 }, V(15));
+        const wr = rows(document.getElementById("behind"), "ويستنى", 640, 5, 150, V(15) - 0.1, 7.4); out(wr, 7.1, {});
+        TL.to(w2.toks[0].w, { clipPath: "inset(-20% 0% -30% 0%)", duration: W(16) - V(15), ease: "sine.inOut" }, V(15));
+        // «ويطلع»: smear slam in, whip out with the phone
+        const go = grp(null, 90, 640, [["ويطلع.", { s: 150, hl: 1 }]], { w: 470 });
+        slam(go.toks[0], V(16), 1); hl(go.toks[0], V(16) + 0.2);
+        out([cl.e, op.e, ar], 6.7, { y: -220 });
+        out([strip], 6.9, { y: 260, rotation: -8 });
+        TL.to(go.e, { x: 30, duration: 0.12, ease: "sine.out" }, 7.5);
+        TL.to(go.e, { motionPath: { path: [{ x: -200, y: -160 }, { x: -520, y: -60 }, { x: -900, y: 260 }], curviness: 1.3 }, rotation: -28, duration: 0.42, ease: "power3.in" }, 7.55);
+
+        // ═══ S3: on his phone (bezel box tracked every 0.1 s on bg.mp4) ═══
+        const K = [[7.95, 230, 690, 470], [8.0, 210, 590, 552], [8.2, 172, 420, 712], [8.4, 158, 360, 768], [8.6, 142, 330, 804], [8.8, 130, 308, 830], [9.0, 122, 296, 848], [9.2, 118, 340, 854], [9.4, 116, 374, 858], [9.6, 114, 390, 864], [10.0, 110, 386, 872], [10.5, 106, 382, 880], [D, 106, 380, 880]];
+        gsap.set(ph, { x: K[0][1], y: K[0][2], scale: K[0][3] / 880 });
+        TL.set(ph, { opacity: 1 }, K[0][0]);
+        for (let i = 1; i < K.length; i++) TL.to(ph, { x: K[i][1], y: K[i][2], scale: K[i][3] / 880, duration: K[i][0] - K[i - 1][0], ease: "none" }, K[i - 1][0]);
+        const nt = grp(document.getElementById("notifTxt"), 0, 12, [["لا", { s: 64 }], ["تدور", { s: 46 }], ["على", { s: 46 }], ["صور", { s: 58 }], ["أقل.", { s: 58 }]]);
+        nt.e.style.left = "auto"; nt.e.style.right = "0px";
+        nt.toks.forEach((t, k) => { gsap.set(t.tk, { color: "#b4b6b8" }); TL.to(t.tk, { color: "#121416", duration: 0.15 }, V(17 + k)); });
+        const notif = document.getElementById("notif");
+        gsap.set(notif, { y: -170, opacity: 0 });
+        TL.to(notif, { y: 14, opacity: 1, duration: 0.3, ease: "power3.out" }, 8.05); TL.to(notif, { y: 0, duration: 0.3, ease: "sine.inOut" }, 8.29);
+        mark(notif, 120, 36, 330, 50, "M320 30 C240 18 150 34 70 24 C40 20 20 28 6 22", V(21) + 0.3, 0.18);
+        TL.to(notif, { y: -170, opacity: 0, duration: 0.22, ease: "power2.in" }, W(22) - 0.3);
+        const search = document.getElementById("search");
+        gsap.set(search, { opacity: 0, scaleX: 0.6 });
+        TL.to(search, { opacity: 1, scaleX: 1, duration: 0.3, ease: "expo.out" }, W(22) - 0.15);
+        const sT = document.createElement("span"); sT.style.fontSize = "56px"; sT.style.whiteSpace = "nowrap"; document.getElementById("searchTxt").appendChild(sT);
+        typeOn(sT, "دور على أحد يعرف", V(22), W(25) + 0.3);
+        const caret = document.getElementById("caret");
+        for (let t = W(22) - 0.1; t < D - 0.3; t += 0.5) { TL.set(caret, { opacity: 1 }, t); TL.set(caret, { opacity: 0 }, t + 0.25); }
+        const lite = grp(null, 230, 236, [["يخفف", { s: 130, hl: 1 }], ["اللي عندك.", { s: 60 }]], { w: 730, origin: "70% 0%" });
+        gsap.set(lite.e, { opacity: 0, filter: "blur(10px)" });
+        TL.set(lite.e, { opacity: 1 }, V(26) - 0.35);
+        TL.fromTo(lite.e, { x: 260, y: -520 }, { motionPath: { path: [{ x: -180, y: -380 }, { x: 160, y: -240 }, { x: -120, y: -110 }, { x: 60, y: -30 }, { x: 0, y: 0 }], curviness: 1.6, fromCurrent: true }, duration: 1.05, ease: "sine.out", immediateRender: false }, V(26) - 0.35);
+        [[V(26) - 0.35, 10], [V(26) - 0.05, -10], [V(26) + 0.25, 7], [V(26) + 0.5, -2]].forEach(([t, r]) => TL.to(lite.e, { rotation: r, duration: 0.28, ease: "sine.inOut" }, t));
+        TL.to(lite.e, { filter: "blur(0px)", duration: 0.6, ease: "expo.out" }, V(26) - 0.35);
+        hl(lite.toks[0], V(26) + 0.55); blurIn(lite.toks[1], V(27)); live(lite.e, V(26) + 0.9, D, 0.03);
+
+        const grains = Array.from(document.querySelectorAll(".grain"));
+        for (let f = 0; f < D * 30; f += 2) grains.forEach((g, i) => TL.set(g, { opacity: i === (f / 2) % 6 ? 0.55 : 0 }, f * F));
+        window.__timelines["main"] = TL; TL.seek(0);
+      }
+      window.__hf = window.__hf || {}; window.__hf.buildReady = window.__hf.buildReady || {};
+      window.__hf.buildReady["main"] = build();
+    </script>
+  </body>
+</html>

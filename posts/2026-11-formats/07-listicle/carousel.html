@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8">
+<link rel="stylesheet" href="common.css">
+<style>
+html,body { width:6480px; height:1350px; }
+.dev { position:absolute; -webkit-mask-image: radial-gradient(ellipse 50% 50% at 50% 50%, #000 62%, transparent 100%); }
+.card { position:absolute; border:3px solid var(--g); border-radius:26px; background:rgba(18,20,22,.72); box-shadow:0 0 40px rgba(0,219,51,.18); }
+.card .num { position:absolute; right:40px; top:50%; transform:translateY(-50%); font-size:170px; line-height:1; font-weight:700; color:var(--g); text-shadow:0 0 40px rgba(0,219,51,.5); }
+.card .ttl { position:absolute; right:170px; top:26px; font-size:62px; line-height:1.2; font-weight:700; color:#fff; white-space:nowrap; }
+.card .dsc { position:absolute; right:170px; top:118px; font-size:38px; line-height:1.4; font-weight:500; color:var(--mute); white-space:nowrap; }
+.chip { position:absolute; background:#1b1e21; border:2px solid rgba(255,255,255,.3); border-radius:14px; padding:4px 20px 0; font-size:38px; white-space:nowrap; box-shadow:0 14px 30px rgba(0,0,0,.55); }
+.src { position:absolute; font-family:Plex; direction:ltr; font-size:19px; color:#8d9195; white-space:nowrap; }
+.pill { display:inline-block; background:var(--g); color:var(--bg); border-radius:16px; padding:0 22px; }
+.lat { font-family:Plex; direction:ltr; unicode-bidi:isolate; }
+.cut { position:absolute; filter: drop-shadow(0 30px 40px rgba(0,0,0,.6)); }
+/* Plex: room under the baseline for pills/chips/labels */
+.pill { line-height:1.28; padding-bottom:6px; }
+.chip { padding-bottom:10px; font-weight:600; }
+.lbl { padding-bottom:10px; font-weight:700; }
+</style></head>
+<body>
+<div id="stage"></div>
+<svg class="marks" width="6480" height="1350" style="z-index:40"></svg>
+<script src="footer.js"></script><script src="gallery.js"></script>
+<script>document.querySelector('svg.marks').innerHTML = '<defs><filter id="rough"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="4"/><feDisplacementMap in="SourceGraphic" scale="3"/></filter></defs><g id="mk"></g>';</script>
+<script>const PAGE_W = 6480;</script>
+<script src="kit.js"></script>
+<script>
+const LAP_Q = [[178,473],[718,473],[723,812],[172,812]], PHONE_Q = [[341,358],[555,358],[555,826],[341,826]];
+for (let i = 1; i <= 6; i++) brand(i);
+glow(S(1, 560), 640, 560); for (let i = 2; i <= 6; i++) glow(S(i, 540), 820, 470, .85);
+function card(i, num, ttl, dsc, top = 160, h = 250) {
+  return el(`<div class="card" style="left:${S(i, 70)}px; top:${top}px; width:940px; height:${h}px"><div class="num">${num}</div><div class="ttl">${ttl}</div><div class="dsc">${dsc}</div></div>`, 30);
+}
+function phone(i, left, top, width, html, bg = '#F4F5F6') {
+  const Q = device('gen/p2_phone.png', 896, PHONE_Q, S(i, left), top, width, 5);
+  const ui = screen(430, 940, html, bg); ui.style.borderRadius = '44px'; onScreen(ui, 430, 940, Q); return Q;
+}
+function laptop(i, left, top, width, html, bg = '#fff') {
+  const Q = device('gen/p1_laptop.png', 896, LAP_Q, S(i, left), top, width, 5);
+  onScreen(screen(1280, 796, html, bg), 1280, 796, Q); return Q;
+}
+const bar = (t = 0) => `<div class="abs" style="left:0; right:0; top:${t}px; height:64px; background:#fff; border-bottom:1px solid #e3e5e8"></div><div class="abs" style="right:30px; top:${t + 22}px; width:110px; height:22px; border-radius:6px; background:#121416"></div><div class="abs" style="left:30px; top:${t + 22}px; width:34px; height:22px; border-top:4px solid #121416; border-bottom:4px solid #121416"></div>`;
+
+/* ============ 1 — cover ============ */
+ct(1, 120, '٥', 360, 'line-height:1; color:var(--g); text-shadow:0 0 70px rgba(0,219,51,.6), 0 0 160px rgba(0,219,51,.3)');
+ct(1, 468, 'أشياء تخلّي العميل', 76);
+ct(1, 556, 'يطلع من <span class="g">موقعك</span>', 124);
+ct(1, 724, 'راجع موقعك عليها وحدة وحدة.', 40, '', 'mute');
+el(`<img class="cut" src="gen/g1_man_wait.png" style="left:${S(1, 395)}px; top:790px; width:290px; transform:rotate(-3deg)">`, 20);
+el(`<div class="chip" style="left:${S(1, 130)}px; top:900px; transform:rotate(-6deg)">يحمّل…</div>`, 31);
+el(`<div class="chip" style="left:${S(1, 720)}px; top:960px; transform:rotate(5deg)">وش ذا؟</div>`, 31);
+el(`<div class="t mute" style="left:auto; right:${PAGE_W - S(1, 1000)}px; transform:none; top:1092px; font-size:38px">اسحب</div>`, 30);
+P(`M${S(1, 880)},1156 C ${S(1, 960)},1170 ${S(1, 1010)},1150 ${S(2, 40)},1110`); arrowHead(S(2, 44), 1106, -25);
+
+/* ============ 2 — slow ============ */
+card(2, '١', 'يفتح ببطء', 'العميل ما ينتظر.<br>يرجع لقوقل ويختار غيرك.');
+phone(2, 330, 380, 760, `${bar()}<div class="abs" style="left:0; top:64px; height:8px; width:18%; background:var(--g)"></div>
+  <div class="abs" style="left:150px; top:330px; width:130px; height:130px; border-radius:50%; border:14px solid #d6d9dc; border-top-color:#121416"></div>
+  ${[0,1,2].map(k => `<div class="abs" style="left:40px; top:${540 + k * 110}px; width:350px; height:84px; border-radius:12px; background:#e7e9eb"></div>`).join('')}`);
+el(`<div class="abs" style="left:${S(2, 90)}px; top:560px; font-size:44px; line-height:1.3; font-weight:600; white-space:nowrap">فوق <span class="g">٣ ثواني</span>؟<br><span class="g" style="font-size:120px; line-height:1.1; text-shadow:0 0 40px rgba(0,219,51,.45)">٥٣٪</span><br>من زوار الجوال<br>يطلعون.</div>`, 30);
+el(`<div class="src" style="left:${S(2, 90)}px; top:1100px">Source: Google, The Need for Mobile Speed (2016)</div>`, 30);
+
+/* ============ 3 — outdated look ============ */
+card(3, '٢', 'شكله قديم', 'الزائر يحكم عليه قبل<br>ما يقرأ أي كلمة.');
+{ const Q = laptop(3, 70, 0, 940, `<div style="font-family:'Times New Roman',serif; direction:ltr">
+    <div class="abs" style="left:0; right:0; top:0; height:120px; background:linear-gradient(#3b5998, #1d2f5c); color:#ffd700; font-size:56px; text-align:center; line-height:120px; font-weight:bold; letter-spacing:2px">WELCOME TO OUR WEBSITE</div>
+    <div class="abs" style="left:0; right:0; top:120px; height:44px; background:#c0c0c0; color:#00f; font-size:24px; line-height:44px; padding-left:20px; text-decoration:underline; word-spacing:30px">Home About Products Gallery Contact</div>
+    <div class="abs" style="left:30px; top:200px; width:360px; height:560px; background:#ffffcc; border:3px ridge #999; padding:20px; font-size:24px; color:#000; line-height:1.4">Latest News<br><span style="color:#f00; font-weight:bold">NEW!!</span> Click here<br><span style="color:#00f; text-decoration:underline">Download catalog</span><br><br>Visitors: 004219</div>
+    <div class="abs" style="left:420px; top:200px; width:820px; height:420px; background:url(gen/p5_photo_a.png) center/cover; filter:saturate(.4) contrast(.8) blur(1.5px); border:6px outset #aaa"></div>
+    <div class="abs" style="left:420px; top:650px; width:820px; font-size:24px; color:#333; line-height:1.4">Lorem ipsum dolor sit amet, best quality since 1999...</div></div>`, '#e8e8e8');
+  window.Q3 = Q; }
+ct(3, 980, 'أول انطباع يتكوّن في حوالي <span class="g">٥٠ ملي ثانية</span>.', 42);
+el(`<div class="src" style="left:${S(3, 540)}px; transform:translateX(-50%); top:1060px">Source: Lindgaard et al., Behaviour &amp; Information Technology (2006)</div>`, 30);
+
+/* ============ 4 — not mobile-ready ============ */
+card(4, '٣', 'ما يضبط على الجوال', 'كلام صغير، أزرار ما تنضغط،<br>وتسحب يمين ويسار.');
+{ const Q = phone(4, 330, 380, 760, `<div class="abs" style="left:0; top:0; width:820px; transform:scale(.62); transform-origin:0 0; font-family:Plex; direction:ltr">
+    <div style="height:80px; background:#121416"></div>
+    <div style="display:flex; gap:20px; padding:20px; font-size:22px; color:#333"><span>Home</span><span>Services</span><span>Projects</span><span>About</span><span>Contact us today</span></div>
+    <div style="height:380px; margin:0 20px; background:url(gen/p6_photo_b.png) center/cover"></div>
+    <div style="padding:20px; font-size:20px; color:#555; line-height:1.5">${'We deliver solutions for every business. '.repeat(14)}</div></div>`, '#fff');
+  window.Q4 = Q; }
+el(`<div class="abs" style="left:${S(4, 90)}px; top:560px; font-size:46px; line-height:1.35; font-weight:600; white-space:nowrap">وقوقل نفسه<br>يقرأ <span class="g">نسخة الجوال</span><br>من موقعك أول.</div>`, 30);
+el(`<div class="src" style="left:${S(4, 90)}px; top:1100px">Source: Google Search Central, mobile-first indexing</div>`, 30);
+
+/* ============ 5 — unclear offer ============ */
+card(5, '٤', 'ما يقول وش تبيع', 'أول شاشة لازم تقول:<br>وش تسوي، ولمين، وليش أنت.');
+{ const Q = laptop(5, 70, 10, 940, `${bar()}
+    <div class="abs" style="left:0; right:0; top:64px; height:560px; background:url(gen/p5_photo_a.png) center/cover"></div>
+    <div class="abs" style="left:0; right:0; top:64px; height:560px; background:rgba(0,0,0,.45)"></div>
+    <div class="abs" id="vague" style="left:0; right:0; top:250px; text-align:center; font-family:Plex; font-size:84px; color:#fff">مرحبًا بكم في موقعنا</div>
+    <div class="abs" style="left:0; right:0; top:390px; text-align:center; font-family:Plex; font-size:40px; color:#ddd">نحن الأفضل دائمًا</div>
+    <div class="abs" style="left:560px; top:580px; display:flex; gap:14px">${[1,0,0,0].map(a => `<i style="width:14px; height:14px; border-radius:50%; background:${a ? '#fff' : 'rgba(255,255,255,.4)'}"></i>`).join('')}</div>
+    ${[0,1,2].map(k => `<div class="abs" style="right:${60 + k * 400}px; top:660px; width:360px; height:110px; border-radius:12px; background:#e7e9eb"></div>`).join('')}`);
+  window.Q5 = Q; }
+ct(5, 1010, 'لو احتاج يفكّر… <span class="g">طلع</span>.', 56);
+
+/* ============ 6 — no way to reach you + CTA ============ */
+card(6, '٥', 'ما يلقى كيف يكلّمك', 'لا واتساب، ولا رقم واضح،<br>ونموذج طويل.', 160, 250);
+{ const Q = phone(6, 560, 420, 560, `${bar()}<div class="abs" style="right:30px; top:90px; font-family:Plex; font-size:40px; color:#121416">تواصل معنا</div>
+    ${['الاسم','البريد','الجوال','الشركة','المدينة','الميزانية','الرسالة'].map((f, k) => `<div class="abs" style="left:30px; right:30px; top:${160 + k * 96}px"><div style="font-family:Plex; font-size:22px; color:#555; text-align:right">${f} *</div><div style="height:48px; border:1.5px solid #c9ccd0; border-radius:8px; background:#fff"></div></div>`).join('')}
+    <div class="abs" style="left:30px; right:30px; top:850px; height:56px; border-radius:8px; background:#9aa0a6"></div>`);
+  window.Q6 = Q; }
+rt(6, 520, 450, 'أي واحد منها', 50, '', 'fit');
+rt(6, 520, 512, 'في موقعك؟', 50);
+rt(6, 520, 610, 'اكتب', 50);
+rt(6, 520, 670, 'انطباع', 150, 'line-height:1; color:var(--g); text-shadow:0 0 50px rgba(0,219,51,.5)');
+rt(6, 520, 850, 'بالتعليقات، ونقول لك', 40, '', 'mute');
+rt(6, 520, 905, 'وش اللي ناقص.', 40, '', 'mute');
+el(`<div class="chip" style="left:${S(6, 120)}px; top:1050px; display:flex; gap:14px; align-items:center; font-size:36px">${SAVE_ICON}احفظ البوست</div>`, 31);
+
+document.fonts.ready.then(() => {
+  fitLines('.t', 900); fitLines('.fit', 560); fitLines('.card .ttl', 740); fitLines('.card .dsc', 740);
+  const map = (Q, w, h, x, y) => { const [a, b, c, d] = Q, u = x / w, v = y / h; return [(1-u)*(1-v)*a[0] + u*(1-v)*b[0] + u*v*c[0] + (1-u)*v*d[0], (1-u)*(1-v)*a[1] + u*(1-v)*b[1] + u*v*c[1] + (1-u)*v*d[1]]; };
+  // 3: circle the shouting banner
+  { const p = map(window.Q3, 1280, 796, 0, 0), q = map(window.Q3, 1280, 796, 1280, 120); ring({ left: p[0], right: q[0], top: p[1], bottom: q[1], width: q[0] - p[0], height: q[1] - p[1] }, 10, 24);
+    el(`<div class="chip" style="left:${S(3, 800)}px; top:${p[1] + 110}px; transform:rotate(6deg)">٢٠٠٥؟</div>`, 31); }
+  // 4: two-way arrow = horizontal scroll
+  { const y = map(window.Q4, 430, 940, 0, 520)[1], l = map(window.Q4, 430, 940, 0, 520)[0], r = map(window.Q4, 430, 940, 430, 520)[0];
+    P(`M${l + 30},${y} C ${l + 120},${y - 14} ${r - 120},${y + 14} ${r - 30},${y}`); arrowHead(r - 26, y, 0); arrowHead(l + 26, y, 180); }
+  // 5: circle the vague headline
+  { const p = map(window.Q5, 1280, 796, 300, 250), q = map(window.Q5, 1280, 796, 980, 450); ring({ left: p[0], right: q[0], top: p[1], bottom: q[1], width: q[0] - p[0], height: q[1] - p[1] }, 60, 50);
+    el(`<div class="chip" style="left:${S(5, 640)}px; top:${p[1] + 300}px; transform:rotate(-5deg)">طيب وش تسوون؟</div>`, 31); }
+  // 6: question mark scribble over form
+  { const p = map(window.Q6, 430, 940, 215, 400); el(`<div class="abs" style="left:${p[0] - 60}px; top:${p[1] - 120}px; font-size:190px; line-height:1; font-weight:700; color:var(--g); text-shadow:0 0 30px rgba(0,219,51,.5); transform:rotate(10deg)">؟</div>`, 41); }
+  document.body.dataset.ready = 1;
+});
+</script>
+</body></html>

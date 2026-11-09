@@ -1,0 +1,9 @@
+{
+  "name": "style-lab-max",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "check": "npx --yes hyperframes@0.8.152 check",
+    "render": "npx --yes hyperframes@0.8.152 render --quality draft --workers 2 --output renders/draft.mp4"
+  }
+}

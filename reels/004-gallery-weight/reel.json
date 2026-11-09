@@ -1,0 +1,21 @@
+{
+  "slug": "gallery-weight",
+  "title": "Heavy gallery: 34 MB to 140 KB",
+  "created": "2026-11-06",
+  "status": "delivered",
+  "speed": 1.0,
+  "voice": {
+    "id": "hKxOF1e0PGHjtctJDcOl",
+    "pick": "B"
+  },
+  "keyword": "فحص مجاني",
+  "sources": [
+    "November 2026 content plan (owner-approved): gallery 34 MB -> 140 KB (project withheld, no client name/logo per DECISIONS)"
+  ],
+  "delivered": "2026-11-06",
+  "flow": {
+    "model": "Omni 1.1 Flash",
+    "clips": 3,
+    "credits": 45
+  }
+}

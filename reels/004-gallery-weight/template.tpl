@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="ar" data-resolution="portrait">
+  <!-- Reel 004 Heavy gallery (34 MB -> 140 KB). tools/captions.py fills __TITLE__, __D__, __SPEED__ and CAPS and
+       writes index.html. Edit THIS file, never index.html.
+       Look: ROAR-style paper collage in Fortune colours. Light Gray paper, prints with 3-layer shadows, pieces boil
+       on twos (12 fps), stepped grain (15 fps), 1-frame invert hits, Google Flow Omni clips inside polaroid frames. -->
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1080, height=1920">
+    <title>__TITLE__</title>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      @font-face { font-family: "Plex Arabic"; font-weight: 500; src: url("assets/fonts/plex-ar-500.woff2") format("woff2"); unicode-range: U+0600-06FF, U+0750-077F, U+FB50-FDFF, U+FE70-FEFF, U+200C-200F; }
+      @font-face { font-family: "Plex Arabic"; font-weight: 700; src: url("assets/fonts/plex-ar-700.woff2") format("woff2"); unicode-range: U+0600-06FF, U+0750-077F, U+FB50-FDFF, U+FE70-FEFF, U+200C-200F; }
+      @font-face { font-family: "Plex Arabic"; font-weight: 500; src: url("assets/fonts/plex-lat-500.woff2") format("woff2"); unicode-range: U+0000-00FF, U+2000-206F; }
+      @font-face { font-family: "Plex Arabic"; font-weight: 700; src: url("assets/fonts/plex-lat-700.woff2") format("woff2"); unicode-range: U+0000-00FF, U+2000-206F; }
+      @font-face { font-family: "Inter"; font-weight: 700; src: url("assets/fonts/inter-lat-700.woff2") format("woff2"); }
+      @font-face { font-family: "Inter"; font-weight: 800; src: url("assets/fonts/inter-lat-800.woff2") format("woff2"); }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1080px; height: 1920px; overflow: hidden; background: #F0F1F2; }
+      #main { position: relative; width: 100%; height: 100%; overflow: hidden; font-family: "Plex Arabic", sans-serif; color: #121416; }
+      .clip { position: absolute; inset: 0; }
+      .abs { position: absolute; }
+      .o0 { opacity: 0; }
+      .en { font-family: "Inter", sans-serif; }
+      .rtl { direction: rtl; }
+      #cam { position: absolute; inset: 0; transform-origin: 540px 700px; }
+      .ground { position: absolute; inset: -60px; background-size: cover; background-position: center; }
+      #gPaper { background-image: url("assets/img/paper.jpg"); }
+      #gDark { background-image: url("assets/img/paper-dark.jpg"); opacity: 0; }
+      #gForest { background-image: url("assets/img/paper-forest.jpg"); opacity: 0; }
+      /* collage pieces: photo prints with a white mat, 3 stacked shadows from one light (top-left) */
+      .print { position: absolute; background: #fbfbfa; padding: 14px; box-shadow: 3px 4px 10px rgba(18,20,22,0.30), 6px 9px 30px rgba(18,20,22,0.18), 10px 14px 44px rgba(18,20,22,0.10); }
+      .print img { display: block; width: 100%; height: 100%; object-fit: cover; }
+      .print::after { content: ""; position: absolute; inset: 0; box-shadow: inset 1px 1px 0 rgba(255,255,255,0.6); pointer-events: none; }
+      #pHall { left: 300px; top: 300px; width: 480px; height: 760px; }
+      #pDoor { left: 70px; top: 330px; width: 260px; height: 320px; }
+      #pTower { left: 760px; top: 270px; width: 250px; height: 310px; }
+      #pFalcon { left: 90px; top: 720px; width: 270px; height: 240px; }
+      #pDunes { left: 700px; top: 640px; width: 320px; height: 290px; }
+      #pDallah { left: 820px; top: 940px; width: 200px; height: 210px; }
+      /* the weight tag */
+      #mb { left: 0; width: 1080px; top: 470px; text-align: center; direction: ltr; font-family: "Inter"; font-weight: 800; font-size: 250px; letter-spacing: -0.06em; line-height: 1; color: #121416; }
+      #mbTag { left: 230px; top: 420px; width: 620px; height: 330px; background: #121416; border-radius: 26px; transform-origin: 310px 0; box-shadow: 4px 6px 14px rgba(18,20,22,0.35), 10px 18px 50px rgba(18,20,22,0.25); }
+      #mbTag .h { position: absolute; left: 275px; top: -54px; width: 70px; height: 70px; border-radius: 50%; border: 14px solid #121416; }
+      #mbTag .v { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; direction: ltr; font-family: "Inter"; font-weight: 800; font-size: 190px; letter-spacing: -0.06em; color: #F0F1F2; }
+      #mbTag .v small { font-size: 110px; margin-left: 22px; color: #00DB33; }
+      /* polaroid frames that hold the Flow clips (frame within a frame) */
+      .pola { position: absolute; left: 260px; top: 250px; width: 560px; height: 880px; background: #fbfbfa; padding: 22px 22px 70px; box-shadow: 3px 4px 10px rgba(18,20,22,0.30), 6px 9px 30px rgba(18,20,22,0.18), 10px 14px 44px rgba(18,20,22,0.10); opacity: 0; transform-origin: 280px 440px; }
+      .pola .win { position: relative; width: 100%; height: 100%; overflow: hidden; background: #121416; }
+      .pola video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+      .tape { position: absolute; width: 170px; height: 46px; background: rgba(0,219,51,0.78); top: -20px; left: 195px; transform: rotate(-4deg); box-shadow: 1px 2px 4px rgba(18,20,22,0.18); }
+      .badge { position: absolute; right: -36px; top: 60px; width: 132px; height: 132px; border-radius: 50%; background: #121416; display: flex; align-items: center; justify-content: center; opacity: 0; box-shadow: 3px 5px 14px rgba(18,20,22,0.35); }
+      /* torn paper notes */
+      .note { position: absolute; width: 300px; height: 300px; background: #F0F1F2; display: flex; align-items: center; justify-content: center; box-shadow: 3px 4px 10px rgba(0,0,0,0.35), 8px 12px 34px rgba(0,0,0,0.25); opacity: 0;
+              clip-path: polygon(0 3%, 9% 0, 21% 2%, 33% 0, 47% 3%, 60% 0, 74% 2%, 88% 0, 100% 3%, 98% 18%, 100% 34%, 97% 51%, 100% 67%, 98% 83%, 100% 97%, 86% 100%, 71% 97%, 57% 100%, 42% 97%, 28% 100%, 13% 97%, 0 100%, 2% 82%, 0 64%, 3% 47%, 0 30%, 2% 15%); }
+      #n1 { left: 80px; top: 360px; } #n2 { left: 390px; top: 560px; } #n3 { left: 700px; top: 360px; }
+      /* snapback: the slab and the shrinking weight */
+      #slab { left: 120px; top: 560px; width: 840px; height: 120px; background: #121416; transform-origin: right center; transform: scaleX(0); }
+      #kb { left: 340px; top: 470px; width: 400px; height: 440px; transform-origin: 200px 440px; opacity: 0; }
+      /* dark world: the numbers */
+      #mark { left: 410px; top: 330px; width: 260px; opacity: 0; }
+      .bar { position: absolute; left: 180px; height: 46px; border-radius: 23px; background: #BBBDBF; transform-origin: right center; transform: scaleX(0); }
+      /* work: grid of prints + scan */
+      .gp { position: absolute; width: 290px; height: 330px; background: #fbfbfa; padding: 12px; box-shadow: 3px 4px 10px rgba(18,20,22,0.30), 6px 9px 30px rgba(18,20,22,0.18); opacity: 0; }
+      .gp img { width: 100%; height: 100%; object-fit: cover; display: block; }
+      .gp .ok { position: absolute; right: -18px; top: -18px; width: 74px; height: 74px; border-radius: 50%; background: #00DB33; display: flex; align-items: center; justify-content: center; opacity: 0; }
+      #scan { left: 60px; width: 960px; top: 290px; height: 10px; background: #00DB33; border-radius: 5px; opacity: 0; box-shadow: 0 0 0 2px rgba(0,219,51,0.25); }
+      /* forest world: the counter */
+      #ctr { left: 0; width: 1080px; top: 420px; text-align: center; direction: ltr; font-family: "Inter"; font-weight: 800; font-size: 300px; letter-spacing: -0.06em; line-height: 1; color: #F0F1F2; opacity: 0; }
+      #ctrU { left: 0; width: 1080px; top: 740px; text-align: center; direction: ltr; font-family: "Inter"; font-weight: 800; font-size: 120px; color: #00DB33; opacity: 0; }
+      #sizeBar { left: 120px; top: 940px; width: 840px; height: 54px; border-radius: 27px; background: rgba(18,20,22,0.35); overflow: hidden; opacity: 0; direction: ltr; }
+      #sizeBar i { display: block; height: 100%; width: 100%; background: #F0F1F2; transform-origin: left center; border-radius: 27px; }
+      /* CTA */
+      #cta { left: 140px; top: 360px; width: 800px; height: 520px; opacity: 0; }
+      #ctaNote { position: absolute; inset: 0; background: #F0F1F2; box-shadow: 3px 4px 10px rgba(18,20,22,0.30), 6px 9px 30px rgba(18,20,22,0.18), 10px 14px 44px rgba(18,20,22,0.10);
+                 clip-path: polygon(0 2%, 8% 0, 19% 2%, 31% 0, 44% 2%, 58% 0, 71% 2%, 85% 0, 100% 2%, 99% 22%, 100% 45%, 98% 70%, 100% 98%, 84% 100%, 66% 98%, 50% 100%, 33% 98%, 16% 100%, 0 98%, 2% 72%, 0 48%, 2% 24%); }
+      #ctaT { position: absolute; left: 0; right: 0; top: 70px; text-align: center; direction: rtl; font-weight: 700; font-size: 104px; line-height: 1.25; color: #121416; }
+      #ctaT b { color: #006A39; }
+      #stamp { position: absolute; left: 230px; top: 330px; width: 340px; height: 130px; border: 10px solid #00DB33; border-radius: 22px; color: #006A39; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 74px; direction: rtl; transform: rotate(-6deg); opacity: 0; }
+      #logoPill { position: absolute; left: 50%; top: 236px; width: 360px; height: 104px; margin-left: -180px; border-radius: 52px; background: #121416; display: flex; align-items: center; justify-content: center; opacity: 0; }
+      #logoPill img { width: 260px; }
+      /* caption zone: y 1180-1440, nothing else enters it */
+      #scrim { position: absolute; left: 0; right: 0; top: 1110px; height: 400px; background: linear-gradient(to bottom, rgba(240,241,242,0), rgba(240,241,242,0.9) 40%, rgba(240,241,242,0.9) 82%, rgba(240,241,242,0)); }
+      #cap { position: absolute; left: 60px; width: 960px; top: 1180px; height: 260px; direction: rtl; }
+      .chunk { position: absolute; inset: 0; display: flex; flex-wrap: wrap; justify-content: center; align-content: center; text-align: center; font-size: 80px; font-weight: 700; line-height: 1.3; opacity: 0; color: #121416; }
+      .chunk span { display: inline-block; margin: 0 0.12em; opacity: 0; }
+      .chunk .hl { color: #006A39; }
+      #cap.onA .chunk { color: #F0F1F2; } #cap.onA .chunk .hl { color: #00DB33; }
+      #cap.onB .chunk { color: #F0F1F2; } #cap.onB .chunk .hl { color: #F0F1F2; text-decoration: underline; text-decoration-color: #00DB33; text-decoration-thickness: 8px; text-underline-offset: 14px; }
+      /* texture on top of everything */
+      .grain { position: absolute; inset: 0; width: 1080px; height: 1920px; mix-blend-mode: soft-light; opacity: 0; image-rendering: auto; }
+      #flash { position: absolute; inset: 0; background: #ffffff; mix-blend-mode: difference; opacity: 0; }
+      #vig { position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 42%, rgba(0,0,0,0) 58%, rgba(18,20,22,0.22) 100%); }
+    </style>
+  </head>
+  <body>
+    <div id="main" data-composition-id="main" data-start="0" data-duration="__D__" data-width="1080" data-height="1920">
+      <div id="stage" class="clip" data-start="0" data-duration="__D__" data-track-index="0">
+        <div id="cam">
+          <div id="gPaper" class="ground"></div>
+          <div id="gDark" class="ground"></div>
+          <div id="gForest" class="ground"></div>
+
+          <!-- S1 hook: the heavy gallery -->
+          <div id="pHall" class="print boil"><img src="assets/img/p-hall.jpg" alt=""></div>
+          <div id="pDoor" class="print boil"><img src="assets/img/p-door.jpg" alt=""></div>
+          <div id="pTower" class="print boil"><img src="assets/img/p-tower.jpg" alt=""></div>
+          <div id="pFalcon" class="print boil"><img src="assets/img/p-falcon.jpg" alt=""></div>
+          <div id="pDunes" class="print boil"><img src="assets/img/p-dunes.jpg" alt=""></div>
+          <div id="pDallah" class="print boil"><img src="assets/img/p-dallah.jpg" alt=""></div>
+          <div id="mbTag" class="abs o0"><div class="h"></div><div class="v">34<small>MB</small></div></div>
+
+          <!-- S3 snapback -->
+          <div id="slab" class="abs"></div>
+          <svg id="kb" class="abs" viewBox="0 0 400 440"><path d="M130 110 C130 40 270 40 270 110" fill="none" stroke="#121416" stroke-width="34" stroke-linecap="round"/><path d="M60 120 H340 L380 420 H20 Z" fill="#121416"/><text x="200" y="330" text-anchor="middle" font-family="Inter" font-weight="800" font-size="120" fill="#F0F1F2">MB</text></svg>
+
+          <!-- S4-S5 dark world: start from the numbers, three questions -->
+          <img id="mark" class="abs" src="assets/brand/mark.svg" alt="">
+          <div id="b1" class="bar" style="top:720px;width:720px;"></div>
+          <div id="b2" class="bar" style="top:800px;width:520px;"></div>
+          <div id="b3" class="bar" style="top:880px;width:640px;background:#00DB33;"></div>
+          <div id="n1" class="note boil"><svg width="200" height="200" viewBox="0 0 200 200"><path d="M30 140 A75 75 0 1 1 170 140" fill="none" stroke="#121416" stroke-width="16" stroke-linecap="round"/><path d="M100 140 L58 82" stroke="#00DB33" stroke-width="16" stroke-linecap="round"/><circle cx="100" cy="140" r="14" fill="#121416"/></svg></div>
+          <div id="n2" class="note boil"><svg width="200" height="200" viewBox="0 0 200 200"><rect x="40" y="26" width="90" height="150" rx="8" fill="none" stroke="#121416" stroke-width="14"/><path d="M110 100 H180 M150 70 L182 100 L150 130" fill="none" stroke="#00DB33" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <div id="n3" class="note boil"><svg width="200" height="200" viewBox="0 0 200 200"><path d="M14 100 C50 40 150 40 186 100 C150 160 50 160 14 100 Z" fill="none" stroke="#121416" stroke-width="14"/><circle cx="100" cy="100" r="30" fill="#00DB33"/><circle cx="100" cy="100" r="12" fill="#121416"/></svg></div>
+
+          <!-- S6 work on every photo -->
+          <div id="g1" class="gp boil" style="left:80px;top:300px;"><img src="assets/img/p-door.jpg" alt=""><div class="ok"><svg width="40" height="40" viewBox="0 0 56 56"><path d="M12 29 L24 40 L45 16" fill="none" stroke="#121416" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+          <div id="g2" class="gp boil" style="left:395px;top:300px;"><img src="assets/img/p-tower.jpg" alt=""><div class="ok"><svg width="40" height="40" viewBox="0 0 56 56"><path d="M12 29 L24 40 L45 16" fill="none" stroke="#121416" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+          <div id="g3" class="gp boil" style="left:710px;top:300px;"><img src="assets/img/p-falcon.jpg" alt=""><div class="ok"><svg width="40" height="40" viewBox="0 0 56 56"><path d="M12 29 L24 40 L45 16" fill="none" stroke="#121416" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+          <div id="g4" class="gp boil" style="left:235px;top:690px;"><img src="assets/img/p-dunes.jpg" alt=""><div class="ok"><svg width="40" height="40" viewBox="0 0 56 56"><path d="M12 29 L24 40 L45 16" fill="none" stroke="#121416" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+          <div id="g5" class="gp boil" style="left:555px;top:690px;"><img src="assets/img/p-dallah.jpg" alt=""><div class="ok"><svg width="40" height="40" viewBox="0 0 56 56"><path d="M12 29 L24 40 L45 16" fill="none" stroke="#121416" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+          <div id="scan" class="abs"></div>
+
+          <!-- S7 forest world: the counter -->
+          <div id="ctr" class="abs">34</div>
+          <div id="ctrU" class="abs">MB</div>
+          <div id="sizeBar" class="abs"><i></i></div>
+
+          <!-- S10 CTA -->
+          <div id="cta" class="abs boil"><div id="ctaNote"></div><div id="ctaT">اطلب <b>فحص</b><br>لموقعك</div><div id="stamp">مجاني</div></div>
+        </div>
+        <div id="logoPill"><img src="assets/brand/logo-white.png" alt=""></div>
+        <div id="scrim"></div>
+        <div id="cap"></div>
+      </div>
+
+      <!-- Google Flow clips (Omni 1.1 Flash) inside polaroids: untimed wrappers, timed videos -->
+      <div id="fB" class="pola"><div class="win"><video id="vB" src="assets/video/clipB.mp4" data-start="3.9" data-duration="3.85" data-media-start="0.3" data-track-index="1" muted playsinline></video></div><div class="tape"></div></div>
+      <div id="fC" class="pola"><div class="win"><video id="vC" src="assets/video/clipC.mp4" data-start="23.45" data-duration="2.05" data-media-start="7.0" data-track-index="2" muted playsinline></video></div><div class="tape"></div>
+        <div id="okC" class="badge"><svg width="76" height="76" viewBox="0 0 56 56"><path d="M12 29 L24 40 L45 16" fill="none" stroke="#00DB33" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+      <div id="f1" class="pola"><div class="win"><video id="v1" src="assets/video/clip1.mp4" data-start="25.4" data-duration="2.15" data-media-start="5.0" data-track-index="3" muted playsinline></video></div><div class="tape"></div>
+        <div id="hg" class="badge"><svg width="64" height="80" viewBox="0 0 64 80"><path d="M8 4 H56 M8 76 H56 M14 4 C14 30 50 34 50 40 C50 46 14 50 14 76 M50 4 C50 30 14 34 14 40 C14 46 50 50 50 76" fill="none" stroke="#F0F1F2" stroke-width="6" stroke-linecap="round"/><path d="M22 70 H42 L32 58 Z" fill="#00DB33"/></svg></div></div>
+
+      <div id="fx" class="clip" data-start="0" data-duration="__D__" data-track-index="4">
+        <img class="grain" src="assets/img/grain0.png" alt=""><img class="grain" src="assets/img/grain1.png" alt=""><img class="grain" src="assets/img/grain2.png" alt="">
+        <img class="grain" src="assets/img/grain3.png" alt=""><img class="grain" src="assets/img/grain4.png" alt=""><img class="grain" src="assets/img/grain5.png" alt="">
+        <div id="vig"></div>
+        <div id="flash"></div>
+      </div>
+      <audio id="mix" src="assets/audio/mix.mp3" data-start="0" data-duration="__D__" data-track-index="5" data-volume="1"></audio>
+    </div>
+
+    <script type="module">
+      import { mountCaptions } from "./lib/captions.js";
+      const CAPS = /*CAPS*/[];
+      const D = __D__, SPEED = __SPEED__;
+      const $ = (q) => document.querySelector(q);
+      const $$ = (q) => Array.from(document.querySelectorAll(q));
+      window.__timelines = window.__timelines || {};
+
+      async function build() {
+        await document.fonts.ready;
+        await Promise.all(["700 40px \"Plex Arabic\"", "500 40px \"Plex Arabic\"", "800 40px Inter", "700 40px Inter"].map((f) => document.fonts.load(f, "كلمة MB 34")));
+        await Promise.all($$("img").map((im) => im.complete ? 1 : new Promise((r) => { im.onload = im.onerror = r; })));
+
+        const tl = gsap.timeline({ paused: true });
+        tl.to({}, { duration: D }, 0);
+        const T = (s) => s / SPEED, at = T;
+        const inn = (sel, t, from, to = {}, d = 0.45, ease = "back.out(1.6)") => tl.fromTo(sel, Object.assign({ opacity: 0 }, from), Object.assign({ opacity: 1, duration: T(d), ease, immediateRender: false }, to), at(t));
+        const out = (sel, t, to = {}, d = 0.2, ease = "power2.in") => tl.to(sel, Object.assign({ opacity: 0, duration: T(d), ease }, to), at(t));
+        const set = (sel, t, v) => tl.set(sel, v, at(t));
+        const pop = (sel, t, s0 = 1.4) => inn(sel, t, { scale: s0 }, { scale: 1 }, 0.3, "back.out(2.2)");
+        // drop-in: from above, rotation settles at a small angle (never 0), with a 2-tween overshoot on scale
+        const drop = (sel, t, rot, y0 = -1300) => { tl.fromTo(sel, { y: y0, rotation: rot * 6, opacity: 1 }, { y: 0, rotation: rot, duration: T(0.35), ease: "back.out(1.6)", immediateRender: false }, at(t)); };
+        const nudge = (sels, t) => sels.forEach((s, i) => tl.to(s, { x: "+=" + (i % 2 ? 10 : -10), duration: T(0.06), yoyo: true, repeat: 1, ease: "power2.out" }, at(t + (i + 1) / 30)));
+        const world = (sel, t, on) => tl.to(sel, { opacity: on ? 1 : 0, duration: T(0.1), ease: "none" }, at(t));
+        const flash = (t) => { set("#flash", t, { opacity: 1 }); set("#flash", t + 1 / 30, { opacity: 0 }); };
+        const prints = ["#pHall", "#pDoor", "#pTower", "#pFalcon", "#pDunes", "#pDallah"];
+
+        // camera drift: one continuous slow move per world, never frozen
+        tl.fromTo("#cam", { scale: 1.0 }, { scale: 1.035, duration: T(3.9), ease: "sine.inOut", immediateRender: true }, 0);
+        tl.to("#cam", { scale: 1.0, duration: T(7.3), ease: "sine.inOut" }, at(3.9));
+        tl.to("#cam", { scale: 1.04, duration: T(6.0), ease: "sine.inOut" }, at(11.2));
+        tl.to("#cam", { scale: 1.0, duration: T(6.2), ease: "sine.inOut" }, at(17.2));
+        tl.to("#cam", { scale: 1.035, duration: D - at(23.4), ease: "sine.inOut" }, at(23.4));
+
+        // ── S1 HOOK 0-3.9: prints rain onto the paper (moving at frame 1), the 34 MB weight slams on them ──
+        prints.forEach((p, i) => set(p, 0, { opacity: 1 }));
+        tl.fromTo("#pHall", { y: -260, rotation: -9, scale: 1.08 }, { y: 0, rotation: -1.5, scale: 1, duration: T(0.42), ease: "back.out(1.5)", immediateRender: true }, 0);
+        drop("#pDoor", 0.28, 3); drop("#pTower", 0.52, -2); drop("#pFalcon", 0.78, -3); drop("#pDunes", 1.02, 2); drop("#pDallah", 1.26, -4);
+        tl.set(["#pDoor", "#pTower", "#pFalcon", "#pDunes", "#pDallah"], { y: -1300 }, 0);
+        nudge(["#pHall", "#pDunes"], 0.65); nudge(["#pHall", "#pFalcon"], 1.12);
+        // 2.56 «أربعة وثلاثين ميقا»: the black weight tag drops and squashes the gallery
+        set("#mbTag", 2.5, { opacity: 1 });
+        tl.fromTo("#mbTag", { y: -1100, rotation: -10 }, { y: 0, rotation: 3, duration: T(0.32), ease: "power3.in", immediateRender: false }, at(2.5));
+        tl.to("#mbTag", { scaleY: 0.9, scaleX: 1.05, duration: T(0.06), yoyo: true, repeat: 1, ease: "power2.out" }, at(2.82));
+        tl.to(prints, { y: "+=26", scaleY: 0.96, duration: T(0.08), yoyo: true, repeat: 1, ease: "power2.out", stagger: T(0.015) }, at(2.82));
+        tl.to("#mbTag", { rotation: -2, duration: T(0.5), ease: "sine.out" }, at(2.98));
+        tl.to("#cam", { y: 18, duration: T(0.05), yoyo: true, repeat: 3, ease: "none" }, at(2.82));
+        flash(3.44);
+        // 3.86 whip: everything leaves left
+        out(prints.concat(["#mbTag"]), 3.8, { x: -1250, rotation: "-=8" }, 0.18);
+
+        // ── S2 3.9-7.7: the customer on his phone (Flow clip in a polaroid) ──
+        inn("#fB", 3.86, { x: 1150, rotation: 9 }, { x: 0, rotation: -2.5 }, 0.36, "power3.out");
+        tl.to("#fB", { rotation: -1.2, duration: T(0.14), yoyo: true, repeat: 1, ease: "sine.out" }, at(4.22));
+        tl.to("#fB", { scale: 1.07, duration: T(3.0), ease: "sine.inOut" }, at(4.3));
+        // «ويستنى، ويستنى»: the frame sags twice
+        tl.to("#fB", { y: 18, duration: T(0.12), yoyo: true, repeat: 1, ease: "power2.out" }, at(5.44));
+        tl.to("#fB", { y: 26, duration: T(0.12), yoyo: true, repeat: 1, ease: "power2.out" }, at(6.24));
+        // 7.12 «ويطلع»: he is gone, the polaroid flies out right
+        flash(7.12);
+        out("#fB", 7.14, { x: 1200, rotation: 14 }, 0.22);
+
+        // ── S3 7.7-11.2: «لا تدور على صور أقل» / «دور على أحد يعرف يخفّف» ──
+        ["#pDoor", "#pTower", "#pDunes"].forEach((p, i) => set(p, 7.6, { x: 0, y: 0, rotation: [4, -3, 2][i], opacity: 0 }));
+        set("#pDoor", 7.6, { x: 0 }); set("#pTower", 7.6, { x: -380 }); set("#pDunes", 7.6, { x: -440, y: -200 });
+        drop("#pDoor", 7.7, 4, -1100); drop("#pTower", 7.86, -3, -1100); drop("#pDunes", 8.02, 2, -1100);
+        // 8.56 «أقل»: removing photos is NOT the answer; a black slab crosses them out
+        tl.to("#slab", { scaleX: 1, duration: T(0.14), ease: "power3.out" }, at(8.5));
+        tl.to(["#pDoor", "#pTower", "#pDunes"], { filter: "grayscale(1) brightness(0.8)", duration: T(0.1) }, at(8.56));
+        out(["#pDoor", "#pTower", "#pDunes", "#slab"], 9.04, { y: 1300, rotation: "+=10" }, 0.2);
+        set("#slab", 9.3, { scaleX: 0, opacity: 1 });
+        // 9.1-11.2: the heavy MB weight appears, then 10.24 «يخفّف» it shrinks and floats up
+        inn("#kb", 9.12, { y: -900, rotation: -8 }, { y: 0, rotation: 2 }, 0.32, "power3.in");
+        tl.to("#kb", { scaleY: 0.9, scaleX: 1.06, duration: T(0.06), yoyo: true, repeat: 1 }, at(9.44));
+        tl.to("#kb", { scale: 0.38, y: -260, rotation: -6, duration: T(0.5), ease: "back.out(1.4)" }, at(10.22));
+        tl.to("#kb", { y: -300, duration: T(0.6), ease: "sine.inOut" }, at(10.72));
+        out("#kb", 11.16, { y: -900 }, 0.16);
+
+        // ── S4 11.2-13.3 dark world: «في فورتشن كود نبدأ من الأرقام» ──
+        world("#gDark", 11.22, 1); set("#cap", 11.22, { className: "onA" });
+        tl.to("#scrim", { opacity: 0, duration: T(0.1) }, at(11.22));
+        inn("#mark", 11.3, { scale: 0.4, rotation: -40 }, { scale: 1, rotation: 0 }, 0.42, "back.out(1.8)");
+        tl.to("#b1", { scaleX: 1, duration: T(0.35), ease: "expo.out" }, at(12.7));
+        tl.to("#b2", { scaleX: 1, duration: T(0.35), ease: "expo.out" }, at(12.78));
+        tl.to("#b3", { scaleX: 1, duration: T(0.35), ease: "expo.out" }, at(12.86));
+        out(["#mark", "#b1", "#b2", "#b3"], 13.36, { y: -700 }, 0.16);
+
+        // ── S5 13.4-17.1: three questions, three torn notes ──
+        drop("#n1", 13.62, -4, -1100); drop("#n2", 14.82, 3, -1100); drop("#n3", 16.0, -3, -1100);
+        tl.to("#n1 path:last-of-type", { rotation: 70, transformOrigin: "100px 140px", duration: T(0.5), ease: "back.out(2)" }, at(13.9));
+        tl.to("#n2 svg", { x: 18, duration: T(0.25), yoyo: true, repeat: 1, ease: "power2.out" }, at(15.1));
+        tl.to("#n3 svg", { scaleY: 0.1, duration: T(0.06), yoyo: true, repeat: 1, transformOrigin: "100px 100px" }, at(16.6));
+        nudge(["#n1"], 14.95); nudge(["#n1", "#n2"], 16.1);
+        out(["#n1", "#n2", "#n3"], 17.06, { y: 1300, rotation: "+=12" }, 0.18);
+
+        // ── S6 17.2-21.05 paper: «اشتغلنا على كل صورة» ──
+        world("#gDark", 17.18, 0); set("#cap", 17.18, { className: "" });
+        tl.to("#scrim", { opacity: 1, duration: T(0.1) }, at(17.18));
+        ["#g1", "#g2", "#g3", "#g4", "#g5"].forEach((g, i) => drop(g, 17.22 + i * 0.07, [2, -2, 3, -3, 1][i], -1200));
+        set("#scan", 17.74, { opacity: 1, y: 0 });
+        tl.to("#scan", { y: 760, duration: T(1.4), ease: "power1.inOut" }, at(17.74));
+        out("#scan", 19.14, {}, 0.08);
+        ["#g1", "#g2", "#g3", "#g4", "#g5"].forEach((g, i) => pop(g + " .ok", 17.95 + (i < 3 ? 0 : 0.55) + (i % 3) * 0.12, 0.3));
+        // 19.28 «نفس الصور، ونفس الجودة»: push into the dunes print, sharp
+        tl.to("#cam", { scale: 1.5, x: 120, y: -150, duration: T(1.2), ease: "power2.inOut" }, at(19.3));
+        out(["#g1", "#g2", "#g3", "#g4", "#g5"], 20.98, { y: -1200 }, 0.14);
+        tl.to("#cam", { scale: 1.0, x: 0, y: 0, duration: T(0.12), ease: "power2.in" }, at(20.98));
+
+        // ── S7 21.08-23.45 forest: 34 MB -> 140 KB ──
+        world("#gForest", 21.06, 1); set("#cap", 21.06, { className: "onB" });
+        tl.to("#scrim", { opacity: 0, duration: T(0.1) }, at(21.06));
+        inn("#ctr", 21.1, { scale: 1.5 }, { scale: 1 }, 0.3, "back.out(1.8)");
+        inn("#ctrU", 21.16, { y: 60 }, { y: 0 }, 0.3, "power3.out");
+        inn("#sizeBar", 21.2, { y: 40 }, { y: 0 }, 0.3, "power3.out");
+        tl.fromTo("#sizeBar i", { scaleX: 1 }, { scaleX: 0.004, duration: T(1.0), ease: "expo.inOut", immediateRender: false }, at(21.76));
+        flash(21.76);
+        tl.to("#ctr", { scale: 1.08, duration: T(0.08), yoyo: true, repeat: 1 }, at(22.72));
+        tl.to("#ctrU", { scale: 1.3, duration: T(0.1), yoyo: true, repeat: 1 }, at(23.07));
+        out(["#ctr", "#ctrU", "#sizeBar"], 23.38, { x: -1150 }, 0.16);
+
+        // ── S8 23.45-25.4 paper: «والمعرض يفتح قبل ما ترمش» (Flow clip C) ──
+        world("#gForest", 23.4, 0); set("#cap", 23.4, { className: "" });
+        tl.to("#scrim", { opacity: 1, duration: T(0.1) }, at(23.4));
+        inn("#fC", 23.42, { x: 1150, rotation: 10 }, { x: 0, rotation: 2 }, 0.34, "power3.out");
+        tl.to("#fC", { scale: 1.06, duration: T(1.9), ease: "sine.inOut" }, at(23.76));
+        flash(24.93);
+        pop("#okC", 24.95, 0.3);
+        out("#fC", 25.36, { x: -1200, rotation: -12 }, 0.18);
+
+        // ── S9 25.4-27.45 «إذا موقعك يبطّئ وما تدري ليش» (Flow clip 1, desaturated) ──
+        set("#f1", 25.3, { filter: "grayscale(0.85) contrast(1.05)" });
+        inn("#f1", 25.38, { x: 1150, rotation: -10 }, { x: 0, rotation: -2 }, 0.34, "power3.out");
+        tl.to("#f1", { scale: 1.06, duration: T(1.9), ease: "sine.inOut" }, at(25.72));
+        pop("#hg", 26.06, 0.3);
+        tl.to("#hg svg", { rotation: 180, duration: T(0.5), ease: "back.inOut(1.4)" }, at(26.6));
+        out("#f1", 27.4, { y: 1300, rotation: 12 }, 0.18);
+
+        // ── S10 27.45-end CTA: «اطلب فحص مجاني لموقعك» + logo ──
+        drop("#cta", 27.46, -2, -1200);
+        set("#stamp", 28.04, { opacity: 1 });
+        tl.fromTo("#stamp", { scale: 2.2, rotation: -16 }, { scale: 1, rotation: -6, duration: T(0.18), ease: "power3.in", immediateRender: false }, at(28.04));
+        tl.to("#cta", { y: 12, duration: T(0.06), yoyo: true, repeat: 1 }, at(28.22));
+        inn("#logoPill", 29.5, { y: -60 }, { y: 0 }, 0.32, "power3.out");
+        // LOOP: the prints rain back into the opening composition; last frame = first frame
+        out(["#cta", "#logoPill"], 31.2, { y: -1200 }, 0.16);
+        prints.forEach((p) => set(p, 31.1, { x: 0, filter: "none", scaleY: 1 }));
+        tl.set(prints, { opacity: 1 }, at(31.3));
+        tl.fromTo("#pHall", { y: -1300, rotation: -9, scale: 1.08 }, { y: -260, rotation: -9, scale: 1.08, duration: D - at(31.3) - 0.04, ease: "power2.out", immediateRender: false }, at(31.3));
+        ["#pDoor", "#pTower", "#pFalcon", "#pDunes", "#pDallah"].forEach((p) => set(p, 31.3, { y: -1300 }));
+
+        mountCaptions(tl, CAPS, $("#cap"));
+        // state derived from time (exact on seek): grain tiles, boil on twos, counter text, caption world
+        const cl = (x) => Math.max(0, Math.min(1, x));
+        const hash = (n) => { let x = Math.sin(n * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); };
+        const grains = $$(".grain"), boils = $$(".boil"), ctr = $("#ctr"), ctrU = $("#ctrU");
+        const cap = $("#cap"), c0 = cap.querySelector(".chunk"), s0 = c0 && c0.querySelector("span");
+        function sync() {
+          const t = tl.time();
+          if (t < 0.06 && c0) { c0.style.opacity = 1; s0.style.opacity = 1; s0.style.transform = "none"; }
+          const g = Math.floor(t * 15) % 6;
+          grains.forEach((im, i) => { im.style.opacity = i === g ? 0.55 : 0; });
+          const f = Math.floor(t * 12);
+          boils.forEach((el, i) => {
+            const k = f * 7 + i * 100;
+            el.style.translate = ((hash(k) - 0.5) * 4).toFixed(2) + "px " + ((hash(k + 1) - 0.5) * 4).toFixed(2) + "px";
+            el.style.rotate = ((hash(k + 2) - 0.5) * (el.id === "pHall" ? 0.6 : 2)).toFixed(2) + "deg";
+          });
+          // 34 MB -> 140 KB: count down in MB, then switch unit to KB
+          const p = cl((t - at(21.76)) / T(0.95));
+          const kb = 34 * 1024 * Math.pow(140 / (34 * 1024), p);
+          if (kb >= 1024) { ctr.textContent = (kb / 1024).toFixed(kb / 1024 >= 10 ? 0 : 1); ctrU.textContent = "MB"; }
+          else { ctr.textContent = String(Math.max(140, Math.round(kb))); ctrU.textContent = "KB"; }
+        }
+        tl.eventCallback("onUpdate", sync);
+        window.addEventListener("hf-seek", sync);
+        window.__timelines["main"] = tl; tl.seek(0); sync();
+      }
+      window.__hf = window.__hf || {};
+      window.__hf.buildReady = window.__hf.buildReady || {};
+      window.__hf.buildReady["main"] = build();
+    </script>
+  </body>
+</html>

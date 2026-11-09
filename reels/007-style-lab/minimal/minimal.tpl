@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="ar" data-resolution="portrait">
+  <!-- Style lab 007 / MINIMAL - WHITE PREMIUM.
+       Warm beige paper + slow window/leaf gobo, ONE photoreal hero object at a time (stack of prints -> iron weight lands on it ->
+       camera glides down to a phone in a deep-green circle with a rotating dashed ring -> the phone is dropped -> camera pulls back
+       to show both). Mixed-voice type: one heavy stress word + small light connectors + a huge faded outline word behind.
+       build.py fills __D__ and WORDS. No <audio> in the page (mixed with ffmpeg after the render). -->
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1080, height=1920">
+    <title>Style lab minimal</title>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      @font-face { font-family: "ZainL"; src: url("assets/fonts/zain-mob-long.ttf") format("truetype"); }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1080px; height: 1920px; overflow: hidden; background: #E9E2D6; }
+      #main { position: relative; width: 100%; height: 100%; overflow: hidden; font-family: "ZainL", sans-serif; color: #121416; background: #E9E2D6; }
+      #stage { position: absolute; inset: 0; }
+      .cam { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; transform-origin: 0 0; }
+      #paper { position: absolute; left: -1600px; top: -1600px; width: 4300px; height: 6600px; background: url("assets/img/paper.jpg") repeat; background-size: 1024px 1024px; }
+      .abs { position: absolute; }
+      .obj img { display: block; width: 100%; height: auto; }
+      .shd { filter: drop-shadow(16px 24px 18px rgba(70, 52, 34, 0.30)) drop-shadow(4px 6px 4px rgba(50, 38, 26, 0.25)); }
+      .contact { position: absolute; border-radius: 50%; background: radial-gradient(closest-side, rgba(52, 40, 28, 0.55), rgba(52, 40, 28, 0.22) 55%, rgba(52, 40, 28, 0) 100%); }
+      .line { position: absolute; left: 60px; width: 960px; direction: rtl; display: flex; justify-content: center; align-items: baseline; white-space: nowrap; }
+      .tk { position: relative; display: inline-block; margin: 0 0.07em; }
+      .m { display: inline-block; overflow: hidden; padding: 0.12em 0.16em 0.22em; margin: -0.12em -0.16em -0.22em; vertical-align: bottom; }
+      .w { display: inline-block; line-height: 1.05; }
+      .heavy { color: #121416; }
+      .light { color: #776F63; }
+      .green { color: #00DB33; }
+      .boxed { color: #E9E2D6; }
+      .bx { position: absolute; left: -0.12em; right: -0.12em; top: 0.12em; bottom: 0.02em; background: #121416; transform: scaleX(0); transform-origin: 100% 50%; }
+      .ghost { position: absolute; left: -300px; width: 1680px; text-align: center; direction: rtl; white-space: nowrap; color: transparent;
+               -webkit-text-stroke: 3px rgba(18, 20, 22, 0.2); font-size: 640px; line-height: 1; }
+      #gobo { position: absolute; left: -260px; top: -240px; width: 1600px; height: 2860px; background: url("assets/img/gobo.jpg") center / cover no-repeat; mix-blend-mode: multiply; opacity: 0.62; z-index: 20; }
+      #vig { position: absolute; inset: 0; z-index: 21; background: radial-gradient(ellipse 85% 70% at 50% 45%, rgba(0,0,0,0) 60%, rgba(60, 44, 28, 0.16) 100%); }
+      .grain { position: absolute; inset: 0; width: 1080px; height: 1920px; mix-blend-mode: soft-light; opacity: 0; z-index: 30; }
+      #scr { position: absolute; left: 4.4%; right: 4.4%; top: 2.2%; bottom: 1.8%; border-radius: 34px; background: #0E1011; overflow: hidden; }
+      .tile { position: absolute; border-radius: 10px; background: #24282b; }
+    </style>
+  </head>
+  <body>
+    <div id="main" data-composition-id="main" data-start="0" data-duration="__D__" data-width="1080" data-height="1920">
+      <div id="stage" class="clip" data-start="0" data-duration="__D__" data-track-index="1">
+        <div class="cam" id="camBg"><div id="paper"></div></div>
+        <div id="ghosts" class="abs" style="inset:0"></div>
+        <div class="cam" id="camFg">
+          <!-- scene A: the gallery (prints) and the weight -->
+          <div id="txtA" class="abs" style="inset:0"></div>
+          <div class="contact" id="cStack" style="left:250px; top:1300px; width:600px; height:120px"></div>
+          <div class="obj abs shd" id="stack" style="left:260px; top:930px; width:560px"><img src="assets/img/stack.png" alt=""></div>
+          <div class="contact" id="cWeight" style="left:330px; top:985px; width:420px; height:90px"></div>
+          <div class="obj abs shd" id="weight" style="left:360px; top:600px; width:360px"><img src="assets/img/weight.png" alt=""></div>
+          <div id="txtA2" class="abs" style="inset:0"></div>
+          <!-- scene B: the phone in the circle -->
+          <div class="abs" id="disc" style="left:240px; top:2330px; width:600px; height:600px; border-radius:50%; background:#006A39; box-shadow: inset 0 0 60px rgba(0,0,0,0.25), 10px 18px 30px rgba(70,52,34,0.22)"></div>
+          <svg class="abs" id="ring" style="left:170px; top:2260px; width:740px; height:740px; overflow:visible" viewBox="0 0 740 740">
+            <circle cx="370" cy="370" r="362" fill="none" stroke="#121416" stroke-width="4" stroke-dasharray="16 13" stroke-linecap="round"/>
+            <circle cx="370" cy="8" r="11" fill="#E9E2D6" stroke="#121416" stroke-width="4"/>
+          </svg>
+          <div class="contact" id="cPhone" style="left:350px; top:2920px; width:380px; height:70px; opacity:0"></div>
+          <div class="obj abs shd" id="phone" style="left:380px; top:2306px; width:320px">
+            <img src="assets/img/phone.png" alt="">
+            <div id="scr">
+              <div class="tile" style="left:9%; top:8%; width:48%; height:3%"></div>
+              <div class="tile" style="left:9%; top:12.5%; width:30%; height:2%"></div>
+              <div class="tile sh" style="left:9%; top:18%; width:39%; height:20%"></div><div class="tile sh" style="left:52%; top:18%; width:39%; height:20%"></div>
+              <div class="tile sh" style="left:9%; top:40%; width:39%; height:20%"></div><div class="tile sh" style="left:52%; top:40%; width:39%; height:20%"></div>
+              <div class="tile sh" style="left:9%; top:62%; width:39%; height:20%"></div><div class="tile sh" style="left:52%; top:62%; width:39%; height:20%"></div>
+              <div class="abs" style="left:50%; top:50%; width:110px; height:110px; margin:-55px 0 0 -55px; border-radius:50%; background:rgba(14,16,17,0.88)"></div>
+              <svg class="abs" id="spin" style="left:50%; top:50%; width:76px; height:76px; margin:-38px 0 0 -38px" viewBox="0 0 76 76">
+                <circle cx="38" cy="38" r="30" fill="none" stroke="#2c3134" stroke-width="7"/>
+                <circle cx="38" cy="38" r="30" fill="none" stroke="#00DB33" stroke-width="7" stroke-linecap="round" stroke-dasharray="52 200"/>
+              </svg>
+              <div class="abs" style="left:9%; right:9%; bottom:6%; height:6px; border-radius:3px; background:#2c3134"><div id="prog" style="position:absolute; right:0; top:0; bottom:0; width:2%; border-radius:3px; background:#00DB33"></div></div>
+            </div>
+          </div>
+          <div class="contact" id="cFlat" style="left:150px; top:3020px; width:520px; height:120px; opacity:0"></div>
+          <div class="obj abs shd" id="flat" style="left:160px; top:2768px; width:500px; opacity:0"><img src="assets/img/phoneflat.png" alt=""></div>
+          <div id="txtB" class="abs" style="inset:0"></div>
+        </div>
+        <div id="front" class="abs" style="inset:0"></div>
+        <div class="obj abs shd" id="pen" style="left:705px; top:1385px; width:420px; z-index:15"><img src="assets/img/pen.png" alt=""></div>
+        <div id="gobo"></div>
+        <div id="vig"></div>
+        <img class="grain" src="assets/img/grain0.png" alt=""><img class="grain" src="assets/img/grain1.png" alt=""><img class="grain" src="assets/img/grain2.png" alt="">
+        <img class="grain" src="assets/img/grain3.png" alt=""><img class="grain" src="assets/img/grain4.png" alt=""><img class="grain" src="assets/img/grain5.png" alt="">
+      </div>
+    </div>
+    <script>
+      const D = __D__;
+      const WORDS = /*WORDS*/[];
+      const W = (i) => WORDS[i][1];
+      const V = (i) => W(i) - 0.04;
+      const F = 1 / 30;
+      window.__timelines = window.__timelines || {};
+      const TL = gsap.timeline({ paused: true });
+      const $ = (id) => document.getElementById(id);
+
+      // a centred RTL line of words; tokens: [text, {s, cls, box}]
+      function line(parent, y, tokens, opt = {}) {
+        const L = document.createElement("div"); L.className = "line"; L.style.top = y + "px";
+        if (opt.gap) L.style.gap = opt.gap + "px";
+        const toks = tokens.map(([text, o]) => {
+          const tk = document.createElement("span"); tk.className = "tk " + (o.cls || "heavy"); tk.style.fontSize = (o.s || 80) + "px";
+          if (o.dy) tk.style.top = o.dy + "px";
+          let bx = null; if (o.box) { bx = document.createElement("span"); bx.className = "bx"; tk.appendChild(bx); }
+          const m = document.createElement("span"); m.className = "m"; const w = document.createElement("span"); w.className = "w"; w.textContent = text;
+          m.appendChild(w); tk.appendChild(m); L.appendChild(tk); return { tk, w, m, bx, text };
+        });
+        parent.appendChild(L); return { e: L, toks };
+      }
+      // heavy stress word: slides up out of its own mask, settles from a slight scale (the reference's "write-on with a slide")
+      function heavyIn(t, a, d = 0.55) {
+        gsap.set(t.w, { yPercent: 150 }); gsap.set(t.tk, { scale: 1.08, transformOrigin: "50% 100%" });
+        TL.to(t.w, { yPercent: 0, duration: d, ease: "expo.out" }, a);
+        TL.to(t.tk, { scale: 1, duration: d + 0.5, ease: "power3.out" }, a);
+      }
+      // light connector: a soft right-to-left wipe with a small drift (reading order)
+      function lightIn(t, a, d = 0.42) {
+        gsap.set(t.w, { clipPath: "inset(-30% 0% -40% 100%)", x: 14 });
+        TL.to(t.w, { clipPath: "inset(-30% 0% -40% 0%)", x: 0, duration: d, ease: "power3.out" }, a);
+      }
+      // black box wipe, then the word is cut out of it
+      function boxIn(t, a) {
+        gsap.set(t.w, { yPercent: 150 });
+        TL.to(t.bx, { scaleX: 1, duration: 0.3, ease: "expo.out" }, a);
+        TL.to(t.w, { yPercent: 0, duration: 0.45, ease: "expo.out" }, a + 0.08);
+      }
+      function outUp(els, a, d = 0.3, dy = -50) { els.forEach((e, k) => TL.to(e, { y: dy, opacity: 0, filter: "blur(8px)", duration: d, ease: "power2.in" }, a + k * 0.04)); }
+      // huge faded outline word behind the hero (screen space, between paper and objects)
+      function ghost(txt, y, a, b, drift = -40) {
+        const g = document.createElement("div"); g.className = "ghost"; g.style.top = y + "px"; g.textContent = txt; $("ghosts").appendChild(g);
+        gsap.set(g, { opacity: 0, scale: 1.06, x: 0 });
+        TL.to(g, { opacity: 1, scale: 1, duration: 0.8, ease: "power2.out" }, a);
+        TL.to(g, { x: drift, duration: b - a, ease: "none" }, a);
+        TL.to(g, { opacity: 0, duration: 0.4, ease: "power1.in" }, b - 0.4);
+        return g;
+      }
+      // camera: both camera layers share one transform; world point (wx, wy) shown at screen (540, sy) with scale s
+      const cams = [$("camBg"), $("camFg")];
+      const camV = (s, wx, wy, sy) => ({ scale: s, x: 540 - wx * s, y: sy - wy * s });
+      function cam(a, d, v, ease = "power2.inOut") { TL.to(cams, Object.assign({ duration: d, ease }, v), a); }
+
+      async function build() {
+        await document.fonts.ready; await document.fonts.load("80px ZainL", "معرض");
+        TL.to({}, { duration: D }, 0);
+        gsap.set(cams, camV(1, 540, 960, 960));
+
+        // ── light: the gobo drifts slowly the whole time; the pen breathes at the frame edge ──
+        gsap.set("#gobo", { x: 60, y: -20, rotation: -2 });
+        TL.to("#gobo", { x: -120, y: 50, rotation: 1.5, duration: D, ease: "none" }, 0);
+        gsap.set("#pen", { rotation: 58, transformOrigin: "50% 50%" });
+        TL.to("#pen", { rotation: 61, duration: D, ease: "sine.inOut" }, 0);
+
+        // ═══ A1  «معرض صور في موقع شركة كبيرة» : the stack of prints lands ═══
+        const LAND = 0.42;
+        gsap.set("#stack", { y: -120, rotation: -3, transformOrigin: "50% 90%" });
+        gsap.set("#cStack", { scaleX: 0.7, opacity: 0.35, transformOrigin: "50% 50%" });
+        TL.to("#stack", { y: 0, duration: LAND, ease: "power2.in" }, 0);
+        TL.to("#stack", { y: -12, duration: 0.16, ease: "power2.out" }, LAND); TL.to("#stack", { y: 0, duration: 0.22, ease: "power2.in" }, LAND + 0.16);
+        TL.to("#stack", { rotation: 1.6, duration: 3.6, ease: "sine.inOut" }, 0);
+        TL.to("#cStack", { scaleX: 1, opacity: 1, duration: LAND, ease: "power2.in" }, 0);
+        ghost("صور", 520, 0, 2.2, -70);
+
+        const a1 = line($("txtA"), 300, [["معرض", { s: 78, cls: "light" }]]);
+        const a2 = line($("txtA"), 360, [["صور", { s: 330 }]]);
+        const a3 = line($("txtA"), 752, [["في", { s: 64, cls: "light" }], ["موقع", { s: 64, cls: "light" }], ["شركة", { s: 64, cls: "light" }], ["كبيرة،", { s: 120 }]], { gap: 4 });
+        lightIn(a1.toks[0], 0.02);
+        heavyIn(a2.toks[0], V(1));
+        lightIn(a3.toks[0], V(2)); lightIn(a3.toks[1], V(3)); lightIn(a3.toks[2], V(4)); heavyIn(a3.toks[3], V(5), 0.45);
+        outUp([a1.e, a2.e, a3.e], 1.84, 0.26, -70);
+
+        // ═══ A2  «حجمه اربعه وثلاثين ميجا» : the iron weight lands on the prints ═══
+        const IMP = V(7) + 0.02;             // impact on «اربعه»
+        gsap.set("#weight", { y: -1150, rotation: 6, transformOrigin: "50% 100%" });
+        gsap.set("#cWeight", { opacity: 0, scale: 0.5 });
+        TL.to("#weight", { y: 0, rotation: 0, duration: 0.42, ease: "power3.in" }, IMP - 0.42);
+        TL.to("#cWeight", { opacity: 1, scale: 1, duration: 0.42, ease: "power3.in" }, IMP - 0.42);
+        TL.to("#weight", { y: -10, duration: 0.14, ease: "power2.out" }, IMP); TL.to("#weight", { y: 0, duration: 0.2, ease: "power2.in" }, IMP + 0.14);
+        // the prints give under it
+        TL.to("#stack", { scaleY: 0.93, scaleX: 1.02, duration: 0.07, ease: "power2.out" }, IMP);
+        TL.to("#stack", { scaleY: 1, scaleX: 1, duration: 0.5, ease: "elastic.out(1, 0.45)" }, IMP + 0.07);
+        // the camera feels it
+        TL.to(cams, { y: 14, duration: 0.06, ease: "power2.out" }, IMP); TL.to(cams, { y: 0, duration: 0.4, ease: "power2.out" }, IMP + 0.06);
+        TL.to("#pen", { y: 8, duration: 0.06 }, IMP); TL.to("#pen", { y: 0, duration: 0.4, ease: "power2.out" }, IMP + 0.06);
+        ghost("ميجا", 470, IMP - 0.1, 3.75, 60);
+
+        const b1 = line($("txtA2"), 270, [["حجمه", { s: 74, cls: "light" }]]);
+        const b2 = line($("txtA2"), 318, [["٣٤", { s: 300, cls: "green" }], ["ميجا", { s: 120, dy: -18 }]], { gap: 18 });
+        lightIn(b1.toks[0], V(6));
+        heavyIn(b2.toks[0], IMP - 0.06, 0.5);
+        heavyIn(b2.toks[1], V(9), 0.45);
+        // the number stays heavy: a small settle on «وثلاثين»
+        TL.to(b2.toks[0].tk, { scale: 1.05, duration: 0.18, ease: "power2.out" }, V(8)); TL.to(b2.toks[0].tk, { scale: 1, duration: 0.4, ease: "sine.inOut" }, V(8) + 0.16);
+
+        // ═══ glide down: the camera travels to the phone (one continuous move) ═══
+        const G1 = 3.5, G1D = 0.8;
+        cam(G1, G1D, camV(1, 540, 2630, 930));
+        TL.to("#pen", { y: -70, duration: G1D, ease: "power2.inOut" }, G1); TL.to("#pen", { y: 0, duration: 1.2, ease: "sine.inOut" }, G1 + G1D);
+        TL.set([b1.e, b2.e], { opacity: 0 }, 4.6);
+
+        // ═══ B1  «عميلك يفتحه من جواله» : phone in the circle, dashed ring turning ═══
+        gsap.set("#disc", { scale: 0.86, transformOrigin: "50% 50%" });
+        TL.to("#disc", { scale: 1, duration: 1.0, ease: "power3.out" }, 3.75);
+        gsap.set("#ring", { rotation: -40, opacity: 0, transformOrigin: "50% 50%" });
+        TL.to("#ring", { opacity: 1, duration: 0.5 }, 3.85);
+        TL.to("#ring", { rotation: 110, duration: 7.2 - 3.85, ease: "none" }, 3.85);
+        gsap.set("#phone", { y: 60, rotation: -4, transformOrigin: "50% 90%" });
+        TL.to("#phone", { y: 0, rotation: 0, duration: 1.1, ease: "power3.out" }, 3.6);
+        TL.to("#phone", { rotation: 1.5, duration: 2.4, ease: "sine.inOut" }, 4.7);
+        // the screen: the gallery never loads
+        TL.to("#spin", { rotation: 360 * 5, duration: 7.12 - 3.9, ease: "none", transformOrigin: "50% 50%" }, 3.9);
+        TL.to("#prog", { width: "9%", duration: 7.1 - 4.0, ease: "power1.out" }, 4.0);
+        document.querySelectorAll(".sh").forEach((t, k) => { TL.to(t, { backgroundColor: "#30353a", duration: 0.45, ease: "sine.inOut", repeat: 5, yoyo: true }, 4.0 + k * 0.08); });
+        ghost("عميلك", 640, 3.95, 5.4, -50);
+
+        const c1 = line($("txtB"), 1700 + 262, [["عميلك", { s: 220 }]]);
+        const c2 = line($("txtB"), 1700 + 500, [["يفتحه", { s: 70, cls: "light" }], ["من", { s: 70, cls: "light" }], ["جواله،", { s: 70, cls: "light" }]], { gap: 2 });
+        heavyIn(c1.toks[0], V(10), 0.6);
+        lightIn(c2.toks[0], V(11)); lightIn(c2.toks[1], V(12)); lightIn(c2.toks[2], V(13));
+
+        // ═══ B2  «ويستنى، ويستنى،» : the wait, the camera leans in ═══
+        cam(4.4, 2.7, camV(1.07, 540, 2630, 930), "sine.inOut");
+        const d1 = line($("txtB"), 1700 + 1262, [["ويستنى،", { s: 150 }]]);
+        heavyIn(d1.toks[0], V(14), 0.6);
+        // second «ويستنى»: the same word stretches its kashida (one string revealed right to left, joins intact)
+        const d2 = line($("txtB"), 1700 + 1262, [["ويستنـــــــــى،", { s: 150 }]]);
+        const shortW = d1.toks[0].tk.getBoundingClientRect().width, longW = d2.toks[0].tk.getBoundingClientRect().width;
+        gsap.set(d2.e, { opacity: 0 });
+        // keep the long word's right edge where the short one was, then let it unroll leftwards (and recentre)
+        const shift = (longW - shortW) / 2;
+        gsap.set(d2.toks[0].w, { clipPath: `inset(-30% 0% -40% ${(100 - (shortW / longW) * 100).toFixed(1)}%)` });
+        gsap.set(d2.e, { x: -shift });
+        TL.set(d2.e, { opacity: 1 }, V(15)); TL.set(d1.e, { opacity: 0 }, V(15));
+        TL.to(d2.toks[0].w, { clipPath: "inset(-30% 0% -40% 0%)", duration: 0.85, ease: "sine.inOut" }, V(15));
+        TL.to(d2.e, { x: 0, duration: 0.85, ease: "sine.inOut" }, V(15));
+        ghost("ويستنى", 640, 5.55, 7.15, 70);
+
+        // ═══ B3  «ويطلع» : he drops the phone and leaves ═══
+        const DROP = V(16) - 0.02;
+        outUp([c1.e, c2.e], DROP - 0.18, 0.25, -40);
+        outUp([d2.e], DROP - 0.1, 0.25, 40);
+        TL.to("#phone", { rotation: -3, y: -14, duration: 0.14, ease: "power2.out" }, DROP - 0.04);          // a little lift (anticipation)
+        TL.to("#phone", { rotation: -38, x: -150, y: 300, scale: 0.92, duration: 0.3, ease: "power2.in" }, DROP + 0.1);
+        TL.to("#phone", { opacity: 0, duration: 0.06 }, DROP + 0.34);
+        gsap.set("#flat", { x: 70, y: -190, rotation: 18, scale: 1.12, transformOrigin: "50% 50%" });
+        TL.to("#flat", { opacity: 1, duration: 0.06 }, DROP + 0.32);
+        TL.to("#flat", { x: 0, y: 0, rotation: 0, scale: 1, duration: 0.2, ease: "power2.in" }, DROP + 0.3);
+        TL.to("#flat", { y: -8, rotation: -1.2, duration: 0.12, ease: "power2.out" }, DROP + 0.5); TL.to("#flat", { y: 0, rotation: 0, duration: 0.18, ease: "power2.in" }, DROP + 0.62);
+        TL.to("#cFlat", { opacity: 1, duration: 0.2, ease: "power2.in" }, DROP + 0.3);
+        // the circle closes once the phone has left it, the ring stops and fades
+        TL.to("#disc", { scale: 0, duration: 0.42, ease: "back.in(1.4)" }, DROP + 0.32);
+        TL.to("#ring", { scale: 0.85, opacity: 0, duration: 0.22, ease: "power2.in" }, DROP + 0.08);
+        const e1 = line($("txtB"), 1700 + 262, [["ويطلع.", { s: 190, cls: "boxed", box: 1 }]]);
+        boxIn(e1.toks[0], W(16) + 0.02);
+        outUp([e1.e], 7.66, 0.3, -60);
+
+        // ═══ C  «لا تدور على صور أقل.» : the camera glides back up to the full stack (the phone stays where he dropped it) ═══
+        const G2 = 7.6;
+        cam(G2, 1.0, camV(0.9, 540, 1010, 1060));
+        TL.to(cams, Object.assign({ duration: D - G2 - 1.0, ease: "sine.out" }, camV(0.93, 540, 1010, 1060)), G2 + 1.0);
+        TL.to("#pen", { y: 60, x: -20, duration: 1.0, ease: "power2.inOut" }, G2);
+        ghost("أقل", 560, 8.3, D + 0.6, -40);
+        const f1 = line($("front"), 300, [["لا", { s: 76, cls: "light" }], ["تدور", { s: 76, cls: "light" }], ["على", { s: 76, cls: "light" }], ["صور", { s: 76, cls: "light" }]], { gap: 2 });
+        const f2 = line($("front"), 370, [["أقل.", { s: 270 }]]);
+        lightIn(f1.toks[0], V(17)); lightIn(f1.toks[1], V(18)); lightIn(f1.toks[2], V(19)); lightIn(f1.toks[3], V(20));
+        // a green pen-stroke crosses out «أقل» (measured before the word is hidden)
+        const r = f2.toks[0].w.getBoundingClientRect();
+        heavyIn(f2.toks[0], V(21), 0.55);
+        const sv = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+        Object.assign(sv.style, { position: "absolute", left: (r.left - 30) + "px", top: (r.top + r.height * 0.5 - 30) + "px", width: (r.width + 60) + "px", height: "60px", overflow: "visible" });
+        sv.setAttribute("viewBox", `0 0 ${r.width + 60} 60`);
+        sv.innerHTML = `<path d="M${r.width + 50} 36 C${r.width * 0.7} 20 ${r.width * 0.35} 42 10 24" fill="none" stroke="#00DB33" stroke-width="18" stroke-linecap="round" pathLength="1" stroke-dasharray="1 2" stroke-dashoffset="1"/>`;
+        $("front").appendChild(sv); gsap.set(sv, { opacity: 0 });
+        TL.set(sv, { opacity: 1 }, W(21) + 0.42);
+        TL.to(sv.querySelector("path"), { strokeDashoffset: 0, duration: 0.3, ease: "power2.inOut" }, W(21) + 0.42);
+
+        const grains = Array.from(document.querySelectorAll(".grain"));
+        for (let f = 0; f < D * 30; f += 2) grains.forEach((g, i) => TL.set(g, { opacity: i === (f / 2) % 6 ? 0.5 : 0 }, f * F));
+        window.__timelines["main"] = TL; TL.seek(0);
+      }
+      window.__hf = window.__hf || {}; window.__hf.buildReady = window.__hf.buildReady || {};
+      window.__hf.buildReady["main"] = build();
+    </script>
+  </body>
+</html>

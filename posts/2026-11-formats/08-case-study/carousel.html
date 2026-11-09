@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8">
+<link rel="stylesheet" href="common.css">
+<style>
+html,body { width:5400px; height:1350px; }
+.dev { position:absolute; -webkit-mask-image: radial-gradient(ellipse 50% 50% at 50% 50%, #000 62%, transparent 100%); }
+.chip { position:absolute; background:#1b1e21; border:2px solid rgba(255,255,255,.3); border-radius:14px; padding:4px 20px 0; font-size:38px; white-space:nowrap; box-shadow:0 14px 30px rgba(0,0,0,.55); }
+.pill { display:inline-block; background:var(--g); color:var(--bg); border-radius:16px; padding:0 22px; }
+.lat { font-family:Plex; direction:ltr; unicode-bidi:isolate; }
+.row { position:absolute; border:3px solid var(--g); border-radius:24px; background:rgba(18,20,22,.72); box-shadow:0 0 30px rgba(0,219,51,.15); }
+.row .n { position:absolute; right:34px; top:50%; transform:translateY(-50%); font-size:120px; line-height:1; font-weight:700; color:var(--g); text-shadow:0 0 30px rgba(0,219,51,.5); }
+.row .tt { position:absolute; right:130px; top:24px; font-size:50px; line-height:1.2; font-weight:700; white-space:nowrap; }
+.row .dd { position:absolute; right:130px; top:94px; font-size:34px; color:var(--mute); white-space:nowrap; }
+.stat { position:absolute; left:0; width:1080px; text-align:center; }
+.stat .big { font-size:190px; line-height:1; font-weight:700; color:var(--g); text-shadow:0 0 50px rgba(0,219,51,.45); }
+.stat .lb { font-size:40px; color:var(--mute); margin-top:22px; }
+.tag { position:absolute; font-size:30px; font-weight:600; color:var(--g); border:2px solid var(--g); border-radius:30px; padding:2px 24px 6px; white-space:nowrap; }
+.cut { position:absolute; filter: drop-shadow(0 30px 40px rgba(0,0,0,.6)); }
+/* Plex: room under the baseline for pills/chips/labels */
+.pill { line-height:1.28; padding-bottom:6px; }
+.chip { padding-bottom:10px; font-weight:600; }
+.lbl { padding-bottom:10px; font-weight:700; }
+</style></head>
+<body>
+<div id="stage"></div>
+<svg class="marks" width="5400" height="1350" style="z-index:40"></svg>
+<script src="footer.js"></script><script src="gallery.js"></script>
+<script>document.querySelector('svg.marks').innerHTML = '<defs><filter id="rough"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="4"/><feDisplacementMap in="SourceGraphic" scale="3"/></filter></defs><g id="mk"></g>';</script>
+<script>const PAGE_W = 5400;</script>
+<script src="kit.js"></script>
+<script>
+const LAP_Q = [[178,473],[718,473],[723,812],[172,812]], PHONE_Q = [[341,358],[555,358],[555,826],[341,826]], SIDE_Q = [[87,567],[538,540],[586,868],[134,946]];
+for (let i = 1; i <= 5; i++) brand(i);
+glow(S(1, 540), 760, 540); glow(S(2, 540), 800, 480, .85); glow(S(3, 300), 860, 460, .7); glow(S(4, 540), 620, 560, .8); glow(S(5, 540), 700, 520, .8);
+const tag = (i, txt, top = 150) => el(`<div class="tag" style="left:auto; right:${PAGE_W - S(i, 1000)}px; top:${top}px">${txt}</div>`, 30);
+
+/* ============ 1 — result-first hook ============ */
+ct(1, 170, 'عميل معرض صور موقعه', 64);
+ct(1, 252, 'كان وزنه <span class="g"><bdi>٣٤ ميجا</bdi></span>', 64);
+ct(1, 350, 'النتيجة:', 120, 'line-height:1.05');
+{ const Q = device('gen/p1_laptop.png', 896, LAP_Q, S(1, 40), 140, 1000, 5);
+  onScreen(galleryUI(1280, 796, { cellStyle: i => i > 1 ? 'background:#dfe2e5' : '' }), 1280, 796, Q);
+  const lb = screen(1280, 796, `<div class="abs" style="left:0; top:64px; height:10px; width:30%; background:var(--g)"></div><div class="abs" style="left:640px; top:520px; width:130px; height:130px; margin:-65px; border-radius:50%; border:14px solid #c9ccd0; border-top-color:#121416"></div>`, 'transparent');
+  onScreen(lb, 1280, 796, Q, 7); }
+el(`<div class="chip" style="left:${S(1, 110)}px; top:540px; transform:rotate(-5deg)">يحمّل…</div>`, 31);
+el(`<div class="t mute" style="left:auto; right:${PAGE_W - S(1, 1000)}px; transform:none; top:1092px; font-size:38px">اسحب للنتيجة</div>`, 30);
+P(`M${S(1, 790)},1156 C ${S(1, 900)},1170 ${S(1, 1000)},1150 ${S(2, 40)},1110`); arrowHead(S(2, 44), 1106, -25);
+
+/* ============ 2 — the problem ============ */
+tag(2, 'المشكلة');
+rt(2, 80, 220, 'كل زائر ينزّل', 72);
+rt(2, 80, 310, '<span class="g"><bdi>٣٤ ميجا</bdi></span> صور', 120, 'line-height:1.05; text-shadow:0 0 40px rgba(0,219,51,.35)');
+rt(2, 80, 470, 'قبل ما يشوف شي.', 72);
+rt(2, 80, 580, 'الصور بمقاسات أكبر من الشاشة،', 40, '', 'mute');
+rt(2, 80, 636, 'وكلها تنزل مرة وحدة.', 40, '', 'mute');
+{ const Q = device('gen/p2_phone.png', 896, PHONE_Q, S(2, -200), 220, 980, 5);
+  const g = galleryUI(430, 940, { cols: 2, cellStyle: i => i > 1 ? 'background:#dfe2e5' : '' }); g.style.borderRadius = '44px'; onScreen(g, 430, 940, Q); window.Q2 = Q; }
+for (const [k, t] of [[0, '<bdi class="lat">IMG_0412.jpg</bdi>'], [1, '<bdi class="lat">IMG_0413.jpg</bdi>'], [2, '<bdi class="lat">IMG_0419.jpg</bdi>']])
+  el(`<div class="chip" style="left:${S(2, 560 + k * 30)}px; top:${780 + k * 100}px; font-size:26px; transform:rotate(${k % 2 ? 3 : -3}deg)">${t}</div>`, 31);
+
+/* ============ 3 — what we did ============ */
+tag(3, 'وش سوّينا');
+rt(3, 80, 210, 'بدون ما نحذف <span class="g">ولا صورة</span>:', 66);
+const rows = [['١', 'صغّرنا المقاس', 'كل صورة بمقاس الشاشة اللي تنعرض فيها.'], ['٢', 'حوّلناها لـ <bdi class="lat" style="font-size:44px">WebP</bdi>', 'صيغة للويب، أخف بكثير وبنفس الشكل.'], ['٣', 'تحميل عند الوصول', 'الصورة تنزل لما يوصلها الزائر بس.']];
+rows.forEach(([n, t, d], k) => el(`<div class="row" style="left:${S(3, 70)}px; top:${340 + k * 200}px; width:940px; height:170px"><div class="n">${n}</div><div class="tt">${t}</div><div class="dd">${d}</div></div>`, 30));
+el(`<img class="cut" src="gen/g4_press.png" style="left:${S(3, 90)}px; top:910px; width:220px; transform:rotate(-6deg)">`, 20);
+rt(3, 80, 950, 'نفس الصور…', 52);
+rt(3, 80, 1020, 'بس <span class="g">مضغوطة صح</span>.', 52);
+
+/* ============ 4 — the numbers ============ */
+tag(4, 'النتيجة');
+el(`<div class="stat" style="left:${S(4, 0)}px; top:200px"><div style="font-size:100px; line-height:1; color:#8d9195" id="old"><bdi>٣٤ ميجا</bdi></div></div>`, 30);
+el(`<div class="stat" style="left:${S(4, 0)}px; top:330px"><div class="big" style="font-size:230px"><bdi>١٤٠ كيلو</bdi></div><div class="lb">وزن المعرض بعد الشغل</div></div>`, 30);
+el(`<div class="abs" style="left:${S(4, 70)}px; top:740px; width:940px; height:2px; background:rgba(255,255,255,.15)"></div>`, 30);
+for (const [k, big, lb] of [[0, 'صفر', 'صورة انحذفت'], [1, '١٠٠٪', 'نفس الصور'], [2, '٢٠٠', 'مرة أخف وأكثر']]) {
+  el(`<div class="abs" style="left:${S(4, 700 - k * 310)}px; top:790px; width:310px; text-align:center"><div style="font-size:120px; line-height:1.05; font-weight:700; color:var(--g); text-shadow:0 0 40px rgba(0,219,51,.45)">${big}</div><div style="font-size:38px; font-weight:600; color:#fff; white-space:nowrap">${lb}</div></div>`, 30);
+}
+el(`<div class="abs" style="left:${S(4, 70)}px; top:1080px; width:940px; text-align:center; font-size:26px; color:#8d9195">٣٤ ميجا ÷ ١٤٠ كيلو = أخف بأكثر من ٢٠٠ مرة</div>`, 30);
+
+/* ============ 5 — CTA ============ */
+ct(5, 160, 'موقعك فيه صور ثقيلة؟', 62, '', 'mute');
+ct(5, 260, 'اكتب', 80);
+ct(5, 370, 'انطباع', 220, 'line-height:1; color:var(--g); text-shadow:0 0 60px rgba(0,219,51,.45)');
+ct(5, 680, 'بالتعليقات، ونرسل لك', 52);
+ct(5, 752, '<span class="pill">تقييم مجاني لموقعك</span>', 56);
+el(`<img class="abs" src="gen/p4_keyboard.png" style="left:${S(5, 0)}px; top:60px; width:1080px; opacity:.9; -webkit-mask-image:linear-gradient(180deg, transparent 0, #000 50%, #000 80%, transparent 96%)">`, 3);
+el(`<div class="chip" style="left:${S(5, 300)}px; top:1040px; display:flex; gap:14px; align-items:center; font-size:38px">${SAVE_ICON}احفظ البوست</div>`, 31);
+
+document.fonts.ready.then(() => {
+  fitLines('.t', 900); fitLines('.row .tt', 720); fitLines('.row .dd', 720);
+  // slide 4: strike old weight + arrow
+  const o = document.querySelector('#old bdi').getBoundingClientRect();
+  P(`M${o.left - 20},${o.top + o.height * .72} C ${o.left + o.width * .4},${o.top + o.height * .62} ${o.left + o.width * .7},${o.top + o.height * .68} ${o.right + 20},${o.top + o.height * .58}`, 'mk', 'stroke-width:12');
+  // slide 5: circle keyword
+  const f = [...document.querySelectorAll('.t')].find(n => n.textContent === 'انطباع').getBoundingClientRect(); ring(f, 110, 30);
+  // slide 2: bracket the heavy files to the phone
+  P(`M${S(2, 550)},820 C ${S(2, 500)},800 ${S(2, 470)},790 ${S(2, 440)},800`); arrowHead(S(2, 436), 801, 175);
+  document.body.dataset.ready = 1;
+});
+</script>
+</body></html>

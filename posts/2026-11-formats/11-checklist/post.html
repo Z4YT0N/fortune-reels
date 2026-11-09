@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8">
+<link rel="stylesheet" href="common.css">
+<style>
+html,body { width:1080px; height:1350px; }
+.list { position:absolute; left:84px; right:84px; top:360px; }
+.row { position:relative; height:67px; display:flex; align-items:center; gap:26px; border-bottom:1px solid rgba(255,255,255,.08); }
+.row:last-child { border-bottom:0; }
+.box { flex:none; width:46px; height:46px; border-radius:12px; background:var(--g); box-shadow:0 0 22px rgba(0,219,51,.45); display:flex; align-items:center; justify-content:center; }
+.box svg { width:30px; height:30px; }
+.txt { font-size:42px; line-height:1; white-space:nowrap; }
+.n { flex:none; width:44px; font-size:30px; color:rgba(255,255,255,.35); text-align:center; }
+.save { position:absolute; left:84px; top:74px; display:flex; align-items:center; gap:12px; font-size:30px; font-weight:600; color:var(--g); }
+.save .ic { width:58px; height:58px; border-radius:50%; border:2px solid var(--g); display:flex; align-items:center; justify-content:center; box-shadow:0 0 24px rgba(0,219,51,.35); }
+.src { position:absolute; right:96px; top:1128px; font-size:19px; font-weight:400; color:rgba(255,255,255,.45); white-space:nowrap; }
+</style></head>
+<body>
+<div class="glow" style="left:-200px; top:-260px; width:1480px; height:900px; opacity:.55"></div>
+<div class="glow" style="left:600px; top:900px; width:700px; height:600px; opacity:.25"></div>
+
+<div class="frame" style="left:40px; top:40px; width:1000px; height:1140px"></div>
+<img class="logo" src="assets/logo-en-h-primary-white.svg" style="left:50%; top:82px; transform:translateX(-50%)">
+<div class="save"><span class="ic"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#00DB33" stroke-width="2.2" stroke-linejoin="round"><path d="M6 3h12v18l-6-4.5L6 21z"/></svg></span>احفظها</div>
+
+<div class="t" style="top:152px; font-size:112px; line-height:1"><span class="g" style="text-shadow:0 0 40px rgba(0,219,51,.35)">تشيك ليست</span></div>
+<div class="t" style="top:272px; font-size:56px">قبل إطلاق موقع شركتك</div>
+
+<div class="list" id="list"></div>
+<div class="src">* <bdi>Google</bdi>: ٥٣٪ من زوار الجوال يطلعون إذا تأخرت الصفحة فوق ٣ ثواني</div>
+<div class="t" style="top:1052px; font-size:40px">احفظها، وأرسلها <span class="g">لمطوّرك</span> قبل الإطلاق</div>
+
+<script src="footer.js"></script>
+<script>
+const items = [
+  'دومين باسم شركتك، وإيميل رسمي عليه',
+  'شهادة أمان: القفل يطلع جنب الرابط',
+  'يفتح بأقل من ٣ ثواني على الجوال*',
+  'مضبوط على الجوال قبل الكمبيوتر',
+  'زر واتساب واضح في كل صفحة',
+  'نموذج التواصل مجرّب ويوصلك فعلًا',
+  'عنوان ووصف لكل صفحة في قوقل',
+  'مربوط بأدوات قوقل للزوار والبحث',
+  'نسخة احتياطية تلقائية كل يوم',
+  'صفحة الخصوصية والشروط موجودة',
+];
+const AR = n => String(n).replace(/\d/g, d => '٠١٢٣٤٥٦٧٨٩'[d]);
+const CHK = '<svg viewBox="0 0 24 24" fill="none" stroke="#121416" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+document.getElementById('list').innerHTML = items.map((t, i) => `<div class="row"><span class="box">${CHK}</span><span class="txt">${t}</span></div>`).join('');
+foot(66, 1208, 948);
+document.fonts.ready.then(() => { fitLines('.t', 900); fitLines('.txt', 820); document.body.dataset.ready = 1; });
+</script>
+</body></html>

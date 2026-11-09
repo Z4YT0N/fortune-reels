@@ -1,0 +1,71 @@
+<!DOCTYPE html><html lang="en" dir="ltr"><head><meta charset="utf-8">
+<link rel="stylesheet" href="../_kit/base.css">
+<style>
+html,body{width:6480px}
+.k{position:absolute;left:80px;top:190px;font-weight:600;font-size:26px;letter-spacing:.14em;color:var(--g)}
+.h{position:absolute;left:80px;right:80px;font-weight:700;line-height:1.1}
+.d{position:absolute;left:80px;width:900px;font-weight:400;font-size:40px;line-height:1.45;color:rgba(240,241,242,.8)}
+.ring{position:absolute;border-radius:50%;border:14px solid var(--g);box-shadow:0 0 60px rgba(0,219,51,.55),inset 0 0 60px rgba(0,219,51,.25);z-index:12}
+.handle{position:absolute;height:34px;border-radius:17px;background:linear-gradient(90deg,#00DB33,#0a3d1a);transform-origin:0 50%;z-index:11}
+.item{position:absolute;left:80px;right:80px;height:92px;display:flex;align-items:center;gap:28px;font-size:40px;font-weight:600;border-bottom:1px solid rgba(240,241,242,.12)}
+.item i{flex:none;width:34px;height:34px;border-radius:50%;border:5px solid var(--g)}
+.note{position:absolute;left:110px;right:110px;background:#F0F1F2;color:#121416;border-radius:8px;padding:50px 56px 54px;box-shadow:0 30px 60px rgba(0,0,0,.6)}
+.note .tt{font-weight:700;font-size:54px}
+.note .r{display:flex;align-items:center;gap:22px;font-weight:600;font-size:40px;margin-top:30px}
+.note .r b{flex:none;width:48px;height:48px;border-radius:12px;background:#00DB33;display:flex}
+.pill{display:inline-block;background:var(--g);color:#121416;border-radius:12px;padding:0 16px 6px;font-weight:700}
+</style></head><body>
+<div class="pg" style="left:0">
+  <div class="bg" style="inset:0;background-image:url(gen/lens.png);background-size:cover;background-position:50% 100%"></div>
+  <div class="a" style="inset:0;background:linear-gradient(180deg,rgba(11,12,13,.7) 0,rgba(11,12,13,0) 30%,rgba(11,12,13,0) 62%,rgba(11,12,13,.92) 82%)"></div>
+  <div class="h" style="top:170px;font-size:76px;text-align:center">We found and fixed</div>
+  <div class="a" style="left:276px;top:400px;width:400px;height:400px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:250px;line-height:1;color:#F0F1F2;padding-bottom:28px;text-shadow:0 0 40px rgba(0,0,0,.6),0 0 90px rgba(0,219,51,.6);z-index:5">14</div>
+  <div class="h" style="top:1060px;font-size:76px;text-align:center">issues <span class="g">before launch.</span></div>
+</div>
+<div class="pg" style="left:1080px;background:#0e1011">
+  <div class="glow" style="left:420px;top:510px;width:700px;height:700px;opacity:.5"></div>
+  <div class="k">WHY AUDIT</div>
+  <div class="h" style="top:250px;font-size:84px">Launch day is the<br>worst day to <span class="g">find<br>a hole.</span></div>
+  <div class="d" style="top:640px;width:500px">After launch, every issue is live, public and urgent. Before launch, it's a fix on our list.<br><br>So we review first.</div>
+  <div class="ring" style="left:600px;top:690px;width:340px;height:340px;display:flex;align-items:center;justify-content:center;flex-direction:column;background:rgba(0,219,51,.06)"><div style="font-weight:600;font-size:22px;letter-spacing:.14em;color:var(--g)">LAUNCH DAY</div><div style="font-weight:700;font-size:96px;line-height:1.05">D-0</div></div>
+  <div class="handle" style="left:880px;top:985px;width:170px;transform:rotate(42deg)"></div>
+</div>
+<div class="pg" style="left:2160px;background:#0e1011">
+  <div class="k">WHAT A REVIEW COVERS</div>
+  <div class="h" style="top:250px;font-size:72px">Examples of what we<br>check <span class="g">before launch.</span></div>
+  <div id="items"></div>
+  <div class="a" style="left:80px;top:1135px;font-size:26px;color:rgba(240,241,242,.55)">Examples of what a review covers, not a list of the 14.</div>
+</div>
+<div class="pg" style="left:3240px;background:#0e1011">
+  <div class="glow" style="left:190px;top:260px;width:700px;height:700px;opacity:.7"></div>
+  <div class="k">THE RESULT</div>
+  <div class="ring" style="left:240px;top:290px;width:600px;height:600px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:300px;color:#F0F1F2;line-height:1;padding-bottom:30px">14</div>
+  <div class="handle" style="left:780px;top:810px;width:320px;transform:rotate(42deg)"></div>
+  <div class="h" style="top:960px;font-size:64px;text-align:left">14 found. <span class="g">14 fixed.</span></div>
+  <div class="d" style="top:1050px">All before launch day, on a company platform.</div>
+</div>
+<div class="pg" style="left:4320px;background:#0e1011">
+  <div class="k">THE HANDOFF</div>
+  <div class="h" style="top:250px;font-size:72px">Fixes don't stay in<br><span class="g">our heads.</span></div>
+  <div class="note" style="top:500px;transform:rotate(-1.5deg)">
+    <div class="tt">Handoff note</div>
+    <div class="r"><b></b>What we checked</div>
+    <div class="r"><b></b>What we fixed</div>
+    <div class="r"><b></b>What to keep watching</div>
+  </div>
+  <div class="d" style="top:1000px">Written for the client's team, so the next update doesn't undo the fix.</div>
+</div>
+<div class="pg" style="left:5400px">
+  <div class="bg" style="inset:0;background-image:url(gen/lens.png);background-size:cover;background-position:50% 100%"></div>
+  <div class="a" style="inset:0;background:linear-gradient(180deg,rgba(11,12,13,.7) 0,rgba(11,12,13,0) 30%,rgba(11,12,13,0) 60%,rgba(11,12,13,.94) 78%)"></div>
+  <div class="h" style="top:170px;font-size:84px;text-align:center">Launching <span class="g">soon?</span></div>
+  <div class="a" style="left:276px;top:400px;width:400px;height:400px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:260px;line-height:1;color:#F0F1F2;padding-bottom:28px;text-shadow:0 0 40px rgba(0,0,0,.6),0 0 90px rgba(0,219,51,.6);z-index:5">?</div>
+  <div class="a" style="left:80px;right:80px;top:1030px;font-size:44px;font-weight:600;line-height:1.45;text-align:center">Comment <span class="pill">review</span> and we'll send<br>a first-impression review of your site.</div>
+</div>
+<script>
+const it=['Access permissions','Form input validation','Security headers','Exposed keys or config','Dependency updates','Rate limiting','Error messages that leak info'];
+document.getElementById('items').innerHTML=it.map((t,i)=>`<div class="item" style="top:${470+i*92}px"><i></i>${t}</div>`).join('');
+document.querySelectorAll('.note .r b').forEach(n=>n.innerHTML='<svg viewBox="0 0 48 48" width="48" height="48"><path d="M13 25l8 8 15-17" fill="none" stroke="#121416" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg>');
+</script><script src="../_kit/kit.js"></script>
+<script>frame(6)</script>
+</body></html>

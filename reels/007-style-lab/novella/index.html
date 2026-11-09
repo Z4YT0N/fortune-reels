@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="ar" data-resolution="portrait">
+  <!-- Style lab 007 / NOVELLA: deadpan symmetric brand ad. Locked-off top-down felt table (hands enter from the frame edges,
+       cut on action) interleaved with a centred deadpan portrait. Type lives on objects: phone screen, the printed receipt,
+       letter-board sign on the wall, coasters revealed when a cup is lifted, the key tag that flips when the keys are picked up.
+       Ends on a black logo card. build.py fills WORDS. -->
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1080, height=1920">
+    <title>Novella style</title>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      @font-face { font-family: "ZainL"; src: url("assets/fonts/zain-mob-long.ttf") format("truetype"); }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1080px; height: 1920px; overflow: hidden; background: #121416; }
+      #main { position: relative; width: 100%; height: 100%; overflow: hidden; font-family: "ZainL", sans-serif; color: #121416; }
+      .scene { position: absolute; inset: 0; overflow: hidden; opacity: 0; }
+      .plate { position: absolute; left: 0; top: -8px; width: 1080px; height: 1935px; }
+      .spr { position: absolute; display: block; }
+      .obj { filter: drop-shadow(3px 6px 5px rgba(10,20,14,0.45)); }
+      .hand { filter: drop-shadow(16px 26px 22px rgba(6,16,10,0.42)); }
+      #tbl { position: absolute; inset: 0; transform-origin: 540px 830px; }
+      /* phone */
+      #phone { position: absolute; left: 423px; top: 595px; width: 233px; height: 470px; }
+      #phone img { width: 233px; height: 470px; }
+      #scr { position: absolute; left: 10.5px; top: 11px; width: 208px; height: 449px; border-radius: 24px; overflow: hidden; background: #0d0f10; }
+      #page { position: absolute; inset: 0; background: #F0F1F2; opacity: 0; direction: rtl; }
+      .url { position: absolute; left: 14px; right: 14px; top: 30px; height: 22px; border-radius: 11px; background: #dfe1e3; font: 11px/22px Inter, Arial, sans-serif; color: #6b6f73; text-align: center; direction: ltr; }
+      .ttl { position: absolute; right: 14px; top: 62px; font-size: 30px; line-height: 1.2; color: #121416; white-space: nowrap; }
+      .grid { position: absolute; left: 14px; right: 14px; top: 112px; display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
+      .tile { height: 64px; border-radius: 7px; background: #d6d9dc; position: relative; overflow: hidden; }
+      .shim { position: absolute; top: 0; bottom: 0; width: 60px; left: -70px; background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,0.75), rgba(255,255,255,0)); }
+      #spin { position: absolute; left: 79px; top: 196px; width: 50px; height: 50px; opacity: 0; }
+      .bar { position: absolute; left: 14px; right: 14px; bottom: 44px; height: 6px; border-radius: 3px; background: #d6d9dc; opacity: 0; }
+      .bar i { position: absolute; right: 0; top: 0; bottom: 0; width: 0%; background: #00DB33; border-radius: 3px; }
+      .pct { position: absolute; right: 14px; bottom: 12px; font-size: 18px; color: #121416; white-space: nowrap; opacity: 0; }
+      #rip { position: absolute; left: 84px; top: 200px; width: 40px; height: 40px; border-radius: 50%; background: rgba(18,20,22,0.18); opacity: 0; }
+      /* receipt */
+      #rcpt { position: absolute; left: 443px; top: 1100px; width: 195px; height: 315px; }
+      #rcpt img { width: 195px; height: 315px; }
+      .rtx { position: absolute; left: 0; right: 0; text-align: center; direction: rtl; color: #2a2b2c; mix-blend-mode: multiply; white-space: nowrap; }
+      .dash { position: absolute; left: 22px; right: 22px; border-top: 2px dashed rgba(42,43,44,0.55); }
+      /* coasters */
+      .coast { position: absolute; width: 220px; height: 220px; background: #E9E2D2; border-radius: 6px;
+               box-shadow: 1px 2px 3px rgba(10,20,14,0.35), 0 0 0 1px rgba(0,0,0,0.04) inset; overflow: hidden; }
+      .coast .rim { position: absolute; inset: 12px; border: 2px solid rgba(0,106,57,0.55); border-radius: 3px; }
+      .coast .cw { position: absolute; left: 0; right: 20px; top: 86px; text-align: center; font-size: 34px; line-height: 1.2; color: #006A39; direction: rtl; mix-blend-mode: multiply; }
+      .coast .gr { position: absolute; inset: 0; width: 100%; height: 100%; mix-blend-mode: multiply; opacity: 0.35; object-fit: cover; }
+      /* keys */
+      #keys { position: absolute; left: 610px; top: 1140px; width: 425px; height: 320px; transform-origin: 83px 228px; }
+      #keys img { width: 425px; height: 320px; }
+      #tagTx { position: absolute; left: 209px; top: 60px; width: 200px; text-align: center; font-size: 46px; line-height: 1.2; color: #3b2414; direction: rtl;
+               transform: rotate(-19deg); mix-blend-mode: multiply; opacity: 0; white-space: nowrap; }
+      /* portraits */
+      .ph { position: absolute; left: 0; top: -8px; width: 1080px; height: 1935px; }
+      .sign { position: absolute; left: 362px; top: 412px; width: 342px; height: 208px; direction: rtl; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+      .sl { display: flex; flex-direction: row; justify-content: center; gap: 16px; white-space: nowrap; }
+      .lw { display: inline-block; font-size: 66px; line-height: 1.15; color: #EFE8D8; text-shadow: 1px 2px 1px rgba(0,0,0,0.55), 0 0 1px rgba(0,0,0,0.4); }
+      .s2 .lw { font-size: 54px; }
+      #end { background: #121416; }
+      #end img { position: absolute; left: 140px; top: 560px; width: 800px; height: 800px; }
+      .grain { position: absolute; inset: 0; width: 1080px; height: 1920px; mix-blend-mode: soft-light; opacity: 0; z-index: 50; pointer-events: none; }
+    </style>
+  </head>
+  <body>
+    <div id="main" data-composition-id="main" data-start="0" data-duration="10" data-width="1080" data-height="1920">
+      <div id="stage" class="clip" data-start="0" data-duration="10" data-track-index="1" style="position:absolute;inset:0">
+
+        <!-- TABLE (top-down) -->
+        <div id="sTable" class="scene">
+          <div id="tbl">
+            <img class="plate" src="assets/img/plate.jpg" alt="">
+            <div class="coast" id="coA" style="left:70px;top:550px;transform:rotate(-3deg)"><img class="gr" src="assets/img/grain2.png" alt=""><div class="rim"></div><div class="cw">ويستنى</div></div>
+            <div class="coast" id="coB" style="left:790px;top:580px;transform:rotate(2.5deg)"><img class="gr" src="assets/img/grain4.png" alt=""><div class="rim"></div><div class="cw">ويستنى</div></div>
+            <div id="keys" class="obj"><img src="assets/img/keys.png" alt=""><div id="tagTx">ويطلع</div></div>
+            <div id="rcpt" class="obj" style="opacity:0">
+              <img src="assets/img/receipt_s.png" alt="">
+              <div class="rtx" style="top:36px;font-size:24px">معرض الصور</div>
+              <div class="dash" style="top:78px"></div>
+              <div class="rtx" style="top:88px;font-size:22px;color:#55585a">الحجم</div>
+              <div class="rtx" id="r34" style="top:112px;font-size:100px;line-height:1.1">٣٤</div>
+              <div class="rtx" id="rMB" style="top:220px;font-size:56px;line-height:1.1">ميجا</div>
+            </div>
+            <div id="phone" class="obj">
+              <img src="assets/img/phone.png" alt="">
+              <div id="scr"><div id="page">
+                <div class="url">company.sa/gallery</div>
+                <div class="ttl">معرض الصور</div>
+                <div class="grid">
+                  <div class="tile"><div class="shim"></div></div><div class="tile"><div class="shim"></div></div>
+                  <div class="tile"><div class="shim"></div></div><div class="tile"><div class="shim"></div></div>
+                  <div class="tile"><div class="shim"></div></div><div class="tile"><div class="shim"></div></div>
+                  <div class="tile"><div class="shim"></div></div><div class="tile"><div class="shim"></div></div>
+                </div>
+                <svg id="spin" viewBox="0 0 50 50"><circle cx="25" cy="25" r="19" fill="none" stroke="#c9cdd0" stroke-width="5"/><path d="M25 6 A19 19 0 0 1 44 25" fill="none" stroke="#00DB33" stroke-width="5" stroke-linecap="round"/></svg>
+                <div id="rip"></div>
+                <div class="bar"><i id="barF"></i></div>
+                <div class="pct">جاري التحميل</div><div class="pct" id="pct" style="right:auto;left:14px;direction:ltr">٣٪</div>
+              </div></div>
+            </div>
+            <img id="cupA" class="spr obj" src="assets/img/cup0.png" style="left:100px;top:580px;width:160px;height:160px" alt="">
+            <img id="cupB" class="spr obj" src="assets/img/cup0.png" style="left:820px;top:610px;width:160px;height:160px" alt="">
+            <img id="cupA2" class="spr obj" src="assets/img/cup1.png" style="left:268px;top:640px;width:160px;height:160px;opacity:0" alt="">
+            <img id="cupB2" class="spr obj" src="assets/img/cup2.png" style="left:652px;top:670px;width:160px;height:160px;opacity:0" alt="">
+            <img id="hPush" class="spr hand" src="assets/img/h_push.png" style="left:362px;top:1040px;width:432px;height:1021px" alt="">
+            <img id="hTap" class="spr hand" src="assets/img/h_tap.png" style="left:433px;top:830px;width:297px;height:932px;opacity:0" alt="">
+            <div id="hA" class="spr hand" style="left:-713px;top:160px;width:1008px;height:588px;opacity:0"><img src="assets/img/h_grab.png" style="width:1008px;height:588px;transform:scaleX(-1);display:block" alt=""></div>
+            <img id="hB" class="spr hand" src="assets/img/h_grab.png" style="left:785px;top:190px;width:1008px;height:588px;opacity:0" alt="">
+            <div id="hK" class="spr hand" style="left:578px;top:880px;width:1008px;height:588px;opacity:0"><img src="assets/img/h_grab.png" style="width:1008px;height:588px;display:block;transform-origin:115px 500px;transform:rotate(90deg)" alt=""></div>
+          </div>
+        </div>
+
+        <!-- PORTRAIT 1 -->
+        <div id="sP1" class="scene">
+          <img class="ph" id="p1" src="assets/img/portrait1.jpg" alt="">
+          <img class="ph" id="p1b" src="assets/img/blink.jpg" style="opacity:0" alt="">
+          <div class="sign"><div class="sl"><span class="lw" id="sw1">شركة</span><span class="lw" id="sw2">كبيرة</span></div></div>
+        </div>
+
+        <!-- PORTRAIT 2 -->
+        <div id="sP2" class="scene">
+          <img class="ph" id="p2" src="assets/img/portrait2.jpg" alt="">
+          <div class="sign s2">
+            <div class="sl"><span class="lw" id="t1">لا</span><span class="lw" id="t2">تدور</span><span class="lw" id="t3">على</span></div>
+            <div class="sl"><span class="lw" id="t4">صور</span><span class="lw" id="t5">أقل.</span></div>
+          </div>
+        </div>
+
+        <!-- END CARD -->
+        <div id="end" class="scene"><img src="assets/img/logo.png" alt=""></div>
+
+        <img class="grain" src="assets/img/grain0.png" alt=""><img class="grain" src="assets/img/grain1.png" alt=""><img class="grain" src="assets/img/grain2.png" alt="">
+        <img class="grain" src="assets/img/grain3.png" alt=""><img class="grain" src="assets/img/grain4.png" alt=""><img class="grain" src="assets/img/grain5.png" alt="">
+      </div>
+      <!-- no <audio>: the mix is muxed with ffmpeg after the render -->
+    </div>
+    <script>
+      const D = 10;
+      const WORDS = [["معرض", 0.0, 0.32], ["صور", 0.4, 0.64], ["في", 0.67, 0.72], ["موقع", 0.8, 1.12], ["شركة", 1.18, 1.44], ["كبيرة،", 1.51, 2.0], ["حجمه", 2.06, 2.4], ["اربعه", 2.44, 2.72], ["وثلاثين", 2.76, 3.12], ["ميجا.", 3.2, 3.68], ["عميلك", 3.73, 4.08], ["يفتحه", 4.12, 4.48], ["من", 4.53, 4.64], ["جواله،", 4.69, 5.2], ["ويستنى،", 5.28, 6.08], ["ويستنى،", 6.19, 7.04], ["ويطلع.", 7.15, 7.84], ["لا", 7.87, 7.92], ["تدور", 7.97, 8.32], ["على", 8.36, 8.48], ["صور", 8.54, 8.72], ["أقل.", 8.8, 9.28]];
+      const W = (i) => WORDS[i][1];
+      const F = 1 / 30;
+      const $ = (id) => document.getElementById(id);
+      window.__timelines = window.__timelines || {};
+      const TL = gsap.timeline({ paused: true });
+
+      async function build() {
+        try { await document.fonts.load('60px "ZainL"', "شركة"); } catch (e) {}
+        // ── cuts (hard, Novella-style) ──
+        const cuts = [["sTable", 0], ["sP1", 1.10], ["sTable", 2.02], ["sP2", 7.87], ["end", 9.45]];
+        const scenes = ["sTable", "sP1", "sP2", "end"];
+        gsap.set($("sTable"), { opacity: 1 });
+        cuts.forEach(([id, t]) => scenes.forEach((s) => TL.set($(s), { opacity: s === id ? 1 : 0 }, t)));
+
+        // ── B1 0.00-1.10: a hand pushes the phone dead centre, the screen wakes on «صور» ──
+        const ph = $("phone"), hP = $("hPush");
+        gsap.set([ph, hP], { y: 760 });
+        TL.to([ph, hP], { y: 0, duration: 0.42, ease: "power3.out" }, 0);
+        TL.to(ph, { rotation: 0.6, duration: 0.12, ease: "sine.out" }, 0.40);
+        TL.to(ph, { rotation: 0, duration: 0.2, ease: "sine.inOut" }, 0.52);
+        TL.set($("page"), { opacity: 1 }, W(1) - 0.04);
+        TL.to(hP, { y: 900, duration: 0.42, ease: "power2.in" }, 0.62);
+
+        // ── B2 1.10-2.02: portrait 1, letter-board sign takes «شركة» then «كبيرة», one blink ──
+        ["sw1", "sw2"].forEach((id) => gsap.set($(id), { opacity: 0 }));
+        [["sw1", W(4)], ["sw2", W(5)]].forEach(([id, t]) => {
+          TL.set($(id), { opacity: 1, y: -6, scale: 1.04 }, t);
+          TL.to($(id), { y: 0, scale: 1, duration: 3 * F, ease: "power2.out" }, t);
+        });
+        TL.set($("p1b"), { opacity: 1 }, 1.70); TL.set($("p1b"), { opacity: 0 }, 1.70 + 3 * F);
+        TL.fromTo($("sP1"), { scale: 1 }, { scale: 1.012, duration: 0.92, ease: "none", immediateRender: false }, 1.10);
+
+        // ── B3 2.02-3.73: the receipt is pushed in under the phone; «٣٤» passes in, the hand lifts off «ميجا» ──
+        const rc = $("rcpt");
+        gsap.set(rc, { opacity: 1, y: 830, rotation: 4 });
+        TL.set(hP, { y: 830 + 280 }, 2.02); // fingertips on the receipt's lower third (receipt top 1100 + 220 -> 1320 vs hand rest 1040)
+        TL.to(rc, { y: 0, duration: 0.55, ease: "power3.out" }, 2.02);
+        TL.to(hP, { y: 280, duration: 0.55, ease: "power3.out" }, 2.02);
+        TL.to(rc, { rotation: -2.5, duration: 0.3, ease: "sine.inOut" }, 2.62);
+        TL.to(hP, { x: -10, duration: 0.3, ease: "sine.inOut" }, 2.62);
+        TL.to(hP, { y: 1000, duration: 0.42, ease: "power2.in" }, W(9) - 0.08);
+
+        // ── B4 3.73-5.05: punch in on the phone; a finger taps «يفتحه», the gallery starts loading... 3 % ──
+        TL.set($("tbl"), { scale: 1.55 }, W(10));
+        const hT = $("hTap");
+        gsap.set(hT, { y: 700 });
+        TL.set(hT, { opacity: 1 }, W(10));
+        TL.to(hT, { y: 0, duration: 0.36, ease: "power3.out" }, W(10) + 0.02);
+        TL.to(hT, { scale: 0.97, transformOrigin: "36% 0%", duration: 2 * F, ease: "power1.in" }, W(11) - 2 * F);
+        TL.to(hT, { scale: 1, duration: 3 * F, ease: "power1.out" }, W(11));
+        TL.fromTo($("rip"), { opacity: 0.9, scale: 0.4 }, { opacity: 0, scale: 2.4, duration: 0.35, ease: "power2.out", immediateRender: false }, W(11));
+        TL.set([$("spin"), document.querySelector(".bar"), ...document.querySelectorAll(".pct")], { opacity: 1 }, W(11) + 2 * F);
+        TL.to($("barF"), { width: "3%", duration: 0.5, ease: "power2.out" }, W(11) + 0.1);
+        TL.to(hT, { y: 760, duration: 0.42, ease: "power2.in" }, W(12) + 0.05);
+        // spinner + shimmer run from the tap to the cut
+        gsap.set($("spin"), { transformOrigin: "50% 50%" });
+        TL.fromTo($("spin"), { rotation: 0 }, { rotation: 360 * 5, duration: D - W(11), ease: "none", immediateRender: false }, W(11));
+        document.querySelectorAll(".shim").forEach((s, i) => {
+          for (let t = W(11) + (i % 2) * 0.12; t < 7.85; t += 0.9) TL.fromTo(s, { x: 0 }, { x: 200, duration: 0.7, ease: "sine.inOut", immediateRender: false }, t);
+        });
+        TL.set($("tbl"), { scale: 1 }, 5.05); TL.set(hT, { opacity: 0 }, 5.05);
+
+        // ── B5 5.05-6.20: wide again, the left hand lifts cup A -> coaster says «ويستنى»; it comes back half drunk ──
+        const hA = $("hA"), cA = $("cupA"), cA2 = $("cupA2");
+        gsap.set(hA, { x: -560 });
+        TL.set(hA, { opacity: 1 }, 5.05);
+        TL.to(hA, { x: 0, duration: 0.22, ease: "power2.out" }, 5.05);
+        TL.to([hA, cA], { scale: 1.05, duration: 4 * F, ease: "power1.out" }, W(14) - 0.02);
+        TL.to([hA, cA], { x: -560, y: -60, duration: 0.3, ease: "power2.in" }, W(14) + 0.08);
+        TL.set(cA2, { opacity: 1, x: -600, y: -40 }, 5.70);
+        TL.set(hA, { x: -432, y: 20, scale: 1 }, 5.70);
+        TL.to([hA, cA2], { x: "+=600", duration: 0.26, ease: "power2.out" }, 5.70);
+        TL.to(cA2, { y: 0, duration: 0.26, ease: "power2.out" }, 5.70);
+        TL.to(hA, { y: 60, duration: 0.26, ease: "power2.out" }, 5.70);
+        TL.to(hA, { x: -700, duration: 0.3, ease: "power2.in" }, 6.02);
+        TL.set($("pct"), { textContent: "٤٪" }, 5.85);
+        TL.to($("barF"), { width: "4%", duration: 0.3 }, 5.85);
+
+        // ── B6 6.00-7.05: the right hand lifts cup B -> second «ويستنى»; it comes back empty ──
+        const hB = $("hB"), cB = $("cupB"), cB2 = $("cupB2");
+        gsap.set(hB, { x: 560 });
+        TL.set(hB, { opacity: 1 }, 5.97);
+        TL.to(hB, { x: 0, duration: 0.2, ease: "power2.out" }, 5.97);
+        TL.to([hB, cB], { scale: 1.05, duration: 4 * F, ease: "power1.out" }, W(15) - 0.02);
+        TL.to([hB, cB], { x: 560, y: -60, duration: 0.3, ease: "power2.in" }, W(15) + 0.08);
+        TL.set(cB2, { opacity: 1, x: 600, y: -40 }, 6.62);
+        TL.set(hB, { x: 432, y: 20, scale: 1 }, 6.62);
+        TL.to([hB, cB2], { x: "-=600", duration: 0.26, ease: "power2.out" }, 6.62);
+        TL.to(cB2, { y: 0, duration: 0.26, ease: "power2.out" }, 6.62);
+        TL.to(hB, { y: 60, duration: 0.26, ease: "power2.out" }, 6.62);
+        TL.to(hB, { x: 700, duration: 0.28, ease: "power2.in" }, 6.92);
+        TL.set($("pct"), { textContent: "٥٪" }, 6.75);
+        TL.to($("barF"), { width: "5%", duration: 0.3 }, 6.75);
+
+        // ── B7 6.95-7.87: a hand takes the keys; the tag flips to «ويطلع», swings, and leaves ──
+        const hK = $("hK"), ky = $("keys");
+        gsap.set(hK, { y: 620 }); gsap.set(hK, { transformOrigin: "115px 500px" });
+        TL.set(hK, { opacity: 1 }, 6.92);
+        TL.to(hK, { y: 0, duration: 0.2, ease: "power2.out" }, 6.92);
+        TL.set($("tagTx"), { opacity: 1 }, W(16));
+        TL.to([hK, ky], { scale: 1.09, duration: 5 * F, ease: "power2.out" }, W(16));
+        TL.to(ky, { rotation: 6, duration: 0.16, ease: "sine.inOut" }, W(16) + 0.05);
+        TL.to(ky, { rotation: -4, duration: 0.16, ease: "sine.inOut" }, W(16) + 0.21);
+        TL.to([hK, ky], { y: 760, x: 30, duration: 0.3, ease: "power2.in" }, 7.48);
+
+        // ── B8 7.87-9.45: portrait 2, the sign spells the line word by word (RTL) ──
+        const tw = ["t1", "t2", "t3", "t4", "t5"];
+        tw.forEach((id) => gsap.set($(id), { opacity: 0 }));
+        tw.forEach((id, k) => {
+          const t = W(17 + k);
+          TL.set($(id), { opacity: 1, y: -6, scale: 1.04 }, t);
+          TL.to($(id), { y: 0, scale: 1, duration: 3 * F, ease: "power2.out" }, t);
+        });
+        TL.fromTo($("sP2"), { scale: 1 }, { scale: 1.012, duration: 1.58, ease: "none", immediateRender: false }, 7.87);
+
+        // ── grain, every 2 frames ──
+        const grains = Array.from(document.querySelectorAll(".grain"));
+        for (let f = 0; f < D * 30; f += 2) grains.forEach((g, i) => TL.set(g, { opacity: i === (f / 2) % 6 ? 0.5 : 0 }, f * F));
+        TL.set({}, {}, D);
+        window.__timelines["main"] = TL; TL.seek(0);
+      }
+      window.__hf = window.__hf || {}; window.__hf.buildReady = window.__hf.buildReady || {};
+      window.__hf.buildReady["main"] = build();
+    </script>
+  </body>
+</html>

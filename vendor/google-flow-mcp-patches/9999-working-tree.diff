@@ -1,0 +1,30 @@
+diff --git a/src/browser.ts b/src/browser.ts
+index 324148e..56f6c2b 100644
+--- a/src/browser.ts
++++ b/src/browser.ts
+@@ -73,7 +73,10 @@ export class FlowBrowser {
+       });
+     }
+     // Reuse an open Flow tab if there is one (CDP mode), else open our own.
+-    const existing = this.context.pages().find((p) => p.url().startsWith(FLOW_ORIGIN));
++    // FLOW_TAB_SLOT=N: use the N-th Flow tab (own tab per parallel caller); open it if missing.
++    const slot = Number(process.env.FLOW_TAB_SLOT || 0);
++    const flowTabs = this.context.pages().filter((p) => p.url().startsWith(FLOW_ORIGIN) && !p.url().includes('fd=1')); // fd=1: flow-direct's own tab
++    const existing = flowTabs[slot];
+     const page = existing ?? (await this.context.newPage());
+     if (!existing) await page.goto(FLOW_ORIGIN + '/', { waitUntil: 'domcontentloaded' });
+     page.on('close', () => { if (this.page === page) this.page = undefined; });
+diff --git a/src/ui.ts b/src/ui.ts
+index f0379ab..ae9e9c1 100644
+--- a/src/ui.ts
++++ b/src/ui.ts
+@@ -159,6 +159,9 @@ export class FlowUi {
+   async setMode(want: 'manual' | 'agent') {
+     for (let i = 0; i < 2; i++) {
+       if ((await this.isManualMode()) === (want === 'manual')) return;
++      // 2026-11-08 Flow UI: an open agent session panel hides the main composer's "Agent" toggle. Close the panel first.
++      const panelClose = this.page.locator('button[aria-label="Open session history"]').locator('xpath=following::button[@aria-label="Close"][1]');
++      if (await panelClose.isVisible().catch(() => false)) { await panelClose.click(); await this.page.waitForTimeout(800); }
+       const c = await this.tagComposer();
+       await c.locator('button', { hasText: /^\s*Agent\s*$/ }).first().click();
+       await this.page.waitForTimeout(800);

@@ -1,0 +1,248 @@
+From bd58375878cd1740612ef8df6bf1c7cc95cd0c58 Mon Sep 17 00:00:00 2001
+From: Fortune Code <fortunecodec@gmail.com>
+Date: Sat, 7 Nov 2026 16:02:01 +0300
+Subject: [PATCH 1/2] Add flow_upload_images and flow_agent_generate;
+ agent-mode detection for the 2026-11 Flow UI
+
+- flow_upload_images: real file chooser via the ingredient picker, returns media ids by caption
+- flow_agent_generate: one call for Nano Banana images or Omni (frames-to-)video through the agent panel,
+  auto-approve within max_credits, waits and downloads
+- isManualMode: the composer Settings trigger is hidden in agent mode; treat that as agent mode
+- agentChat: fall back to reading the quote from the page when the StreamChat body is unreadable
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+---
+ src/flow.ts  | 81 ++++++++++++++++++++++++++++++++++++++++++++++++++--
+ src/index.ts | 34 ++++++++++++++++++++++
+ src/ui.ts    | 57 ++++++++++++++++++++++++++++++++++++
+ 3 files changed, 169 insertions(+), 3 deletions(-)
+
+diff --git a/src/flow.ts b/src/flow.ts
+index f86c6d7..b3812a4 100644
+--- a/src/flow.ts
++++ b/src/flow.ts
+@@ -300,8 +300,8 @@ export class FlowClient {
+    * Send one message to Flow's agent via its panel. If it asks to spend
+    * credits, approve only when the quoted cost is <= maxCredits.
+    */
+-  async agentChat(o: { projectId: string; message: string; newSession?: boolean; characterIds?: string[]; maxCredits?: number }) {
+-    const ingredients = await this.ingredientNames(o.projectId, { characterIds: o.characterIds });
++  async agentChat(o: { projectId: string; message: string; newSession?: boolean; characterIds?: string[]; imageIds?: string[]; maxCredits?: number }) {
++    const ingredients = await this.ingredientNames(o.projectId, { characterIds: o.characterIds, imageIds: o.imageIds });
+     return this.withUi(async (ui) => {
+       await ui.openProject(o.projectId);
+       if (o.newSession) await ui.startNewAgentSession();
+@@ -309,7 +309,17 @@ export class FlowClient {
+       await ui.clearPrompt();
+       for (const i of ingredients) await ui.addIngredient(i.name, i.kind);
+       await ui.typePrompt(o.message);
+-      const turns = [P.parseAgentChunks(await ui.submitAgentTurn())];
++      let turns: P.AgentTurn[];
++      try {
++        turns = [P.parseAgentChunks(await ui.submitAgentTurn())];
++      } catch {
++        // Flow's StreamChat body could not be read (it navigated); fall back to reading the page itself.
++        const q = await ui.waitForAgentQuote();
++        const empty: P.AgentTurn = { text: '', thinking: '', toolCalls: [], generatedMediaIds: [] } as any;
++        if (q === undefined) return this.summarise(o.projectId, [empty], 'none');
++        if (o.maxCredits !== undefined && q >= 0 && q <= o.maxCredits) { await ui.clickLatestApprove(); return this.summarise(o.projectId, [empty], 'approved'); }
++        return { ...(await this.summarise(o.projectId, [empty], 'awaiting')), pendingPermission: { totalCost: q } as any };
++      }
+       let approval: 'approved' | 'awaiting' | 'none' = 'none';
+       const ask = turns[0].permissionRequest;
+       if (ask) {
+@@ -322,6 +332,71 @@ export class FlowClient {
+     });
+   }
+ 
++  /** Upload local files; returns the new media id per path (matched by file name = Flow caption). */
++  async uploadImages(projectId: string, paths: string[]) {
++    const base = (p: string) => p.split(/[\\/]/).pop()!;
++    const before = new Set((await this.contents(projectId)).workflows.map((w: any) => w.mediaId));
++    await this.withUi(async (ui) => { await ui.openProject(projectId); await ui.setMode('agent'); await ui.uploadFiles(paths); });
++    const deadline = Date.now() + 180_000;
++    let found: { path: string; mediaId?: string }[] = paths.map((p) => ({ path: p }));
++    while (Date.now() < deadline) {
++      const ws = (await this.contents(projectId)).workflows.filter((w: any) => !before.has(w.mediaId));
++      found = paths.map((p) => ({ path: p, mediaId: ws.find((w: any) => w.caption === base(p))?.mediaId }));
++      if (found.every((f) => f.mediaId)) break;
++      await sleep(4000);
++    }
++    return { uploads: found, missing: found.filter((f) => !f.mediaId).map((f) => f.path) };
++  }
++
++  /**
++   * One-call generation through the agent panel (works while the manual composer settings are hidden).
++   * image: Nano Banana Pro. video: Omni (frames-to-video when start+end ids are given).
++   * Auto-approves only when Flow's quote <= maxCredits; optionally waits and downloads.
++   */
++  async agentGenerate(o: {
++    projectId: string; kind: 'image' | 'video'; prompt: string; aspect: string; count: number;
++    referenceImageIds?: string[]; startImageId?: string; endImageId?: string;
++    model?: string; durationSec?: number; resolution?: string; maxCredits: number; wait: boolean;
++    downloadDir?: string; download: (mediaId: string, dir?: string) => Promise<string>;
++  }) {
++    const before = new Set((await this.contents(o.projectId)).workflows.map((w: any) => w.mediaId));
++    let msg: string; let imageIds: string[] = [];
++    if (o.kind === 'image') {
++      imageIds = o.referenceImageIds ?? [];
++      msg = `Generate ${o.count} image${o.count > 1 ? 's' : ''} now with Nano Banana Pro, ${o.aspect}, x${o.count}. Do not generate video. ` +
++        (imageIds.length ? 'Use the attached image(s) as references for subject and style. ' : '') + `Image: ${o.prompt}`;
++    } else {
++      const model = o.model ?? 'Omni 1.2 Flash'; const dur = o.durationSec ?? 4; const res = o.resolution ?? '720p';
++      if (o.startImageId && o.endImageId) {
++        imageIds = [o.startImageId, o.endImageId];
++        msg = `Generate ONE video now with ${model}, frames-to-video mode, ${o.aspect}, ${dur} seconds, ${res}, x1. Use the first attached image as the FIRST frame and the second attached image as the LAST frame. Do not generate images. ${o.prompt}`;
++      } else if (o.startImageId) {
++        imageIds = [o.startImageId];
++        msg = `Generate ONE video now with ${model}, image-to-video mode, ${o.aspect}, ${dur} seconds, ${res}, x1. Use the attached image as the FIRST frame. Do not generate images. ${o.prompt}`;
++      } else {
++        imageIds = o.referenceImageIds ?? [];
++        msg = `Generate ONE video now with ${model}, ${o.aspect}, ${dur} seconds, ${res}, x1. ` + (imageIds.length ? 'Use the attached images as ingredients. ' : '') + `Do not generate images. ${o.prompt}`;
++      }
++    }
++    const chat = await this.agentChat({ projectId: o.projectId, message: msg, newSession: true, imageIds, maxCredits: o.maxCredits });
++    let ids: string[] = chat.generatedMediaIds;
++    if (!ids.length) {
++      const deadline = Date.now() + (o.kind === 'image' ? 120_000 : 60_000);
++      while (Date.now() < deadline) {
++        ids = (await this.contents(o.projectId)).workflows.filter((w: any) => !before.has(w.mediaId)).map((w: any) => w.mediaId);
++        if (ids.length) break;
++        await sleep(4000);
++      }
++    }
++    let videoStatus: any;
++    if (o.kind === 'video' && o.wait && ids.length) videoStatus = await this.waitForVideos(ids);
++    const files: string[] = [];
++    if (o.downloadDir && ids.length && (o.kind === 'image' || o.wait)) {
++      for (const id of ids) files.push(await o.download(id, o.downloadDir).catch((e) => `ERROR ${e}`));
++    }
++    return { mediaIds: ids, files, approval: chat.approval, pendingPermission: chat.pendingPermission, reply: chat.reply, videoStatus };
++  }
++
+   async agentAnswerPermission(projectId: string, answer: 'Approve' | 'Reject') {
+     return this.withUi(async (ui) => {
+       await ui.openProject(projectId);
+diff --git a/src/index.ts b/src/index.ts
+index dddc54e..13ff8c5 100644
+--- a/src/index.ts
++++ b/src/index.ts
+@@ -263,6 +263,40 @@ server.registerTool('flow_agent_chat', {
+ }, wrap(({ project_id, message, new_session, character_ids, max_credits }) =>
+   flow.agentChat({ projectId: project_id, message, newSession: new_session, characterIds: character_ids, maxCredits: max_credits })));
+ 
++const dl = async (mediaId: string, dir?: string) => {
++  const m = await flow.getMedia(mediaId);
++  const url = m.videoUrl ?? m.imageUrl;
++  if (!url) throw new FlowError('no URL yet');
++  return downloadTo(url, mediaId + (m.videoUrl ? '.mp4' : '.png'), dir);
++};
++
++server.registerTool('flow_upload_images', {
++  title: 'Upload local images/videos',
++  description: 'Upload local files into a Flow project (ingredient picker "Upload media"). Returns the media id per path, to use as references or start/end frames.',
++  inputSchema: { project_id: projectId, paths: z.array(z.string()).min(1).max(10) },
++}, wrap(({ project_id, paths }) => flow.uploadImages(project_id, paths)));
++
++server.registerTool('flow_agent_generate', {
++  title: 'Generate image or video via the Flow agent (one call)',
++  description:
++    'Most reliable generation path. kind="image" uses Nano Banana Pro (no credit prompt observed); kind="video" uses Omni ' +
++    '(frames-to-video when start_image_id + end_image_id are given, image-to-video with only start_image_id). ' +
++    'Auto-approves only when the quote <= max_credits. wait=true waits for videos; download_dir saves files and returns their paths.',
++  inputSchema: {
++    project_id: projectId, kind: z.enum(['image', 'video']), prompt: z.string(),
++    aspect: z.enum(['9:16', '16:9', '1:1', '4:3', '3:4']).default('9:16'), count: z.number().int().min(1).max(4).default(1),
++    reference_image_ids: z.array(z.string()).optional(), start_image_id: z.string().optional(), end_image_id: z.string().optional(),
++    model: z.string().optional().describe('Video model display name, default "Omni 1.2 Flash".'),
++    duration_sec: z.number().int().min(3).max(15).optional(), resolution: z.enum(['360p', '720p']).optional(),
++    max_credits: maxCredits, wait: z.boolean().default(true), download_dir: z.string().optional(),
++  },
++}, wrap((a) => flow.agentGenerate({
++  projectId: a.project_id, kind: a.kind, prompt: a.prompt, aspect: a.aspect, count: a.count,
++  referenceImageIds: a.reference_image_ids, startImageId: a.start_image_id, endImageId: a.end_image_id,
++  model: a.model, durationSec: a.duration_sec, resolution: a.resolution,
++  maxCredits: a.max_credits ?? DEFAULT_MAX_CREDITS, wait: a.wait, downloadDir: a.download_dir, download: dl,
++})));
++
+ server.registerTool('flow_agent_respond', {
+   title: 'Answer agent permission request', description: 'Approve or reject the agent\'s pending request to spend credits.',
+   inputSchema: { project_id: projectId, answer: z.enum(['Approve', 'Reject']) },
+diff --git a/src/ui.ts b/src/ui.ts
+index 67ffea9..cbfb0fa 100644
+--- a/src/ui.ts
++++ b/src/ui.ts
+@@ -146,6 +146,9 @@ export class FlowUi {
+   }
+ 
+   async isManualMode(): Promise<boolean> {
++    // 2026-11 Flow UI: in agent mode the composer's "Settings trigger" is hidden (agent uses its own Settings button).
++    const c0 = await this.tagComposer();
++    if (!(await c0.locator('button[aria-label="Settings trigger"]').first().isVisible().catch(() => false))) return false;
+     await this.openSettings();
+     const manual = await this.page.evaluate(() => /image\s*Image[\s\S]*videocam\s*Video/.test(
+       [...document.querySelectorAll('body *')].map((e) => (e as HTMLElement).innerText || '').find((t) => /Generating will use/.test(t) && t.length < 600) ?? ''));
+@@ -258,6 +261,60 @@ export class FlowUi {
+     return parseStream(await (await wait).text());
+   }
+ 
++  /** Upload local image/video files through the ingredient picker's "Upload media" (real file chooser). */
++  async uploadFiles(paths: string[]) {
++    const c = await this.tagComposer();
++    await c.locator('button[aria-label="Add ingredients to the prompt box"]').click();
++    const up = this.page.getByRole('button', { name: 'Upload media' }).first();
++    await up.waitFor({ state: 'visible', timeout: 10_000 });
++    const [fc] = await Promise.all([this.page.waitForEvent('filechooser', { timeout: 15_000 }), up.click()]);
++    await fc.setFiles(paths);
++    const agree = this.page.getByRole('button', { name: 'I agree' }).first();
++    await agree.waitFor({ state: 'visible', timeout: 6_000 }).then(() => agree.click()).catch(() => {});
++    await this.page.waitForTimeout(1500);
++    await this.page.keyboard.press('Escape').catch(() => {});
++  }
++
++  /** Send the agent message without depending on reading the streamed response body. */
++  async sendAgentMessage() {
++    await this.generateButton().click();
++    await this.page.waitForTimeout(1500);
++  }
++
++  /**
++   * Wait for the agent to finish its turn. Returns the newest credit quote if a fresh,
++   * enabled "Approve" radio is waiting, else undefined (no approval needed).
++   */
++  async waitForAgentQuote(timeoutMs = 90_000): Promise<number | undefined> {
++    const deadline = Date.now() + timeoutMs;
++    while (Date.now() < deadline) {
++      const q = await this.page.evaluate(() => {
++        const radios = [...document.querySelectorAll<HTMLElement>('[role=radio]')].filter((r) => /Approve/.test(r.innerText || r.getAttribute('aria-label') || '') && !(r as any).disabled && r.getAttribute('aria-disabled') !== 'true' && r.offsetParent);
++        const live = radios.filter((r) => !(r.querySelector('input') as HTMLInputElement | null)?.disabled);
++        if (!live.length) return null;
++        let n: HTMLElement | null = live[live.length - 1];
++        for (let i = 0; i < 8 && n; i++) {
++          const m = (n.innerText || '').match(/costing\s+([\d,]+)\s+credits?/i);
++          if (m) return Number(m[1].replace(/,/g, ''));
++          n = n.parentElement;
++        }
++        return -1;
++      });
++      if (q !== null) return q;
++      // agent finished without asking (images): the send button is enabled again and the input is empty
++      const idle = await this.page.evaluate(() => !!document.querySelector('button[aria-label="Start generation"]:not([disabled])'));
++      if (idle && Date.now() > deadline - timeoutMs + 20_000) return undefined;
++      await this.page.waitForTimeout(2000);
++    }
++    return undefined;
++  }
++
++  async clickLatestApprove() {
++    const r = this.page.getByRole('radio', { name: 'Approve', exact: true }).last();
++    await r.click();
++    await this.page.waitForTimeout(2000);
++  }
++
+   async startNewAgentSession() {
+     const btn = this.page.locator('button:has(mat-icon:text-is("edit_square")):visible').first();
+     if (await btn.count()) { await btn.click(); await this.page.waitForTimeout(800); }
+-- 
+2.54.0.windows.1
+

@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8">
+<link rel="stylesheet" href="common.css">
+<style>
+@font-face { font-family: PlexUI; src: url(assets/IBMPlexSansArabic-Medium.ttf); }
+@font-face { font-family: PlexUIB; src: url(assets/IBMPlexSansArabic-Bold.ttf); }
+html,body { width:1080px; height:1350px; }
+.bp { position:absolute; inset:0; background-image:
+  linear-gradient(rgba(0,219,51,.07) 1px, transparent 1px), linear-gradient(90deg, rgba(0,219,51,.07) 1px, transparent 1px),
+  linear-gradient(rgba(0,219,51,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(0,219,51,.035) 1px, transparent 1px);
+  background-size: 120px 120px, 120px 120px, 24px 24px, 24px 24px; background-position: 0 0; }
+/* ---- dashboard UI ---- */
+#ui { position:absolute; left:80px; top:318px; width:920px; height:548px; border-radius:18px; overflow:hidden; background:#0E1012; border:1.5px solid rgba(255,255,255,.16);
+  box-shadow:0 30px 80px rgba(0,0,0,.7), 0 0 80px rgba(0,219,51,.12); font-family:PlexUI, sans-serif; color:#E8EAEC; direction:rtl; }
+#ui .bar { height:34px; background:#17191C; display:flex; align-items:center; gap:7px; padding:0 14px; direction:ltr; border-bottom:1px solid rgba(255,255,255,.07); }
+#ui .bar i { width:10px; height:10px; border-radius:50%; background:#3A3D41; display:block; }
+#ui .bar .url { margin-left:14px; flex:1; height:20px; border-radius:6px; background:#0E1012; font-size:11px; color:#80858a; display:flex; align-items:center; padding:0 10px; font-family:Plex; }
+.side { position:absolute; right:0; top:34px; bottom:0; width:168px; background:#141619; border-left:1px solid rgba(255,255,255,.06); padding:16px 12px; }
+.side .brand { display:flex; align-items:center; gap:8px; font-family:PlexUIB; font-size:14px; margin-bottom:18px; }
+.side .brand b { width:26px; height:26px; border-radius:7px; background:#2A2E33; display:block; }
+.side .it { font-size:13px; color:#9A9FA4; padding:7px 10px; border-radius:8px; margin-bottom:3px; display:flex; align-items:center; gap:8px; }
+.side .it s { width:12px; height:12px; border-radius:3px; border:1.5px solid currentColor; display:block; }
+.side .it.on { background:rgba(0,219,51,.12); color:#00DB33; }
+.main { position:absolute; right:168px; left:0; top:34px; bottom:0; padding:16px 18px; }
+.hi { font-family:PlexUIB; font-size:17px; }
+.hi small { font-family:PlexUI; font-size:11px; color:#80858a; margin-right:8px; }
+.kpis { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-top:12px; }
+.k { background:#16191C; border:1px solid rgba(255,255,255,.07); border-radius:12px; padding:10px 12px; }
+.k .l { font-size:11px; color:#8D9297; }
+.k .v { font-family:PlexUIB; font-size:20px; margin-top:2px; }
+.k .d { font-size:10.5px; color:#00DB33; }
+.k .d.r { color:#FF6B5B; }
+.grid2 { display:grid; grid-template-columns: 1.15fr 1fr; gap:10px; margin-top:10px; }
+.card { background:#16191C; border:1px solid rgba(255,255,255,.07); border-radius:12px; padding:10px 12px; }
+.card h4 { font-family:PlexUIB; font-size:12.5px; font-weight:inherit; margin-bottom:6px; display:flex; justify-content:space-between; }
+.card h4 span { font-family:PlexUI; color:#80858a; font-size:10.5px; }
+.inv .row { display:flex; justify-content:space-between; align-items:center; font-size:11.5px; padding:6px 0; border-top:1px solid rgba(255,255,255,.05); }
+.pill { font-size:10px; padding:2px 8px; border-radius:20px; }
+.p-ok { background:rgba(0,219,51,.12); color:#00DB33; }
+.p-low { background:rgba(255,176,32,.14); color:#FFB020; }
+.p-out { background:rgba(255,107,91,.14); color:#FF6B5B; }
+.bar2 { height:5px; border-radius:3px; background:#24282C; margin-top:3px; position:relative; overflow:hidden; }
+.bar2 b { position:absolute; right:0; top:0; bottom:0; border-radius:3px; display:block; }
+.fat { display:flex; gap:12px; align-items:flex-start; }
+.fat .meta { flex:1; font-size:11px; color:#A9AEB3; line-height:1.75; }
+.fat .meta b { font-family:PlexUIB; color:#E8EAEC; font-weight:inherit; }
+.qr { width:96px; height:96px; background:#fff; border-radius:6px; padding:6px; flex:none; }
+.demo { position:absolute; left:14px; bottom:10px; font-size:9.5px; color:#5d6267; }
+/* ---- annotation ---- */
+svg.ann { position:absolute; left:0; top:0; z-index:40; pointer-events:none; overflow:visible; }
+.hl { fill:none; stroke:var(--g); stroke-width:1.6; stroke-dasharray:6 5; }
+.ln { fill:none; stroke:var(--g); stroke-width:1.6; }
+.dot { fill:var(--g); }
+.num { position:absolute; width:46px; height:46px; margin:-23px 0 0 -23px; border-radius:50%; background:var(--bg); border:2px solid var(--g); color:var(--g); font-size:30px; display:flex; align-items:center; justify-content:center; padding-top:6px; box-shadow:0 0 18px rgba(0,219,51,.45); z-index:45; }
+.note { position:absolute; width:226px; text-align:center; white-space:nowrap; }
+.note .h { display:table; margin:0 auto; font-size:36px; line-height:1.1; }
+.note .s { display:table; margin-left:auto; margin-right:auto; font-size:25px; line-height:1.2; color:var(--mute); margin-top:2px; }
+</style></head>
+<body>
+<div class="bp"></div>
+<div class="glow" style="left:140px; top:260px; width:800px; height:700px; opacity:.28"></div>
+
+<div class="frame" style="left:40px; top:40px; width:1000px; height:1140px"></div>
+<img class="logo" src="assets/logo-en-h-primary-white.svg" style="left:50%; top:82px; transform:translateX(-50%)">
+
+<div class="t" style="top:146px; font-size:86px">ليش صمّمنا الشاشة <span class="g">كذا؟</span></div>
+<div class="t mute" style="top:246px; font-size:36px">لوحة نظام شركة، كل قرار فيها له سبب.</div>
+
+<div id="ui">
+  <div class="bar"><i></i><i></i><i></i><div class="url">erp.your-company.sa/dashboard</div><span style="font-family:PlexUI; font-size:10.5px; color:#6b7075; margin-left:12px">بيانات تجريبية</span></div>
+  <div class="side" id="side">
+    <div class="brand"><b></b>شركتك للتجارة</div>
+    <div class="it on"><s></s>الرئيسية</div>
+    <div class="it"><s></s>المبيعات</div>
+    <div class="it"><s></s>المخزون</div>
+    <div class="it"><s></s>الفواتير</div>
+    <div class="it"><s></s>العملاء</div>
+    <div class="it"><s></s>المشتريات</div>
+    <div class="it"><s></s>التقارير</div>
+    <div class="it"><s></s>الإعدادات</div>
+  </div>
+  <div class="main">
+    <div class="hi">صباح الخير، أبو فهد <small>الأحد ٨ نوفمبر</small></div>
+    <div class="kpis" id="kpis">
+      <div class="k"><div class="l">مبيعات اليوم</div><div class="v">١٢٬٤٨٠ ر.س</div><div class="d">▲ أعلى من أمس</div></div>
+      <div class="k"><div class="l">فواتير اليوم</div><div class="v">٣٨</div><div class="d">كلها مرسلة</div></div>
+      <div class="k"><div class="l">أصناف قاربت تخلص</div><div class="v">٥</div><div class="d r">تحتاج طلب شراء</div></div>
+      <div class="k"><div class="l">تحصيل متأخر</div><div class="v">٣ عملاء</div><div class="d r">تذكير تلقائي</div></div>
+    </div>
+    <div class="card" id="chart" style="margin-top:10px">
+      <h4>المبيعات هذا الأسبوع <span>ر.س</span></h4>
+      <div style="display:flex; align-items:flex-end; gap:14px; height:88px; padding:0 4px">
+        <div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:4px"><div style="width:100%; height:36px; border-radius:5px 5px 2px 2px; background:rgba(0,219,51,.28)"></div><div style="font-size:9.5px; color:#80858a">السبت</div></div><div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:4px"><div style="width:100%; height:45px; border-radius:5px 5px 2px 2px; background:rgba(0,219,51,.28)"></div><div style="font-size:9.5px; color:#80858a">الأحد</div></div><div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:4px"><div style="width:100%; height:40px; border-radius:5px 5px 2px 2px; background:rgba(0,219,51,.28)"></div><div style="font-size:9.5px; color:#80858a">الاثنين</div></div><div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:4px"><div style="width:100%; height:50px; border-radius:5px 5px 2px 2px; background:rgba(0,219,51,.28)"></div><div style="font-size:9.5px; color:#80858a">الثلاثاء</div></div><div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:4px"><div style="width:100%; height:43px; border-radius:5px 5px 2px 2px; background:rgba(0,219,51,.28)"></div><div style="font-size:9.5px; color:#80858a">الأربعاء</div></div><div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:4px"><div style="width:100%; height:60px; border-radius:5px 5px 2px 2px; background:#00DB33"></div><div style="font-size:9.5px; color:#80858a">الخميس</div></div><div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:4px"><div style="width:100%; height:25px; border-radius:5px 5px 2px 2px; background:rgba(0,219,51,.28)"></div><div style="font-size:9.5px; color:#80858a">الجمعة</div></div>
+      </div>
+    </div>
+    <div class="grid2">
+      <div class="card inv" id="inv">
+        <h4>المخزون <span>عرض الكل</span></h4>
+        <div class="row"><div>ألواح ألمنيوم ٦م<div class="bar2" style="width:150px"><b style="width:18%; background:#FF6B5B"></b></div></div><span class="pill p-out">٤ متبقي</span></div>
+        <div class="row"><div>زجاج شفاف ٦ مم<div class="bar2" style="width:150px"><b style="width:34%; background:#FFB020"></b></div></div><span class="pill p-low">قارب يخلص</span></div>
+        <div class="row"><div>مقابض ستانلس<div class="bar2" style="width:150px"><b style="width:76%; background:#00DB33"></b></div></div><span class="pill p-ok">متوفر</span></div>
+        <div class="row"><div>براغي تثبيت<div class="bar2" style="width:150px"><b style="width:88%; background:#00DB33"></b></div></div><span class="pill p-ok">متوفر</span></div>
+      </div>
+      <div class="card" id="fat">
+        <h4>آخر فاتورة <span>#١٠٤٢</span></h4>
+        <div class="fat">
+          <div class="meta">فاتورة ضريبية مبسطة<br>الإجمالي <b>٢٬٣٠٠ ر.س</b><br>ضريبة القيمة المضافة ١٥٪<br>الحالة: <b style="color:#00DB33">مرسلة</b></div>
+          <div class="qr" id="qr"></div>
+        </div>
+        <div style="display:flex; gap:6px; margin-top:8px"><span class="pill p-ok" style="font-size:10.5px">طباعة</span><span class="pill" style="font-size:10.5px; background:#24282C; color:#C9CDD1">إرسال واتساب</span></div>
+      </div>
+    </div>
+  </div>
+  
+</div>
+
+<svg class="ann" width="1080" height="1350" id="ann"></svg>
+<div id="notes"></div>
+
+<script src="footer.js"></script>
+<script>
+// fake QR: deterministic pattern + 3 finder squares (illustrative, not a real code)
+(function () {
+  const n = 25, c = 84 / n; let s = '';
+  let seed = 7; const rnd = () => (seed = (seed * 9301 + 49297) % 233280) / 233280;
+  const finder = (x, y) => `<rect x="${x*c}" y="${y*c}" width="${7*c}" height="${7*c}" fill="#000"/><rect x="${(x+1)*c}" y="${(y+1)*c}" width="${5*c}" height="${5*c}" fill="#fff"/><rect x="${(x+2)*c}" y="${(y+2)*c}" width="${3*c}" height="${3*c}" fill="#000"/>`;
+  for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) {
+    const inF = (x < 8 && y < 8) || (x > n - 9 && y < 8) || (x < 8 && y > n - 9);
+    if (!inF && rnd() > .52) s += `<rect x="${x*c}" y="${y*c}" width="${c+.3}" height="${c+.3}" fill="#000"/>`;
+  }
+  s += finder(0, 0) + finder(n - 7, 0) + finder(0, n - 7);
+  document.getElementById('qr').innerHTML = `<svg width="84" height="84" viewBox="0 0 84 84">${s}</svg>`;
+})();
+foot(66, 1208, 948);
+
+const notes = [
+  // [element selector, note title, sub]
+  ['#side', 'القائمة يمين', 'وبالعربي كامل'],
+  ['#kpis', 'أرقام اليوم', 'أول شي تشوفه'],
+  ['#inv', 'تنبيه المخزون', 'قبل ما يخلص'],
+  ['#fat',   'فاتورة برمز <bdi>QR</bdi>', 'للفوترة الإلكترونية'],
+];
+const AR = n => '١٢٣٤'[n];
+const A = document.getElementById('ann'), N = document.getElementById('notes');
+const svg = h => A.insertAdjacentHTML('beforeend', h);
+document.fonts.ready.then(() => {
+  fitLines('.t', 900);
+  const colW = 230, x0 = 1000; // columns right → left
+  notes.forEach(([sel, t, s], i) => {
+    const r = document.querySelector(sel).getBoundingClientRect();
+    const pad = 4;
+    svg(`<rect class="hl" x="${r.left - pad}" y="${r.top - pad}" width="${r.width + 2*pad}" height="${r.height + 2*pad}" rx="12"/>`);
+    const cx = x0 - colW * i - colW / 2;           // note column centre
+    // anchor on element's bottom edge, nearest to the column centre
+    const ax = Math.min(Math.max(cx, r.left + 24), r.right - 24), ay = r.bottom + pad;
+    const lane = 884 + i * 0;                       // elbow lane under the dashboard
+    const ny = 934;
+    svg(`<circle class="dot" cx="${ax}" cy="${ay}" r="5"/>`);
+    svg(`<path class="ln" d="M${ax},${ay} V${Math.max(ay + 14, 890 - i * 0)} H${cx} V${ny - 23}"/>`);
+    N.insertAdjacentHTML('beforeend', `<div class="num" style="left:${cx}px; top:${ny}px">${AR(i)}</div>
+      <div class="note" style="left:${cx - 113}px; top:${ny + 34}px"><span class="h">${t}</span><span class="s">${s}</span></div>`);
+  });
+  fitLines('.note .h', 214); fitLines('.note .s', 200);
+  document.body.dataset.ready = 1;
+});
+</script>
+<div class="t" style="top:1112px; font-size:36px">تبي نظام كذا لشركتك؟ <span class="g">راسلنا واتساب</span></div>
+</body></html>

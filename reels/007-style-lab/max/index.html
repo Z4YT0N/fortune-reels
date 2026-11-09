@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="ar" data-resolution="portrait">
+  <!-- Style lab 007 / MAX MIEDINGER (ref iwIy0enG6uU): one typographic world, one unbroken virtual camera
+       (pan, zoom, ROLL, tilt). The world is laid out right-to-left: tower «موقع» (justified word stack) -> green band
+       on its flank (camera rolls -90 to read «حجمه ٤٣ ميجا») -> «عميلك» lying under the band becomes a building when the
+       camera rolls back -> «يفتحه من» bridge -> «جواله» phone tower -> «ويستنى» stretched by kashida along the horizon
+       -> «ويطلع» upside down (camera rolls to -180 to read it, it shoots off, camera keeps rolling to -360) -> billboard. -->
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1080, height=1920">
+    <title>Max style lab</title>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      @font-face { font-family: "ZainL"; src: url("assets/zain-mob-long.ttf") format("truetype"); }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1080px; height: 1920px; overflow: hidden; background: #9d9d99; }
+      #main { position: relative; width: 1080px; height: 1920px; overflow: hidden; font-family: "ZainL", sans-serif; color: #121416; background: #a3a39f; }
+      #paper { position: absolute; inset: 0; background: radial-gradient(ellipse 62% 48% at 50% 44%, #b9b9b5 0%, #acaca8 45%, #8a8a86 78%, #5f5f5c 100%); }
+      #cam { position: absolute; inset: 0; perspective: 1500px; perspective-origin: 540px 835px; }
+      #world { position: absolute; left: 0; top: 0; width: 0; height: 0; transform-origin: 0 0;
+        --cx: 0; --cy: 0; --s: 1; --r: 0; --tilt: 0; --dr: 0; --ds: 1;
+        transform: translate(540px, 835px) rotateX(calc(var(--tilt) * 1deg)) rotate(calc((var(--r) + var(--dr)) * 1deg)) scale(calc(var(--s) * var(--ds))) translate(calc(var(--cx) * -1px), calc(var(--cy) * -1px)); }
+      .g { position: absolute; width: 0; height: 0; transform-origin: 0 0; }
+      .o { position: absolute; transform-origin: 50% 50%; }
+      .i { position: absolute; left: 0; top: 0; white-space: nowrap; direction: rtl; line-height: 1; transform-origin: 0 0; }
+      .hv { -webkit-text-stroke: 0.045em currentColor; paint-order: stroke fill; }
+      .bp { display: inline-block; width: 0; height: 0; vertical-align: baseline; }
+      .bld { position: absolute; background: rgba(18, 20, 22, 0.16); transform-origin: 50% 100%; }
+      #vig { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse 70% 52% at 50% 44%, rgba(0,0,0,0) 55%, rgba(18,20,22,0.38) 100%); }
+      .grain { position: absolute; inset: 0; width: 1080px; height: 1920px; mix-blend-mode: soft-light; opacity: 0; }
+    </style>
+  </head>
+  <body>
+    <div id="main" data-composition-id="main" data-start="0" data-duration="9.73" data-width="1080" data-height="1920">
+      <div id="paper"></div>
+      <div id="cam" class="clip" data-start="0" data-duration="9.73" data-track-index="1"><div id="world"></div></div>
+      <div id="vig"></div>
+      <img class="grain" src="assets/grain0.png"><img class="grain" src="assets/grain1.png"><img class="grain" src="assets/grain2.png">
+      <img class="grain" src="assets/grain3.png"><img class="grain" src="assets/grain4.png"><img class="grain" src="assets/grain5.png">
+    </div>
+    <script>
+      window.__timelines = window.__timelines || {};
+      const TL = gsap.timeline({ paused: true });
+      const D = 9.73;
+      const INK = "#121416", LIGHT = "#F0F1F2", GREEN = "#00DB33", DEEP = "#006A39";
+      const world = document.getElementById("world");
+      const cv = document.createElement("canvas").getContext("2d");
+      const K = "ـ"; // tatweel (kashida)
+
+      function grp(parent, x, y, rot) {
+        const g = document.createElement("div"); g.className = "g";
+        gsap.set(g, { x, y, rotation: rot || 0 }); (parent || world).appendChild(g); return g;
+      }
+      // Measure ink box of a string at font size fs (canvas: horizontal + vertical ink, DOM probe: baseline).
+      function meas(txt, fs) {
+        cv.font = `${fs}px ZainL`; cv.direction = "rtl"; cv.textAlign = "right";
+        const m = cv.measureText(txt);
+        return { adv: m.width, L: m.actualBoundingBoxLeft, R: m.actualBoundingBoxRight, asc: m.actualBoundingBoxAscent, desc: m.actualBoundingBoxDescent };
+      }
+      // Place a word so its INK fills the box (x|xr, y, W, H). W omitted -> natural width. Returns {o, W, H, x, y}.
+      function word(parent, txt, o) {
+        const m0 = meas(txt, 200), inkH0 = m0.asc + m0.desc;
+        const fs = 200 * o.H / inkH0;
+        const m = meas(txt, fs);
+        const inkW = m.L + m.R;
+        const W = o.W || inkW * (o.sx || 1);
+        const x = o.xr !== undefined ? o.xr - W : (o.xc !== undefined ? o.xc - W / 2 : o.x);
+        const ob = document.createElement("div"); ob.className = "o";
+        Object.assign(ob.style, { left: x + "px", top: o.y + "px", width: W + "px", height: o.H + "px" });
+        const inn = document.createElement("div"); inn.className = "i" + (o.heavy ? " hv" : "");
+        inn.style.fontSize = fs + "px"; inn.style.color = o.color || INK;
+        inn.textContent = txt; const bp = document.createElement("span"); bp.className = "bp"; inn.appendChild(bp);
+        ob.appendChild(inn); (parent || world).appendChild(ob);
+        const base = bp.offsetTop, elW = inn.offsetWidth;
+        const inkLeft = elW - m.L; // element right edge = alignment point
+        const sx = W / inkW;
+        inn.style.transform = `scale(${sx}, 1) translate(${-inkLeft}px, ${-(base - m.asc)}px)`;
+        return { o: ob, W, H: o.H, x, y: o.y, cx: x + W / 2, cy: o.y + o.H / 2 };
+      }
+      // Kashida-justify: txt has "|" where tatweels go; choose n so natural width at H is closest to W.
+      function kash(txt, H, W, maxN) {
+        let best = txt.replace("|", ""), bd = 1e9;
+        for (let n = 0; n <= (maxN || 12); n++) {
+          const t = txt.replace("|", K.repeat(n)); const m = meas(t, 200), sc = H / (m.asc + m.desc);
+          const d = Math.abs((m.L + m.R) * sc - W); if (d < bd) { bd = d; best = t; }
+        }
+        return best;
+      }
+      // Hidden state at build; snap in (motion blur comes from the 120 fps shutter render).
+      function snap(w, t, from) {
+        const f = Object.assign({ x: 240, y: 0, scale: 1.12 }, from || {});
+        gsap.set(w.o, { opacity: 0, x: f.x, y: f.y, scale: f.scale });
+        TL.set(w.o, { opacity: 1 }, t);
+        TL.to(w.o, { x: 0, y: 0, scale: 1, duration: 0.2, ease: "expo.out" }, t);
+      }
+
+      async function build() {
+        await document.fonts.ready; await document.fonts.load("100px ZainL", "معرض");
+        const T = (i) => [0.0, 0.4, 0.67, 0.8, 1.18, 1.51, 2.06, 2.44, 2.76, 3.2, 3.73, 4.12, 4.53, 4.69, 5.28, 6.19, 7.15, 7.87, 7.97, 8.36, 8.54, 8.8][i] - 0.04;
+        const T0 = (i) => Math.max(0, T(i));
+
+        // ---------- skyline (silhouettes behind everything) ----------
+        const sky = grp(null, 0, 0);
+        let sx0 = 1500, sk = 0; const blds = [];
+        const rnd = (() => { let s = 7; return () => (s = (s * 16807) % 2147483647) / 2147483647; })();
+        while (sx0 > -5700) {
+          const w = 150 + rnd() * 260, h = 260 + rnd() * 820;
+          const b = document.createElement("div"); b.className = "bld";
+          Object.assign(b.style, { left: (sx0 - w) + "px", top: (-h) + "px", width: w + "px", height: h + "px" });
+          if (rnd() > 0.6) { const c = document.createElement("div"); c.className = "bld";
+            const cw = w * (0.3 + rnd() * 0.4), ch = 80 + rnd() * 200; Object.assign(c.style, { left: (w - cw) / 2 + "px", top: (-ch) + "px", width: cw + "px", height: ch + "px", background: "inherit" }); b.appendChild(c); }
+          sky.appendChild(b); blds.push({ b, x: sx0 - w / 2 }); sx0 -= w * (0.7 + rnd() * 0.5);
+        }
+        blds.forEach(({ b, x }) => {
+          let t = x > -450 ? 1.5 + (rnd() * 0.45) : x > -1500 ? 4.05 + rnd() * 0.6 : x > -3300 ? 5.2 + (-1500 - x) / 1800 * 1.8 : 7.55 + rnd() * 0.45;
+          gsap.set(b, { scaleY: 0 }); TL.to(b, { scaleY: 1, duration: 0.45, ease: "expo.out" }, t);
+        });
+
+        // ---------- B1: tower «موقع» — justified word stack (x 0..640, ground y 0) ----------
+        const TW = 640, gap = 16;
+        const rows = [
+          { t: "معر|ض", H: 300, heavy: 1, c: INK },
+          { t: "صو|ر", H: 170, c: LIGHT },
+          { t: "فـ|ـي", H: 120, c: "#3b3d3f" },
+          { t: "مو|قع", H: 370, heavy: 1, c: INK },
+          { t: "شر|كة", H: 230, heavy: 1, c: LIGHT },
+          { t: "كبير|ة", H: 330, heavy: 1, c: INK },
+        ];
+        let y = -rows.reduce((a, r) => a + r.H, 0) - gap * (rows.length - 1);
+        const towerTop = y;
+        const tw = rows.map((r, i) => { const w = word(null, kash(r.t, r.H, TW, 10), { x: 0, y, W: TW, H: r.H, heavy: r.heavy, color: r.c }); y += r.H + gap; return w; });
+        tw.forEach((w, i) => snap(w, T0(i), { x: i % 2 ? -300 : 300 }));
+
+        // ---------- B2: green band on the tower's left flank, text rotated +90 (camera rolls -90) ----------
+        const band = document.createElement("div"); band.className = "o";
+        Object.assign(band.style, { left: "-400px", top: towerTop + "px", width: "370px", height: (-towerTop) + "px", background: GREEN, transformOrigin: "50% 100%" });
+        world.appendChild(band); gsap.set(band, { scaleY: 0 }); TL.to(band, { scaleY: 1, duration: 0.5, ease: "power3.inOut" }, 1.95);
+        const bandCX = -215, bandCY = -820;
+        const bg = grp(null, bandCX, bandCY, 90);
+        const d4 = word(bg, "٤", { xr: 0, y: -100, H: 215, heavy: 1, sx: 1.05 });
+        const d3 = word(bg, "٣", { xr: d4.x - 14, y: -100, H: 215, heavy: 1, sx: 1.05 });
+        const mg = word(bg, "ميجا", { xr: d3.x - 26, y: 20, H: 95, heavy: 1, sx: 0.95 });
+        const hj = word(bg, "حجمه", { xr: 0, y: -168, H: 52, color: INK });
+        const bMinX = mg.x, bMaxX = 0, lxMid = (bMinX + bMaxX) / 2, lyMid = (-168 + 115) / 2;
+        const bandCamX = bandCX - lyMid, bandCamY = bandCY + lxMid;
+        console.log("band width", bMaxX - bMinX);
+        snap(hj, T(6), { x: 160 }); snap(d4, T(7), { y: -260, x: 0, scale: 1.3 }); snap(d3, T(8), { y: 260, x: 0, scale: 1.3 }); snap(mg, T(9), { x: -200 });
+
+        // ---------- B3: «عميلك» lies under the band when rolled, stands as a building when the camera rolls back ----------
+        const ag = grp(null, -640, -520, 90);
+        const am = word(ag, kash("عميـ|ـلك", 300, 1040, 14), { xc: 0, y: -150, W: 1040, H: 300, heavy: 1, color: INK });
+        snap(am, T(10), { x: 300 });
+        const yf = word(null, kash("يفتـ|ـحه", 150, 470, 8), { xr: -810, y: -880, W: 470, H: 150, heavy: 1, color: LIGHT });
+        const mn = word(null, "من", { xr: yf.x - 18, y: -820, H: 80, color: INK });
+        snap(yf, T(11), { x: 260 }); snap(mn, T(12), { x: 160 });
+        // «جواله» phone tower
+        const ph = document.createElement("div"); ph.className = "o";
+        Object.assign(ph.style, { left: "-1760px", top: "-1180px", width: "350px", height: "1180px", background: INK, borderRadius: "56px", transformOrigin: "50% 100%" });
+        const scr = document.createElement("div"); Object.assign(scr.style, { position: "absolute", left: "22px", top: "70px", right: "22px", bottom: "70px", background: LIGHT, borderRadius: "18px" });
+        const notch = document.createElement("div"); Object.assign(notch.style, { position: "absolute", left: "135px", top: "28px", width: "80px", height: "16px", borderRadius: "8px", background: "#3b3d3f" });
+        ph.appendChild(scr); ph.appendChild(notch); world.appendChild(ph);
+        gsap.set(ph, { scaleY: 0 }); TL.to(ph, { scaleY: 1, duration: 0.42, ease: "expo.out" }, T(13) - 0.06);
+        const pg = grp(null, -1585, -590, -90);
+        const jw = word(pg, kash("جوا|له", 230, 940, 14), { xc: 0, y: -115, W: 940, H: 230, heavy: 1, color: INK });
+        snap(jw, T(13) + 0.08, { x: -380, scale: 1 });
+
+        // ---------- B4: «ويستنى» stretched by kashida along the horizon (right anchor x -1440) ----------
+        const hz = document.createElement("div"); hz.className = "o";
+        Object.assign(hz.style, { left: "-5000px", top: "-3px", width: "3240px", height: "6px", background: INK, transformOrigin: "100% 50%" });
+        world.appendChild(hz); gsap.set(hz, { scaleX: 0 }); TL.to(hz, { scaleX: 1, duration: 2.7, ease: "none" }, T(14));
+        function stretchWord(txt, H, xr, yTop, color, heavy, t0, t1, target, ease) {
+          const states = []; for (let n = 0; n <= 80; n++) { const st = word(null, txt.replace("|", K.repeat(n)), { xr, y: yTop, H, heavy, color }); states.push(st); if (st.W >= target) break; }
+          const nMax = states.length - 1;
+          states.forEach((s, n) => gsap.set(s.o, { opacity: 0 }));
+          snap(states[0], t0, { x: 220 });
+          const pe = gsap.parseEase(ease || "power2.out");
+          let prev = 0;
+          for (let n = 1; n <= nMax; n++) {
+            // invert ease: time when progress = n/nMax
+            let lo = 0, hi = 1; for (let k = 0; k < 30; k++) { const mid = (lo + hi) / 2; if (pe(mid) < n / nMax) lo = mid; else hi = mid; }
+            const t = t0 + 0.12 + lo * (t1 - t0 - 0.12);
+            TL.set(states[n - 1].o, { opacity: 0 }, t); TL.set(states[n].o, { opacity: 1 }, t);
+          }
+          return states;
+        }
+        const w1 = stretchWord("ويسـ|ـتنى", 250, -1800, -250, INK, 1, T(14), 6.1, 1150, "power1.inOut");
+        const w2 = stretchWord("ويسـ|ـتنى", 140, -1800, -440, LIGHT, 0, T(15), 7.1, 1500, "power1.inOut");
+        const w2end = w2[w2.length - 1];
+        const dots = []; for (let i = 0; i < 6; i++) { const d = word(null, ".", { xr: w2end.x - 30 - i * 70, y: -330, H: 28, heavy: 1 }); snap(d, 6.62 + i * 0.07, { x: 60, scale: 1.6 }); dots.push(d); }
+
+        // ---------- B5: «ويطلع» upside down; camera rolls -180 to read it, it shoots off ----------
+        const wg = grp(null, -3980, -620, 180);
+        const wt = word(wg, kash("ويطـ|ـلع", 240, 720, 10), { xc: 0, y: -120, W: 720, H: 240, heavy: 1, color: INK });
+        snap(wt, T(16), { x: 300 });
+        TL.to(wt.o, { y: -1400, scaleY: 1.8, scaleX: 0.7, duration: 0.32, ease: "power3.in" }, 7.5);
+        TL.set(wt.o, { opacity: 0 }, 7.83);
+
+        // ---------- B6: billboard «لا تدور على / صور / أقل» ----------
+        const bbX = -4560, bbY = -960;
+        const bb = grp(null, bbX, bbY, 0);
+        const posts = [-260, 230].map(px => { const p = document.createElement("div"); p.className = "o"; Object.assign(p.style, { left: px + "px", top: "-280px", width: "30px", height: (-bbY + 280) + "px", background: INK, transformOrigin: "50% 0%" }); bb.appendChild(p); return p; });
+        const pan = document.createElement("div"); pan.className = "o";
+        Object.assign(pan.style, { left: "-420px", top: "-300px", width: "840px", height: "600px", background: LIGHT, border: "12px solid " + INK });
+        bb.appendChild(pan);
+        gsap.set(pan, { height: 172 });
+        TL.to(pan, { height: 400, duration: 0.22, ease: "expo.out" }, T(20) - 0.02);
+        TL.to(pan, { height: 600, duration: 0.22, ease: "expo.out" }, T(21) - 0.02);
+        gsap.set(bb, { rotation: -1.5, scaleY: 0, transformOrigin: "0px 300px" });
+        TL.to(bb, { scaleY: 1, duration: 0.4, ease: "expo.out" }, 7.62);
+        // row 1: three light words, right to left, justified to 740
+        const r1 = ["لا", "تدور", "على"], r1H = 100, r1W = 740;
+        const r1m = r1.map(t => { const m = meas(t, 200); return (m.L + m.R) * r1H / (m.asc + m.desc); });
+        const r1gap = (r1W - r1m.reduce((a, b) => a + b, 0)) / 2;
+        let xr = 370; const r1w = r1.map((t, i) => { const w = word(bb, t, { xr, y: -255, H: r1H, color: INK }); xr = w.x - r1gap; return w; });
+        r1w.forEach((w, i) => snap(w, T(17 + i), { x: 70, scale: 1.25 }));
+        const sw = word(bb, kash("صـ|ـور", 190, 740, 12), { x: -370, y: -135, W: 740, H: 190, heavy: 1, color: INK });
+        const aq = word(bb, kash("أقـ|ـل", 190, 740, 12), { x: -370, y: 75, W: 740, H: 190, heavy: 1, color: INK });
+        snap(sw, T(20), { x: 300 }); snap(aq, T(21), { x: -300 });
+        const strike = document.createElement("div"); strike.className = "o";
+        Object.assign(strike.style, { left: "-400px", top: "150px", width: "800px", height: "40px", background: GREEN, transformOrigin: "100% 50%" });
+        bb.appendChild(strike); gsap.set(strike, { scaleX: 0 }); TL.to(strike, { scaleX: 1, duration: 0.28, ease: "power3.out" }, 9.12);
+
+        // ---------- CAMERA: one unbroken move ----------
+        const C = (t, k, ease, dur) => { TL.to(world, Object.assign({ duration: dur, ease: ease || "power2.inOut" }, Object.fromEntries(Object.entries(k).map(([a, v]) => ["--" + a, v]))), t); };
+        gsap.set(world, { "--cx": tw[0].cx, "--cy": tw[0].cy - 40, "--s": 1.32, "--r": -9, "--tilt": 0, "--dr": 0, "--ds": 1 });
+        C(0.0, { cx: tw[1].cx, cy: tw[1].cy, r: -5, s: 1.3 }, "power2.inOut", 0.5);
+        C(0.5, { cx: tw[3].cx, cy: tw[2].cy + 60, r: -1, s: 1.24 }, "power2.inOut", 0.38);
+        C(0.88, { cx: tw[4].cx, cy: tw[4].cy - 40, r: 2, s: 1.22 }, "power2.inOut", 0.38);
+        C(1.26, { cx: tw[5].cx, cy: tw[5].cy - 20, r: 4, s: 1.2 }, "power2.inOut", 0.34);
+        C(1.6, { cx: 120, cy: -760, s: 0.52, r: 0, tilt: 30 }, "power3.inOut", 0.5);
+        C(2.1, { cx: bandCamX, cy: bandCamY + 40, s: 1.52, r: -90, tilt: 0 }, "power3.inOut", 0.48);
+        C(2.58, { cy: bandCamY - 20, s: 1.62 }, "sine.inOut", 1.06);
+        C(3.64, { cx: -600, cy: -540, s: 0.86, r: -90 }, "power3.inOut", 0.38);
+        C(4.02, { cx: -930, cy: -650, s: 0.56, r: 0, tilt: 12 }, "power2.inOut", 0.66);
+        C(4.68, { cx: -1420, cy: -640, s: 0.62, tilt: 6 }, "power2.inOut", 0.52);
+        C(5.2, { cx: -2330, cy: -300, s: 0.76, tilt: 0, r: -2 }, "power1.inOut", 0.95);
+        C(6.15, { cx: -2780, cy: -330, s: 0.6, r: -3 }, "power1.inOut", 0.9);
+        C(7.05, { cx: -3980, cy: -620, s: 1.08, r: -180 }, "power3.inOut", 0.42);
+        C(7.47, { cx: -4300, cy: -820, s: 0.42, r: -280 }, "power2.in", 0.26);
+        C(7.73, { cx: bbX + 10, cy: bbY - 150, s: 1.06, r: -360 }, "power3.out", 0.42);
+        C(8.38, { cx: bbX, cy: bbY - 60, s: 1.04, r: -360.8 }, "power2.inOut", 0.3);
+        C(8.7, { cx: bbX - 10, cy: bbY + 40, s: 1.0, r: -361.2 }, "power2.inOut", 0.3);
+        C(9.02, { cx: bbX + 10, cy: bbY + 70, s: 0.86, r: -361.8 }, "power2.inOut", 0.71);
+        // life: tiny roll wobble + slow push across the whole piece
+        TL.to(world, { "--dr": 1.2, duration: 1.1, ease: "sine.inOut", repeat: 8, yoyo: true }, 0);
+        TL.to(world, { "--ds": 1.05, duration: D, ease: "none" }, 0);
+
+        const grains = Array.from(document.querySelectorAll(".grain"));
+        for (let f = 0; f < D * 30; f += 2) grains.forEach((g, i) => TL.set(g, { opacity: i === (f / 2) % 6 ? 0.5 : 0 }, f / 30));
+        TL.set({}, {}, D);
+        window.__timelines["main"] = TL; TL.seek(0);
+      }
+      window.__hf = window.__hf || {}; window.__hf.buildReady = window.__hf.buildReady || {};
+      window.__hf.buildReady["main"] = build();
+    </script>
+  </body>
+</html>

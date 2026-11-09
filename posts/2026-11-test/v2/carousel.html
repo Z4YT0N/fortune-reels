@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8">
+<link rel="stylesheet" href="common.css">
+<style>
+html,body { width:7560px; height:1350px; }
+.dev { position:absolute; -webkit-mask-image: radial-gradient(ellipse 50% 50% at 50% 50%, #000 62%, transparent 100%); }
+.dev.top { -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 32%, #000 70%, transparent 86%), linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent); -webkit-mask-composite: source-in; }
+.card { position:absolute; border:3px solid var(--g); border-radius:26px; background:rgba(18,20,22,.6); }
+.card .num { position:absolute; right:44px; top:50%; transform:translateY(-50%); font-size:150px; line-height:1; font-weight:700; color:#fff; }
+.card .ttl { position:absolute; right:150px; top:26px; font-size:58px; line-height:1.2; font-weight:700; color:var(--g); white-space:nowrap; }
+.card .dsc { position:absolute; right:150px; top:116px; font-size:38px; line-height:1.4; font-weight:500; color:#fff; white-space:nowrap; }
+.pill { display:inline-block; background:var(--g); color:var(--bg); border-radius:18px; padding:0 22px; }
+.chip { position:absolute; background:#1b1e21; border:2px solid rgba(255,255,255,.3); border-radius:14px; padding:4px 20px 0; font-size:38px; white-space:nowrap; box-shadow:0 14px 30px rgba(0,0,0,.55); }
+/* Plex: room under the baseline for pills/chips/labels */
+.pill { line-height:1.28; padding-bottom:6px; }
+.chip { padding-bottom:10px; font-weight:600; }
+.lbl { padding-bottom:10px; font-weight:700; }
+</style></head>
+<body>
+<div id="stage"></div>
+<svg class="marks" width="7560" height="1350" style="z-index:40"><defs><filter id="rough"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="4"/><feDisplacementMap in="SourceGraphic" scale="3"/></filter></defs><g id="mk"></g></svg>
+<script src="footer.js"></script><script src="gallery.js"></script>
+<script>
+const W = 1080, S = (i, x) => (i - 1) * W + x;
+const stage = document.getElementById('stage'), M = document.getElementById('mk');
+function el(html, z = 10) { const d = document.createElement('div'); d.innerHTML = html.trim(); const n = d.firstChild; if (!n.style.zIndex) n.style.zIndex = z; stage.appendChild(n); return n; }
+const P = (d, cls = 'mk', st = '') => M.insertAdjacentHTML('beforeend', `<path class="${cls}" d="${d}" style="${st}"/>`);
+function arrowHead(x, y, ang, len = 40) { const a = ang * Math.PI / 180, s = .55;
+  P(`M${x - len * Math.cos(a - s)},${y - len * Math.sin(a - s)} L${x},${y} L${x - len * Math.cos(a + s)},${y - len * Math.sin(a + s)}`); }
+function ct(i, top, html, size, st = '', cls = '') { return el(`<div class="t ${cls}" style="left:${S(i, 540)}px; top:${top}px; font-size:${size}px; ${st}">${html}</div>`, 30); }
+function glow(cx, cy, r, a = 1) { el(`<div class="glow" style="left:${cx - r}px; top:${cy - r}px; width:${2 * r}px; height:${2 * r}px; opacity:${a}"></div>`, 1); }
+function device(src, nw, quad, left, top, width, z = 5, st = '') {
+  const k = width / nw;
+  el(`<img class="dev ${width > 900 ? 'top' : ''}" src="${src}" style="left:${left}px; top:${top}px; width:${width}px; ${st}">`, z);
+  return quad.map(([x, y]) => [left + x * k, top + y * k]);
+}
+function onScreen(node, w, h, Q, z = 6) { node.style.transform = quadTransform(w, h, Q); node.style.zIndex = z; stage.appendChild(node); return node; }
+function selBox(x, y, w, h) { P(`M${x},${y} H${x + w} V${y + h} H${x} Z`, 'mkd');
+  for (const [hx, hy] of [[x, y], [x + w, y], [x, y + h], [x + w, y + h]]) M.insertAdjacentHTML('beforeend', `<rect class="hdl" x="${hx - 7}" y="${hy - 7}" width="14" height="14"/>`); }
+function cursor(x, y, z = 45) { return el(`<svg class="abs" style="left:${x}px; top:${y}px" width="50" height="68" viewBox="0 0 22 30"><path d="M2 2 L2 24 L8 18 L12 28 L16 26 L12 17 L20 17 Z" fill="#fff" stroke="#121416" stroke-width="1.6" stroke-linejoin="round"/></svg>`, z); }
+function card(i, top, num, ttl, dsc, h = 250) {
+  return el(`<div class="card" style="left:${S(i, 70)}px; top:${top}px; width:940px; height:${h}px"><div class="num">${num}</div><div class="ttl">${ttl}</div><div class="dsc">${dsc}</div></div>`, 30);
+}
+function phoneUI(opt = {}) { return galleryUI(430, 940, Object.assign({ cols: 2 }, opt)); }
+const PHONE_Q = [[341,358],[555,358],[555,826],[341,826]];
+const LAP_Q = [[178,473],[718,473],[723,812],[172,812]];
+
+/* ---------- brand frame: one continuous outline across all 7 slides ---------- */
+el(`<div class="frame" style="left:40px; top:40px; width:${7560 - 80}px; height:1140px"></div>`, 50);
+for (let i = 1; i <= 7; i++) {
+  el(`<img class="logo" src="assets/logo-en-h-primary-white.svg" style="left:${S(i, 540)}px; top:82px; transform:translateX(-50%)">`, 50);
+  foot(S(i, 66), 1208, 948);
+}
+/* ---------- glows (some straddle seams so the swipe reads as one panorama) ---------- */
+glow(S(1, 520), 820, 520); glow(S(2, 0), 560, 360, .6); glow(S(2, 560), 820, 460, .8); glow(S(3, 560), 800, 520);
+glow(S(4, 0), 900, 400, .6); glow(S(4, 560), 780, 460, .85); glow(S(5, 540), 800, 520, .7); glow(S(6, 0), 420, 360, .55);
+glow(S(6, 330), 820, 480); glow(S(7, 540), 1050, 560, .9);
+
+/* ================= 1 — hook ================= */
+ct(1, 150, 'معرض صور في موقع شركة كان وزنه', 50);
+ct(1, 222, '<bdi>٣٤ ميجا</bdi>', 220, 'line-height:1; color:var(--g); text-shadow:0 0 50px rgba(0,219,51,.35)');
+ct(1, 494, 'نزّلناه إلى <span class="g"><bdi>١٤٠ كيلو</bdi></span> بـ<span class="g">٣</span> خطوات', 56);
+ct(1, 570, 'ونفس الصور بالضبط.', 44, '', 'mute');
+{ const Q = device('gen/p1_laptop.png', 896, LAP_Q, S(1, 130), 250, 820, 5);
+  onScreen(galleryUI(1280, 796, { cellStyle: i => i > 0 ? 'background:#dfe2e5' : '' }), 1280, 796, Q);
+  const lb = el(`<div class="abs" style="left:0; top:0; width:1280px; height:796px; transform-origin:0 0"><div class="abs" style="left:0; top:64px; height:10px; width:24%; background:var(--g)"></div>
+     <div class="abs" style="left:640px; top:470px; width:130px; height:130px; margin:-65px; border-radius:50%; border:14px solid #c9ccd0; border-top-color:#121416"></div></div>`, 7);
+  lb.style.transform = quadTransform(1280, 796, Q);
+}
+el(`<div class="chip" style="left:${S(1, 760)}px; top:700px; transform:rotate(-4deg)">يحمّل…</div>`, 31);
+P(`M${S(1, 880)},1110 C ${S(1, 980)},1060 ${S(2, 0)},1050 ${S(2, 80)},1100`); arrowHead(S(2, 86), 1106, 40);
+el(`<div class="t mute" style="left:auto; right:${7560 - S(1, 860)}px; transform:none; top:1086px; font-size:40px">وش سوّينا؟ اسحب</div>`, 30);
+
+/* ================= 2 — fix 1: size ================= */
+card(2, 170, '١', 'صغّرنا مقاس الصور على الشاشة', 'كل صورة تنزل بالمقاس اللي تنعرض فيه،<br>مو أكبر منه.');
+{ const Q = device('gen/p2_phone.png', 896, PHONE_Q, S(2, 40), 70, 1000, 5);
+  const g = phoneUI(); g.style.borderRadius = '44px'; onScreen(g, 430, 940, Q);
+  window.Q2 = Q; }
+el(`<div class="chip" style="left:${S(2, 96)}px; top:700px; transform:rotate(-5deg)">على مقاس الشاشة</div>`, 31);
+
+/* ================= 3 — fix 2: WebP ================= */
+card(3, 170, '٢', 'حوّلناها لصيغة <bdi>WebP</bdi>', 'صيغة مصمّمة للويب: أخف بكثير،<br>وبنفس الشكل.');
+{ const Q = device('gen/p3_laptop_side.png', 896, [[87,567],[538,540],[586,868],[134,946]], S(3, 110), -130, 1000, 5);
+  const ui = el(`<div class="abs" style="left:0; top:0; width:1280px; height:796px; background:#F4F5F6; transform-origin:0 0; overflow:hidden"></div>`, 6);
+  ui.innerHTML = [0, 1, 2].map(r => `
+    <div class="abs" style="right:90px; top:${70 + r * 240}px; width:300px; height:200px; border-radius:14px; background:url(gen/${r % 2 ? 'p6_photo_b' : 'p5_photo_a'}.png) center/cover"></div>
+    <div class="abs" style="right:440px; top:${120 + r * 240}px; font-family:Plex; direction:ltr; unicode-bidi:isolate; font-size:60px; color:#9aa0a6; text-decoration:line-through">.jpg</div>
+    <div class="abs" style="right:600px; top:${112 + r * 240}px; font-family:Plex; font-size:70px; color:#121416">&larr;</div>
+    <div class="abs" style="right:730px; top:${110 + r * 240}px; font-family:Plex; direction:ltr; unicode-bidi:isolate; font-size:64px; color:#fff; background:#00A82A; border-radius:16px; padding:0 26px">.webp</div>`).join('');
+  ui.style.transform = quadTransform(1280, 796, Q);
+}
+
+/* ================= 4 — fix 3: lazy loading ================= */
+card(4, 170, '٣', 'خلّينا الصور تنزل لما توصلها', 'الصفحة تحمّل اللي قدامك بس،<br>والباقي ينزل وأنت تنزل.');
+{ const Q = device('gen/p2_phone.png', 896, PHONE_Q, S(4, 40), 70, 1000, 5);
+  const g = phoneUI({ cellStyle: i => i > 3 ? 'background:#dfe2e5' : '' }); g.style.borderRadius = '44px'; onScreen(g, 430, 940, Q); window.Q4 = Q; }
+el(`<div class="chip" style="left:${S(4, 720)}px; top:640px; transform:rotate(4deg)">نزلت</div>`, 31);
+el(`<div class="chip mute" style="left:${S(4, 720)}px; top:880px; transform:rotate(-3deg)">تنتظرك…</div>`, 31);
+P(`M${S(4, 260)},600 C ${S(4, 225)},700 ${S(4, 225)},820 ${S(4, 260)},930`); arrowHead(S(4, 262), 936, 78);
+
+/* ================= 5 — quality ================= */
+ct(5, 150, 'طيب، الجودة نزلت؟', 72);
+ct(5, 250, 'لا.', 230, 'line-height:1; color:var(--g); text-shadow:0 0 50px rgba(0,219,51,.35)');
+for (const [x, lbl, rot] of [[565, 'قبل', 2], [105, 'بعد', -2]]) {
+  el(`<div class="abs" style="left:${S(5, x)}px; top:560px; width:410px; height:500px; border-radius:22px; background:url(gen/p5_photo_a.png) 50% 50%/cover; border:3px solid rgba(255,255,255,.85); transform:rotate(${rot}deg); box-shadow:0 30px 60px rgba(0,0,0,.6)"></div>`, 20);
+  el(`<div class="chip" style="left:${S(5, x + 150)}px; top:520px; transform:rotate(${rot}deg)">${lbl}</div>`, 31);
+}
+ct(5, 1092, 'حطّ الصورتين جنب بعض… وش الفرق؟', 42, '', 'mute');
+
+/* ================= 6 — result ================= */
+ct(6, 150, 'النتيجة', 52, '', 'mute');
+ct(6, 214, '<bdi>٣٤ ميجا</bdi>', 120, 'color:#8d9195');
+ct(6, 350, '<bdi>١٤٠ كيلو</bdi>', 200, 'line-height:1; color:var(--g); text-shadow:0 0 50px rgba(0,219,51,.35)');
+{ const Q = device('gen/p2_phone.png', 896, PHONE_Q, S(6, -60), 330, 800, 5);
+  const g = phoneUI(); g.style.borderRadius = '44px'; onScreen(g, 430, 940, Q); }
+for (const [t, line, cls] of [[640, 'نفس الصور،', ''], [714, 'ونفس الجودة،', ''], [820, 'والمعرض يفتح', 'g'], [894, 'قبل ما ترمش.', 'g']])
+  el(`<div class="t ${cls}" style="left:auto; right:${7560 - S(6, 990)}px; transform:none; top:${t}px; font-size:62px; text-align:right">${line}</div>`, 30);
+
+/* ================= 7 — CTA ================= */
+ct(7, 160, 'تبي تعرف وش اللي مثقّل موقعك؟', 52, '', 'mute');
+ct(7, 250, 'اكتب', 84);
+ct(7, 380, 'فحص', 220, 'line-height:1; color:var(--g); text-shadow:0 0 60px rgba(0,219,51,.45)');
+ct(7, 720, 'في التعليقات، ونرسل لك', 52);
+ct(7, 792, '<span class="pill">فحص مجاني لموقعك</span>', 56);
+el(`<img class="abs" src="gen/p4_keyboard.png" style="left:${S(7, 0)}px; top:-20px; width:1080px; opacity:.95; -webkit-mask-image:linear-gradient(180deg, transparent 0, #000 45%, #000 82%, transparent 97%)">`, 3);
+el(`<div class="chip" style="left:${S(7, 250)}px; top:1060px; display:flex; gap:14px; align-items:center; font-size:40px">
+  <svg width="28" height="38" viewBox="0 0 30 40"><path d="M3 3 H27 V37 L15 27 L3 37 Z" fill="none" stroke="#00DB33" stroke-width="4" stroke-linejoin="round"/></svg>احفظ البوست عشان ترجع له</div>`, 31);
+cursor(S(7, 760), 640);
+
+document.fonts.ready.then(() => {
+  fitLines('.t', 960); fitLines('.card .ttl', 760); fitLines('.card .dsc', 760);
+  // strike 34 MB on slide 6
+  const s6 = [...document.querySelectorAll('.t')].find(n => n.textContent === '٣٤ ميجا' && n.style.fontSize === '120px').getBoundingClientRect();
+  P(`M${s6.left - 20},${s6.top + s6.height * .68} C ${s6.left + s6.width * .4},${s6.top + s6.height * .56} ${s6.left + s6.width * .7},${s6.top + s6.height * .64} ${s6.right + 20},${s6.top + s6.height * .5}`, 'mk', 'stroke-width:13');
+  // circle around «فحص»
+  const f = [...document.querySelectorAll('.t')].find(n => n.textContent === 'فحص').getBoundingClientRect();
+  const cx = (f.left + f.right) / 2, cy = (f.top + f.bottom) / 2 + 40, rx = Math.min(f.width / 2 + 70, 500), ry = f.height / 2 + 60;
+  P(`M${cx + rx * .9},${cy - ry * .7} C ${cx + rx * 1.15},${cy + ry * .9} ${cx - rx * .3},${cy + ry * 1.15} ${cx - rx},${cy + ry * .2} C ${cx - rx * 1.2},${cy - ry * .8} ${cx + rx * .1},${cy - ry * 1.2} ${cx + rx * .95},${cy - ry * .45}`);
+  // dashed selection box with handles on the phone's first photo (slide 2)
+  const [a, b, c, d] = window.Q2, sx = (b[0] - a[0]) / 430, sy = (d[1] - a[1]) / 940;
+  const cw = (430 - 80 - 18) / 2, chh = cw * .68;
+  selBox(b[0] - (40 + cw) * sx, a[1] + 150 * sy, cw * sx, chh * sy);
+  document.body.dataset.ready = 1;
+});
+</script>
+</body></html>

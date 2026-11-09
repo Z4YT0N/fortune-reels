@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="ar" data-resolution="portrait">
+  <!-- Reel 005 (v2 of 004) Heavy gallery 34 ميقا -> 140 كيلو. build.py fills __D__ and WORDS and writes index.html.
+       Edit THIS file. Rebuilt from scratch on 2026-11-06 after the owner rejected v1's flat text:
+       - owner's font only (Zain mob-long, long built-in tails), hierarchy from size, boxes, scraps, strokes
+       - text engine: masked rise with overlap (2 f stagger, 10 f tweens), highlight boxes, kashida tail reveal,
+         selection box + handles, blinking cursor, dashed guides, hand-drawn strokes, smear slam, push-through,
+         shared word, blur/alpha-clamp/displacement morph, anticipation + 2-tween overshoot
+       - collage engine: pieces and camera stepped on twos (12 fps), seeded boil, drop-ins back.out(1.6)
+         settling at +-1-2 deg, 3 stacked shadows + contact ellipse, grain tiles every 2 f, 1-frame hits -->
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1080, height=1920">
+    <title>Heavy gallery v2</title>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      @font-face { font-family: "ZainL"; src: url("assets/fonts/zain-mob-long.ttf") format("truetype"); }
+      @font-face { font-family: "Inter"; font-weight: 800; src: url("assets/fonts/inter-lat-800.woff2") format("woff2"); }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1080px; height: 1920px; overflow: hidden; background: #E9E8E3; }
+      #main { position: relative; width: 100%; height: 100%; overflow: hidden; font-family: "ZainL", "Inter", sans-serif; color: #121416; }
+      .clip { position: absolute; inset: 0; }
+      .abs { position: absolute; }
+      #cam { position: absolute; inset: 0; transform-origin: 540px 900px; }
+      .ground { position: absolute; inset: -80px; background-size: cover; background-position: center; }
+      #gPaper { background-image: url("assets/img/paper.jpg"); }
+      #gDark { background-image: url("assets/img/paper-dark.jpg"); opacity: 0; }
+      #gForest { background-image: url("assets/img/paper-forest.jpg"); opacity: 0; }
+      .pc { position: absolute; left: 0; top: 0; opacity: 0; will-change: transform; }
+      /* cut-outs: three stacked shadows from one light (upper left) */
+      .cut { filter: drop-shadow(3px 4px 4px rgba(18,20,22,0.30)) drop-shadow(6px 9px 14px rgba(18,20,22,0.20)) drop-shadow(10px 16px 26px rgba(18,20,22,0.12)); }
+      .cut img { display: block; width: 100%; height: auto; }
+      .contact { position: absolute; height: 46px; border-radius: 50%; background: radial-gradient(ellipse at center, rgba(18,20,22,0.42), rgba(18,20,22,0) 70%); }
+      /* prints: white mat, 3 shadows */
+      .print { background: #fbfbf8; padding: 16px 16px 16px; box-shadow: 3px 4px 10px rgba(18,20,22,0.30), 6px 9px 30px rgba(18,20,22,0.18), 10px 14px 44px rgba(18,20,22,0.10); }
+      .print img, .print video { display: block; width: 100%; height: 100%; object-fit: cover; }
+      .print .win { width: 100%; height: 100%; overflow: hidden; background: #121416; position: relative; }
+      .print .win video { position: absolute; inset: 0; }
+      .tape { position: absolute; width: 190px; height: 50px; background: rgba(0,219,51,0.80); top: -22px; left: 50%; margin-left: -95px; transform: rotate(-4deg); box-shadow: 1px 2px 4px rgba(18,20,22,0.18); }
+      .tape.k { background: rgba(240,241,242,0.78); }
+      /* torn paper scrap */
+      .scrap { position: absolute; box-shadow: 3px 4px 10px rgba(18,20,22,0.32), 8px 12px 34px rgba(18,20,22,0.20);
+               clip-path: polygon(0 4%, 7% 0, 18% 3%, 30% 0, 43% 4%, 57% 0, 70% 3%, 84% 0, 100% 4%, 98% 22%, 100% 40%, 97% 60%, 100% 78%, 98% 96%, 86% 100%, 72% 96%, 58% 100%, 44% 96%, 30% 100%, 15% 96%, 0 100%, 2% 80%, 0 60%, 3% 40%, 0 20%); }
+      .scrap.w { background: #F0F1F2; } .scrap.b { background: #121416; } .scrap.g { background: #00DB33; }
+      .fibre { position: absolute; inset: -5px; background: #fdfdfb; clip-path: inherit; }
+      /* phone mock */
+      .phone { width: 400px; height: 840px; border-radius: 62px; background: #121416; padding: 16px; box-shadow: 3px 4px 10px rgba(18,20,22,0.35), 8px 14px 36px rgba(18,20,22,0.25); }
+      .phone .scr { position: relative; width: 100%; height: 100%; border-radius: 48px; overflow: hidden; background: #0e0f11; }
+      .phone .scr img { position: absolute; left: 0; top: 0; width: 100%; }
+      .skel { position: absolute; left: 22px; right: 22px; border-radius: 14px; background: #24272b; }
+      .spin { position: absolute; left: 50%; top: 50%; width: 110px; height: 110px; margin: -55px 0 0 -55px; }
+      /* text engine */
+      .blk { position: absolute; direction: rtl; }
+      .ln { display: flex; flex-direction: row; justify-content: center; align-items: baseline; flex-wrap: nowrap; white-space: nowrap; position: relative; }
+      .tk { position: relative; display: inline-block; margin: 0 0.06em; }
+      #waw { margin-left: -0.18em; }
+      .m { display: inline-block; overflow: hidden; padding: 0.10em 0.14em 0.26em; margin: -0.10em -0.14em -0.26em; vertical-align: bottom; }
+      .w { display: inline-block; line-height: 1.12; }
+      .box { position: absolute; left: -0.16em; right: -0.16em; top: 0.10em; bottom: 0.02em; background: #00DB33; transform: scaleX(0); transform-origin: right center; z-index: -1; }
+      .box.b { background: #121416; transform-origin: right center; clip-path: polygon(0 6%, 12% 0, 30% 5%, 52% 0, 74% 4%, 100% 0, 98% 50%, 100% 100%, 80% 95%, 58% 100%, 36% 95%, 14% 100%, 0 94%, 2% 50%); top: 0.04em; bottom: -0.04em; }
+      .box.w { background: #F0F1F2; box-shadow: 3px 4px 10px rgba(18,20,22,0.28); }
+      .box.t { background: rgba(0,219,51,0.82); top: 0.30em; bottom: 0.10em; transform: rotate(-2deg) scaleX(0); }
+      .ol .w { color: transparent; -webkit-text-stroke: 0.035em currentColor; }
+      .sel { position: absolute; left: -0.22em; right: -0.22em; top: 0.02em; bottom: -0.06em; border: 4px dashed currentColor; opacity: 0; }
+      .sel i { position: absolute; width: 22px; height: 22px; background: #00DB33; border: 4px solid #121416; }
+      .sel i:nth-child(1) { left: -13px; top: -13px; } .sel i:nth-child(2) { right: -13px; top: -13px; }
+      .sel i:nth-child(3) { left: -13px; bottom: -13px; } .sel i:nth-child(4) { right: -13px; bottom: -13px; }
+      .cur { position: absolute; left: -0.24em; top: 0.18em; width: 9px; height: 0.86em; background: #00DB33; opacity: 0; }
+      .guide { position: absolute; left: -40px; right: -40px; height: 0; border-top: 4px dashed rgba(18,20,22,0.38); transform: scaleX(0); transform-origin: right center; }
+      .dk .guide { border-top-color: rgba(240,241,242,0.40); }
+      .draw { position: absolute; overflow: visible; pointer-events: none; opacity: 0; }
+      .draw path { fill: none; stroke: #00DB33; stroke-width: 11; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1; stroke-dashoffset: 1; }
+      .lat { font-family: "Inter", sans-serif; font-weight: 800; letter-spacing: -0.04em; }
+      /* morph */
+      #morph { position: absolute; left: 0; top: 520px; width: 1080px; height: 520px; filter: url(#goo); opacity: 0; }
+      #morph div { position: absolute; left: 0; right: 0; top: 0; display: flex; justify-content: center; text-align: center; direction: rtl; font-size: 210px; line-height: 1.2; color: #F0F1F2; }
+      #flashW { position: absolute; inset: 0; background: #ffffff; opacity: 0; }
+      #flash { position: absolute; inset: 0; background: #ffffff; mix-blend-mode: difference; opacity: 0; }
+      .grain { position: absolute; inset: 0; width: 1080px; height: 1920px; mix-blend-mode: soft-light; opacity: 0; }
+      #vig { position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 46%, rgba(0,0,0,0) 56%, rgba(18,20,22,0.26) 100%); }
+    </style>
+  </head>
+  <body>
+    <svg width="0" height="0" style="position:absolute">
+      <filter id="goo" x="-20%" y="-20%" width="140%" height="140%">
+        <feGaussianBlur id="gooBlur" in="SourceGraphic" stdDeviation="0" result="b"/>
+        <feComponentTransfer in="b" result="c"><feFuncA id="gooA" type="linear" slope="1" intercept="0"/></feComponentTransfer>
+        <feTurbulence type="fractalNoise" baseFrequency="0.012" numOctaves="2" seed="7" result="n"/>
+        <feDisplacementMap id="gooD" in="c" in2="n" scale="0" xChannelSelector="R" yChannelSelector="G"/>
+      </filter>
+    </svg>
+    <div id="main" data-composition-id="main" data-start="0" data-duration="__D__" data-width="1080" data-height="1920">
+      <div id="stage" class="clip" data-start="0" data-duration="__D__" data-track-index="0">
+        <div id="cam">
+          <div id="gPaper" class="ground"></div>
+          <div id="gDark" class="ground"></div>
+          <div id="gForest" class="ground"></div>
+          <div id="pieces" style="position:absolute;inset:0;z-index:10"></div>
+          <div id="morph"><div id="mA">٣٤ ميقا</div><div id="mB">١٤٠ كيلو</div></div>
+          <div id="texts" style="position:absolute;inset:0;z-index:40"></div>
+        </div>
+      </div>
+      <!-- real footage (Mixkit, free licence) inside prints: untimed wrappers, timed videos -->
+      <div id="vHands" class="pc print" style="width:400px;height:300px;"><div class="win"><video src="assets/video/mk34091.mp4" data-start="__VH_S__" data-duration="__VH_D__" data-media-start="3.0" data-track-index="1" muted playsinline></video></div><div class="tape"></div></div>
+      <div id="vPhone" class="pc print" style="width:470px;height:600px;"><div class="win"><video src="assets/video/mk41165.mp4" data-start="__VP_S__" data-duration="__VP_D__" data-media-start="6.0" data-track-index="2" muted playsinline></video></div><div class="tape k"></div></div>
+      <div id="vHappy" class="pc print" style="width:620px;height:780px;"><div class="win"><video src="assets/video/mk8778.mp4" data-start="__VY_S__" data-duration="__VY_D__" data-media-start="6.2" data-track-index="3" muted playsinline></video></div><div class="tape"></div></div>
+      <div id="vConf" class="pc print" style="width:860px;height:700px;"><div class="win"><video src="assets/video/mk8843.mp4" data-start="__VC_S__" data-duration="__VC_D__" data-media-start="1.0" data-track-index="4" muted playsinline></video></div><div class="tape k"></div></div>
+      <div id="fx" class="clip" data-start="0" data-duration="__D__" data-track-index="5">
+        <img class="grain" src="assets/img/grain0.png" alt=""><img class="grain" src="assets/img/grain1.png" alt=""><img class="grain" src="assets/img/grain2.png" alt="">
+        <img class="grain" src="assets/img/grain3.png" alt=""><img class="grain" src="assets/img/grain4.png" alt=""><img class="grain" src="assets/img/grain5.png" alt="">
+        <div id="vig"></div>
+        <div id="flashW"></div>
+        <div id="flash"></div>
+      </div>
+      <audio id="mix" src="assets/audio/mix.mp3" data-start="0" data-duration="__D__" data-track-index="6" data-volume="1"></audio>
+    </div>
+
+    <script>
+      const D = __D__;
+      const WORDS = /*WORDS*/[];
+      const W = (i) => WORDS[i][1];
+      const F = 1 / 30;
+      const $ = (q) => document.querySelector(q);
+      const $$ = (q) => Array.from(document.querySelectorAll(q));
+      window.__timelines = window.__timelines || {};
+      const hash = (n) => { let x = Math.sin(n * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); };
+      const cl = (x) => Math.max(0, Math.min(1, x));
+
+      // ───────────── collage engine: stepped on twos ─────────────
+      const P = {};           // id -> { el, base, segs: [[t0, t1, to, ease]], boil, big }
+      function piece(id, html, base, opt = {}) {
+        let el = document.getElementById(id);
+        if (!el) { el = document.createElement("div"); el.id = id; el.className = "pc " + (opt.cls || ""); el.innerHTML = html; $("#pieces").appendChild(el); }
+        Object.assign(el.style, opt.style || {});
+        el.style.left = (base.x || 0) + "px"; el.style.top = (base.y || 0) + "px";
+        P[id] = { el, base: Object.assign({ s: 1, sx: 1, sy: 1, o: 0, r: 0 }, base, { x: 0, y: 0 }), segs: [], boil: opt.boil !== false, big: !!opt.big, z: opt.z || 1 };
+        el.style.zIndex = P[id].z;
+        return P[id];
+      }
+      function seg(id, t0, d, to, ease = "power2.out") { P[id].segs.push([t0, t0 + d, to, gsap.parseEase(ease)]); }
+      // drop-in from above, rotation settles at a small angle (never 0)
+      function drop(id, t, rot, opt = {}) {
+        seg(id, t - F, F * 0.5, { o: 1, x: opt.tx ?? 0, y: opt.y0 ?? -1500, r: rot * 6, s: opt.s ?? 1 }, "none");
+        seg(id, t, 0.35, { y: opt.ty ?? 0, r: rot }, "back.out(1.6)");
+      }
+      function slideIn(id, t, fromX, rot, d = 0.34) { seg(id, t - F, F * 0.5, { o: 1, x: fromX, y: 0, r: rot * 4 }, "none"); seg(id, t, d, { x: 0, r: rot }, "power3.out"); }
+      function exitTo(id, t, to, d = 0.22) { seg(id, t, d, to, "power2.in"); seg(id, t + d, F, { o: 0 }, "none"); }
+      function nudge(ids, t) { ids.forEach((id, i) => { seg(id, t + (i + 1) * F, 0.08, { sx: 1.02, sy: 0.98 }, "power2.out"); seg(id, t + (i + 1) * F + 0.08, 0.12, { sx: 1, sy: 1 }, "power2.inOut"); }); }
+      function squash(id, t) { seg(id, t, 0.06, { sy: 0.9, sx: 1.06 }, "power2.out"); seg(id, t + 0.06, 0.1, { sy: 1, sx: 1 }, "back.out(2)"); }
+      function evalPiece(p, tq, f) {
+        const v = Object.assign({}, p.base);
+        for (const [t0, t1, to, ease] of p.segs) {
+          if (tq < t0) continue;
+          const from = Object.assign({}, v);
+          const k = t1 > t0 ? ease(cl((tq - t0) / (t1 - t0))) : 1;
+          for (const key in to) v[key] = from[key] + (to[key] - from[key]) * k;
+        }
+        let bx = 0, by = 0, br = 0;
+        if (p.boil && v.o > 0.01) { const kk = f * 7 + p.idn * 100; bx = (hash(kk) - 0.5) * 4; by = (hash(kk + 1) - 0.5) * 4; br = (hash(kk + 2) - 0.5) * (p.big ? 0.6 : 2); }
+        // safe-zone QA: a piece is in transit while a segment that moves or scales it is running
+        const moving = p.segs.some(([t0, t1, to]) => tq >= t0 && tq < t1 && ("x" in to || "y" in to || "s" in to));
+        if (moving) p.el.dataset.transit = "1"; else delete p.el.dataset.transit;
+        p.el.style.opacity = v.o;
+        p.el.style.transform = `translate(${(v.x + bx).toFixed(2)}px, ${(v.y + by).toFixed(2)}px) rotate(${(v.r + br).toFixed(2)}deg) scale(${(v.s * v.sx).toFixed(4)}, ${(v.s * v.sy).toFixed(4)})`;
+      }
+      // segments compose in order: a later segment animates from the value the earlier ones produced
+      function prepSegs() { let n = 0; for (const id in P) { P[id].segs.sort((a, b) => a[0] - b[0]); P[id].idn = n++; } }
+
+      // ───────────── text engine (full frame rate, GSAP) ─────────────
+      // token: [text, opts]; opts: { t: time, s: size px, hl: box at time, kash: tail reveal, sel: selbox at time,
+      //   cur: [tOn, tOff], under: time, circ: time, strike: time, slam: true, col: colour, lat: true, id }
+      function block(id, x, y, w, lines, opt = {}) {
+        const b = document.createElement("div"); b.className = "blk" + (opt.dk ? " dk" : ""); b.id = id;
+        Object.assign(b.style, { left: x + "px", top: y + "px", width: w + "px", zIndex: opt.z || 20 });
+        if (opt.scrap) { const s = document.createElement("div"); s.className = "scrap " + opt.scrap; Object.assign(s.style, opt.scrapBox); b.appendChild(s); }
+        const tokens = [];
+        lines.forEach((ln, li) => {
+          const L = document.createElement("div"); L.className = "ln"; if (opt.lineGap) L.style.marginTop = (li ? opt.lineGap : 0) + "px";
+          ln.forEach(([text, o]) => {
+            const tk = document.createElement("span"); tk.className = "tk"; if (o.id) tk.id = o.id;
+            tk.style.fontSize = (o.s || 90) + "px"; tk.style.color = o.col || (opt.dk ? "#F0F1F2" : "#121416");
+            if (o.hl !== undefined) { const bx = document.createElement("span"); bx.className = "box " + (o.hlc || "g"); tk.appendChild(bx); }
+            if (o.ol) tk.classList.add("ol");
+            const m = document.createElement("span"); m.className = "m"; const wv = document.createElement("span"); wv.className = "w" + (o.lat ? " lat" : ""); wv.textContent = text;
+            m.appendChild(wv); tk.appendChild(m);
+            if (o.sel !== undefined) { const sl = document.createElement("span"); sl.className = "sel"; sl.innerHTML = "<i></i><i></i><i></i><i></i>"; tk.appendChild(sl); }
+            if (o.cur) { const c = document.createElement("span"); c.className = "cur"; c.dataset.on = o.cur[0]; c.dataset.off = o.cur[1]; tk.appendChild(c); }
+            ["under", "circ", "strike"].forEach((kind) => {
+              if (o[kind] === undefined) return;
+              const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg"); svg.setAttribute("class", "draw " + kind);
+              svg.setAttribute("viewBox", "0 0 100 40"); svg.setAttribute("preserveAspectRatio", "none");
+              const pth = document.createElementNS("http://www.w3.org/2000/svg", "path"); pth.setAttribute("pathLength", "1");
+              pth.setAttribute("d", kind === "under" ? "M98 30 C80 36 55 33 35 35 C22 36 10 33 2 37" : kind === "strike" ? "M99 22 C75 18 50 26 28 20 C16 17 8 22 1 19" : "M60 3 C25 0 3 9 4 21 C5 33 35 39 62 37 C88 35 99 26 96 15 C93 6 76 2 52 4");
+              svg.appendChild(pth); tk.appendChild(svg);
+              if (kind === "under") Object.assign(svg.style, { left: "-4%", width: "108%", top: "88%", height: "0.42em" });
+              else if (kind === "strike") Object.assign(svg.style, { left: "-6%", width: "112%", top: "38%", height: "0.42em" });
+              else Object.assign(svg.style, { left: "-18%", width: "136%", top: "-8%", height: "1.36em" });
+            });
+            tokens.push({ tk, w: wv, o }); L.appendChild(tk);
+          });
+          b.appendChild(L);
+        });
+        if (opt.guides) opt.guides.forEach((gy) => { const g = document.createElement("div"); g.className = "guide"; g.style.top = gy + "px"; b.appendChild(g); });
+        $("#texts").appendChild(b);
+        gsap.set(tokens.map((x) => x.w), { yPercent: 140, opacity: 0 });
+        // fit: Zain's long tails make lines wide; shrink a line's tokens until it fits the block (minus 24 px)
+        b.querySelectorAll(".ln").forEach((L) => {
+          const tks = Array.from(L.querySelectorAll(":scope > .tk"));
+          const wsum = tks.reduce((a, el) => a + el.getBoundingClientRect().width + parseFloat(getComputedStyle(el).fontSize) * 0.12, 0);
+          const max = w - 24;
+          if (wsum > max) { const k = max / wsum; tks.forEach((el) => { el.style.fontSize = (parseFloat(el.style.fontSize) * k).toFixed(1) + "px"; }); }
+        });
+        if (opt.scrap) gsap.set(b, { opacity: 0 });
+        return { b, tokens };
+      }
+      const TL = gsap.timeline({ paused: true });
+      // word entrance: masked rise, 10 f tween, expo.out (overlaps the next word's start)
+      function rise(tok, t, d = 10 * F) { TL.set(tok.w, { opacity: 1 }, t); TL.fromTo(tok.w, { yPercent: 115 }, { yPercent: 0, duration: d, ease: "expo.out", immediateRender: false }, t); }
+      // smear slam: arrives from the side, stretched and blurred for 3 f, then a 2-tween overshoot
+      function slam(tok, t, dir = 1) {
+        TL.set(tok.w, { yPercent: 0, opacity: 1 }, t - F);
+        TL.fromTo(tok.tk, { x: 340 * dir, scaleX: 1.7, skewX: -14 * dir, filter: "blur(12px)", opacity: 0 }, { x: -18 * dir, scaleX: 1, skewX: 0, filter: "blur(0px)", opacity: 1, duration: 3 * F, ease: "power3.out", immediateRender: false }, t);
+        TL.to(tok.tk, { x: 0, duration: 6 * F, ease: "back.out(2)" }, t + 3 * F);
+        TL.fromTo(tok.tk, { scale: 1.08 }, { scale: 1, duration: 8 * F, ease: "power2.out", immediateRender: false }, t + 4 * F);
+      }
+      // cascade for a whole line: word progress = clamp((u(1+r) - i/n)/r); here as 2 f stagger, 10 f tweens
+      function cascade(toks, t0, stag = 2 * F, d = 10 * F) { toks.forEach((tk, i) => rise(tk, t0 + i * stag, d)); }
+      function hl(tok, t, toCol) {
+        const bx = tok.tk.querySelector(".box"), c = tok.o.hlc || "g";
+        if (!toCol) toCol = c === "b" ? "#00DB33" : "#121416";
+        const rot = c === "t" ? -2 : 0;
+        TL.fromTo(bx, { scaleX: 0, rotation: rot }, { scaleX: 1, rotation: rot, duration: 6 * F, ease: "expo.out", immediateRender: false }, t);
+        TL.to(tok.tk, { color: toCol, duration: 2 * F, ease: "none" }, t + 2 * F);
+      }
+      function kash(tok, t, d = 16 * F) { TL.set(tok.w, { yPercent: 0, opacity: 1 }, t - F); TL.fromTo(tok.w, { clipPath: "inset(-20% 0% -30% 100%)" }, { clipPath: "inset(-20% 0% -30% 0%)", duration: d, ease: "expo.inOut", immediateRender: false }, t); }
+      function sel(tok, t) { const s = tok.tk.querySelector(".sel"); TL.fromTo(s, { opacity: 0, scale: 0.86 }, { opacity: 1, scale: 1, duration: 7 * F, ease: "back.out(2.2)", immediateRender: false }, t); }
+      function drawS(tok, kind, t, d = 9 * F) { TL.set(tok.tk.querySelector(".draw." + kind), { opacity: 1 }, t); const p = tok.tk.querySelector(".draw." + kind + " path"); TL.fromTo(p, { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: d, ease: "power2.inOut", immediateRender: false }, t); }
+      function guides(blk, t) { blk.b.querySelectorAll(".guide").forEach((g, i) => TL.fromTo(g, { scaleX: 0 }, { scaleX: 1, duration: 12 * F, ease: "expo.out", immediateRender: false }, t + i * 2 * F)); }
+      // push-through exit: every word drops back out of its mask upward, 1 f stagger, accelerating
+      function pushOut(blk, t) {
+        blk.tokens.forEach((tk, i) => { TL.to(tk.w, { yPercent: -120, duration: 6 * F, ease: "power2.in" }, t + i * F); TL.set(tk.w, { opacity: 0 }, t + i * F + 6 * F); });
+        TL.to(blk.b.querySelectorAll(".box,.sel,.draw,.guide,.scrap,.cur"), { opacity: 0, duration: 4 * F }, t + 2 * F);
+        TL.set(blk.b, { visibility: "hidden" }, t + (blk.tokens.length + 7) * F);
+      }
+      function heroExit(blk, t) { TL.to(blk.b, { scale: 1.06, duration: 4 * F, ease: "power2.out" }, t); TL.to(blk.b, { y: -900, scale: 0.9, duration: 7 * F, ease: "back.in(1.4)" }, t + 4 * F); TL.set(blk.b, { visibility: "hidden" }, t + 12 * F); }
+      // hero emphasis: anticipation (shrink) then 2 stacked overshoot tweens
+      function punch(el, t, k = 1) { TL.to(el, { scale: 1 - 0.07 * k, duration: 4 * F, ease: "power2.out" }, t); TL.to(el, { scale: 1 + 0.1 * k, duration: 5 * F, ease: "power3.out" }, t + 4 * F); TL.to(el, { scale: 1, duration: 8 * F, ease: "sine.inOut" }, t + 7 * F); }
+
+      async function build() {
+        await document.fonts.ready;
+        await Promise.all(["40px ZainL", "800 40px Inter"].map((f) => document.fonts.load(f, "كلمة ٣٤ MB")));
+        TL.to({}, { duration: D }, 0);
+
+        // ════════ pieces ════════
+        const cutI = (src, w) => `<img src="assets/cut/${src}.png" alt="" style="width:${w}px">`;
+        const printI = (src, w, h, tape = "") => `<div style="width:${w}px;height:${h}px" class="print"><img src="assets/img/${src}" alt="">${tape ? `<div class="tape ${tape}"></div>` : ""}</div>`;
+        // S1 gallery prints (real Fortune Code portfolio screens)
+        piece("pr1", printI("r-site1.jpg", 560, 360, "k"), { x: 420, y: 690 }, { z: 3 });
+        piece("pr2", printI("r-site2.jpg", 520, 345), { x: 70, y: 820 }, { z: 4 });
+        piece("pr3", printI("r-site1.jpg", 380, 245), { x: 560, y: 1000 }, { z: 5 });
+        const starPts = (n, R, r) => Array.from({ length: n * 2 }, (_, i) => { const a = Math.PI * i / n - Math.PI / 2, rr = i % 2 ? r : R; return (Math.cos(a) * rr).toFixed(1) + "," + (Math.sin(a) * rr).toFixed(1); }).join(" ");
+        piece("burst", `<svg width="820" height="820" viewBox="-100 -100 200 200"><polygon points="${starPts(14, 100, 64)}" fill="#00DB33"/></svg>`, { x: 130, y: 500 }, { z: 2 });
+        piece("weight", cutI("prop-weight", 470), { x: 305, y: 540 }, { cls: "cut", z: 8 });
+        // S2 man + phone + hourglass
+        piece("manBg", `<div class="scrap w" style="position:relative;width:560px;height:980px"></div><div class="tape" style="left:280px;top:-18px"></div>`, { x: 10, y: 560, r: -3 }, { z: 4 });
+        piece("burst2", `<svg width="560" height="560" viewBox="-100 -100 200 200"><polygon points="${starPts(12, 100, 70)}" fill="#00DB33"/></svg>`, { x: 30, y: 600 }, { z: 5 });
+        piece("ctc1", `<div class="contact" style="width:440px"></div>`, { x: 50, y: 1655 }, { z: 6, boil: false });
+        piece("man", cutI("man-wait", 520), { x: 0, y: 520 }, { cls: "cut", z: 7, big: true });
+        piece("manF", cutI("man-frust", 432), { x: 40, y: 512 }, { cls: "cut", z: 7, big: true });
+        piece("phone", `<div class="phone"><div class="scr"><img id="scrImg" src="assets/img/r-phone.jpg" alt=""><div id="skel"><div class="skel" style="top:120px;height:300px"></div><div class="skel" style="top:440px;height:40px;right:120px"></div><div class="skel" style="top:500px;height:40px;right:60px"></div><div class="skel" style="top:560px;height:220px"></div></div><svg class="spin" id="spinner" viewBox="0 0 100 100"><circle cx="50" cy="50" r="38" fill="none" stroke="#3a3e43" stroke-width="10"/><path d="M50 12 A38 38 0 0 1 88 50" fill="none" stroke="#00DB33" stroke-width="10" stroke-linecap="round"/></svg></div></div>`, { x: 640, y: 560 }, { z: 6, style: { transform: "scale(0.85)" } });
+        piece("hglass", cutI("prop-hourglass", 220), { x: 830, y: 880 }, { cls: "cut", z: 9 });
+        // S3 snapback
+        piece("slab", `<div style="width:900px;height:150px;background:#121416"></div>`, { x: 90, y: 860, sx: 1 }, { z: 9, boil: false });
+        piece("mag", cutI("prop-magnifier", 400), { x: 640, y: 840 }, { cls: "cut", z: 10 });
+        piece("feather", cutI("prop-feather", 360), { x: 110, y: 920 }, { cls: "cut", z: 10 });
+        // S4 dark: mark + bars
+        piece("mark", `<img src="assets/brand/mark.svg" alt="" style="width:170px">`, { x: 455, y: 700 }, { z: 6 });
+        const ticks = Array.from({ length: 11 }, (_, i) => { const a = Math.PI + Math.PI * i / 10, c = Math.cos(a), s = Math.sin(a); return `<line x1="${(300 + c * 236).toFixed(1)}" y1="${(320 + s * 236).toFixed(1)}" x2="${(300 + c * (i % 5 ? 262 : 276)).toFixed(1)}" y2="${(320 + s * (i % 5 ? 262 : 276)).toFixed(1)}" stroke="#F0F1F2" stroke-width="${i % 5 ? 5 : 9}" stroke-linecap="round"/>`; }).join("");
+        piece("gauge", `<div style="position:relative;width:600px;height:460px"><svg width="600" height="360" viewBox="0 0 600 360"><path d="M64 320 A236 236 0 0 1 536 320" fill="none" stroke="#2b2f34" stroke-width="44" stroke-linecap="round"/><path d="M420 116 A236 236 0 0 1 536 320" fill="none" stroke="#00DB33" stroke-width="44" stroke-linecap="round"/>${ticks}<g id="needle2" style="transform-origin:300px 320px"><path d="M300 320 L300 110" stroke="#F0F1F2" stroke-width="14" stroke-linecap="round"/></g><circle cx="300" cy="320" r="26" fill="#F0F1F2"/></svg><div style="position:absolute;left:0;right:0;top:350px;text-align:center;direction:rtl;font-family:ZainL;font-size:110px;color:#00DB33;line-height:1">٣٤ ميقا</div></div>`, { x: 240, y: 930 }, { z: 6 });
+        // S5 notes (questions on torn paper)
+        const note = (ic) => `<div class="scrap w" style="position:relative;width:300px;height:300px;display:flex;align-items:center;justify-content:center">${ic}</div>`;
+        piece("n1", note(`<svg width="190" height="190" viewBox="0 0 200 200"><path d="M30 140 A75 75 0 1 1 170 140" fill="none" stroke="#121416" stroke-width="16" stroke-linecap="round"/><path id="needle" d="M100 140 L58 82" stroke="#00DB33" stroke-width="16" stroke-linecap="round"/><circle cx="100" cy="140" r="14" fill="#121416"/></svg>`), { x: 70, y: 820 }, { z: 6 });
+        piece("n2", note(`<svg width="190" height="190" viewBox="0 0 200 200"><rect x="40" y="26" width="90" height="150" rx="8" fill="none" stroke="#121416" stroke-width="14"/><path d="M110 100 H180 M150 70 L182 100 L150 130" fill="none" stroke="#00DB33" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/></svg>`), { x: 390, y: 1010 }, { z: 6 });
+        piece("n3", note(`<svg width="190" height="190" viewBox="0 0 200 200"><path d="M14 100 C50 40 150 40 186 100 C150 160 50 160 14 100 Z" fill="none" stroke="#121416" stroke-width="14"/><circle cx="100" cy="100" r="30" fill="#00DB33"/><circle cx="100" cy="100" r="12" fill="#121416"/></svg>`), { x: 710, y: 820 }, { z: 6 });
+        // S6 work grid (real screens) + scan
+        const gp = (src, w, h) => `<div class="print" style="width:${w}px;height:${h}px;position:relative"><img src="assets/img/${src}" alt=""><div class="ok" style="position:absolute;right:-22px;top:-22px;width:80px;height:80px;border-radius:50%;background:#00DB33;display:flex;align-items:center;justify-content:center;opacity:0"><svg width="44" height="44" viewBox="0 0 56 56"><path d="M12 29 L24 40 L45 16" fill="none" stroke="#121416" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>`;
+        piece("g1", gp("r-site1.jpg", 470, 300), { x: 540, y: 760 }, { z: 6 });
+        piece("g2", gp("r-site2.jpg", 470, 300), { x: 60, y: 790 }, { z: 6 });
+        piece("g3", gp("r-site2.jpg", 470, 300), { x: 540, y: 1090 }, { z: 6 });
+        piece("g4", gp("r-site1.jpg", 470, 300), { x: 60, y: 1120 }, { z: 6 });
+        piece("scan", `<div style="width:1000px;height:10px;border-radius:5px;background:#00DB33;box-shadow:0 0 0 3px rgba(0,219,51,0.25)"></div>`, { x: 40, y: 740 }, { z: 9, boil: false });
+        // S7 weight -> feather
+        piece("weight2", cutI("prop-weight", 360), { x: 360, y: 1080 }, { cls: "cut", z: 8 });
+        piece("feather2", cutI("prop-feather", 340), { x: 370, y: 1060 }, { cls: "cut", z: 8 });
+        // S8 payoff: real clip + phone fast
+        const vid = (id, x, y, big) => { const el = $("#" + id); el.style.left = x + "px"; el.style.top = y + "px"; P[id] = { el, base: { x: 0, y: 0, r: 0, s: 1, sx: 1, sy: 1, o: 0 }, segs: [], boil: true, big, z: 6 }; };
+        vid("vHappy", 80, 560, true);
+        piece("phone2", `<div class="phone" style="transform:scale(0.78);transform-origin:0 0"><div class="scr"><img id="scr2" src="assets/img/r-phone.jpg" alt=""></div></div>`, { x: 690, y: 820 }, { z: 7 });
+        piece("manH", cutI("man-happy", 330), { x: 720, y: 760 }, { cls: "cut", z: 8, big: true });
+        // S9: confused, real clip
+        vid("vConf", 110, 640, true); vid("vHands", 560, 1120, false); vid("vPhone", 300, 1290, false);
+        // S10 CTA
+        piece("cta", `<div class="scrap w" style="position:relative;width:860px;height:560px"></div><div class="tape" style="left:110px;top:-20px;margin-left:0;transform:rotate(-12deg)"></div><div class="tape" style="left:600px;top:-16px;margin-left:0;transform:rotate(9deg)"></div>`, { x: 110, y: 560 }, { z: 6 });
+        piece("stamp", `<div style="width:250px;height:104px;border:9px solid #00DB33;border-radius:18px;color:#006A39;display:flex;align-items:center;justify-content:center;font-size:66px;direction:rtl;padding-bottom:12px;background:rgba(240,241,242,0.5)">مجاني</div>`, { x: 690, y: 1035, r: -9 }, { z: 26 });
+        piece("logo", `<div style="width:380px;height:110px;border-radius:55px;background:#121416;display:flex;align-items:center;justify-content:center"><img src="assets/brand/logo-white.png" alt="" style="width:270px"></div>`, { x: 350, y: 240 }, { z: 9 });
+        piece("manH2", cutI("man-happy", 280), { x: 760, y: 1180 }, { cls: "cut", z: 10, big: true });
+
+        // ════════ S1 HOOK 0-4.4 ════════
+        // frame 1: the prints are already piled, the iron weight is falling onto them; impact at 0.27 s
+        seg("pr1", -1, F * 0.5, { o: 1, r: -3 }, "none"); seg("pr2", -1, F * 0.5, { o: 1, r: 4 }, "none"); seg("pr3", -1, F * 0.5, { o: 1, r: -2 }, "none");
+        seg("burst", -1, F * 0.5, { o: 0, s: 0.2 }, "none"); seg("burst", 0.26, F, { o: 1 }, "none"); seg("burst", 0.26, 0.3, { s: 1, r: 8 }, "back.out(2)");
+        seg("weight", -1, F * 0.5, { o: 1, y: -90, r: 7 }, "none"); seg("weight", 0, 0.26, { y: 0, r: 3 }, "power3.in");
+        squash("weight", 0.26);
+        const crush = (t0) => ["pr1", "pr2", "pr3"].forEach((id, i) => { seg(id, t0 + i * F, 0.07, { y: 30, sy: 0.94 }, "power2.out"); seg(id, t0 + 0.07 + i * F, 0.14, { y: 18, sy: 1 }, "back.out(2)"); });
+        crush(0.26); nudge(["pr1", "pr2"], 0.3);
+        // «أربعة وثلاثين ميقا»: anticipation lift, then a second slam
+        seg("weight", W(8) - 0.3, 0.18, { y: -110, r: -3 }, "power2.out"); seg("weight", W(8) - 0.12, 0.12, { y: 0, r: 3 }, "power3.in");
+        squash("weight", W(8)); crush(W(8)); seg("burst", W(8), 0.1, { s: 1.15 }, "power2.out"); seg("burst", W(8) + 0.1, 0.25, { s: 1 }, "back.out(2)");
+        exitTo("pr1", W(10) - 0.16, { x: -1300, r: -14 }); exitTo("pr2", W(10) - 0.14, { x: -1300, r: -16 }); exitTo("pr3", W(10) - 0.12, { x: -1300, r: -10 }); exitTo("weight", W(10) - 0.18, { x: -1300, r: -20 }); exitTo("burst", W(10) - 0.2, { x: -1300 });
+        const H1 = block("h1", 60, 230, 960, [[["معرض", { s: 230 }], ["صور", { s: 230, hl: 1 }]], [["في", { s: 70 }], ["موقع", { s: 70 }], ["شركة", { s: 96, hl: 1, hlc: "t" }], ["كبيرة،", { s: 70, under: 1 }]]], { guides: [250, 330] });
+        guides(H1, 0);
+        TL.set(H1.tokens[0].w, { yPercent: 0, opacity: 1 }, 0); // frame 1 already shows the first word
+        TL.fromTo(H1.tokens[0].tk, { scale: 1.25 }, { scale: 1, duration: 10 * F, ease: "expo.out", immediateRender: true }, 0);
+        rise(H1.tokens[1], W(1));
+        hl(H1.tokens[1], W(1) + 6 * F);
+        cascade(H1.tokens.slice(2), W(2)); hl(H1.tokens[4], W(4) + 4 * F);
+        drawS(H1.tokens[5], "under", W(5) + 4 * F);
+        const H2 = block("h2", 80, 1440, 920, [[["حجمه", { s: 84 }], ["٣٤", { s: 190, col: "#F0F1F2" }], ["ميقا", { s: 150, col: "#00DB33" }]]], { scrap: "b", scrapBox: { left: "-30px", right: "-30px", top: "-10px", bottom: "-34px" }, z: 22 });
+        TL.fromTo(H2.b, { y: 300, rotation: 4, opacity: 0 }, { y: 0, rotation: -2, opacity: 1, duration: 8 * F, ease: "back.out(1.6)", immediateRender: false }, W(6) - 4 * F);
+        TL.set(H2.tokens[0].tk, { color: "#BBBDBF" }, 0);
+        rise(H2.tokens[0], W(6));
+        slam(H2.tokens[1], W(7), 1); slam(H2.tokens[2], W(9), -1);
+        pushOut(H1, W(10) - 0.28); TL.to(H2.b, { x: -1300, rotation: -10, duration: 7 * F, ease: "power2.in" }, W(10) - 0.24);
+
+        // ════════ S2 4.4-8.8: the customer waits ════════
+        drop("manBg", W(10) - 0.14, -3); seg("burst2", W(10) - 0.05, F, { o: 1, s: 0.3 }, "none"); seg("burst2", W(10) - 0.05, 0.3, { s: 1, r: 10 }, "back.out(2)");
+        drop("man", W(10) - 0.06, -1, { y0: -1700 }); seg("ctc1", W(10) + 0.2, 0.1, { o: 1 }, "none");
+        // secondary motion while he waits: phone tilts on twos, an impatient head-turn (mirror swap), a quick frustrated pose flash
+        [0, 1, 2, 3].forEach((k) => seg("man", W(11) + k * 0.42, 0.17, { r: k % 2 ? 1.6 : -1.4 }, "power2.inOut"));
+        seg("man", W(14) + 0.3, F, { sx: -1 }, "none"); seg("man", W(14) + 0.66, F, { sx: 1 }, "none");
+        seg("man", W(15), F, { o: 0 }, "none"); seg("manF", W(15), F, { o: 1 }, "none"); seg("manF", W(15) + 0.28, F, { o: 0 }, "none"); seg("man", W(15) + 0.28, F, { o: 1 }, "none");
+        exitTo("manBg", W(16) + 0.36, { x: -900, r: -10 }, 0.24); exitTo("burst2", W(16) + 0.34, { x: -900 }, 0.22);
+        slideIn("phone", W(11), 900, 3);
+        drop("hglass", W(14), -4);
+        seg("hglass", W(15) - 0.05, 0.4, { r: 176 }, "back.inOut(1.4)");
+        slideIn("vHands", W(14) + 0.2, 700, 5, 0.3);
+        // «ويطلع»: frustrated pose swap (stop-motion), then he walks out, phone and hands leave
+        seg("man", W(16) - 0.15, F, { o: 0 }, "none"); seg("manF", W(16) - 0.15, F, { o: 1 }, "none");
+        exitTo("manF", W(16) + 0.35, { x: -900, r: -8 }, 0.24); seg("ctc1", W(16) + 0.35, 0.12, { o: 0 }, "none");
+        exitTo("phone", W(17) - 0.2, { x: 1000, r: 14 }); exitTo("hglass", W(17) - 0.18, { y: -1200 }); exitTo("vHands", W(17) - 0.16, { x: 900, r: 10 });
+        const H3 = block("h3", 60, 230, 960, [[["عميلك", { s: 190, hl: 1 }]], [["يفتحه", { s: 70 }], ["من", { s: 70 }], ["جواله،", { s: 104, hl: 1, hlc: "t" }]]], { lineGap: -10 });
+        rise(H3.tokens[0], W(10)); hl(H3.tokens[0], W(10) + 7 * F);
+        cascade(H3.tokens.slice(1), W(11)); hl(H3.tokens[3], W(13) + 4 * F);
+        pushOut(H3, W(14) - 0.12);
+        const H4 = block("h4", 60, 250, 960, [[["ويستنى،", { s: 160, cur: [W(14), W(16)], sel: 1 }]]], {});
+        rise(H4.tokens[0], W(14)); sel(H4.tokens[0], W(15));
+        TL.to(H4.tokens[0].tk, { x: 26, duration: 3 * F, yoyo: true, repeat: 1, ease: "power2.out" }, W(15));
+        TL.set(H4.b, { visibility: "hidden" }, W(16) - 2 * F);
+        const H5 = block("h5", 60, 250, 960, [[["ويطلع.", { s: 230, ol: 1 }]]], {});
+        slam(H5.tokens[0], W(16), -1);
+        TL.to(H5.b, { x: -1200, duration: 7 * F, ease: "power2.in" }, W(17) - 0.28);
+
+        // ════════ S3 8.8-14.4: snapback ════════
+        drop("pr1", W(17), -3, { y0: -1500, ty: 330, s: 0.85 });
+        drop("pr2", W(18), 3, { y0: -1500, ty: 170, s: 0.9 });
+        seg("slab", W(21) - 0.1, F, { o: 1, sx: 0 }, "none"); seg("slab", W(21), 0.16, { sx: 1 }, "power3.out");
+        P.slab.el.style.transformOrigin = "right center";
+        exitTo("pr1", W(22) - 0.2, { y: 1500, r: 12 }); exitTo("pr2", W(22) - 0.18, { y: 1500, r: -10 }); exitTo("slab", W(22) - 0.16, { y: 1500 });
+        const H6 = block("h6", 60, 250, 960, [[["لا", { s: 92 }], ["تدور", { s: 92 }], ["على", { s: 92 }]], [["صور", { s: 190 }], ["أقل.", { s: 190, strike: 1, col: "#121416" }]]], { guides: [118] });
+        guides(H6, W(17) - 4 * F); cascade(H6.tokens.slice(0, 3), W(17)); rise(H6.tokens[3], W(20)); kash(H6.tokens[4], W(21) - 2 * F, 12 * F);
+        drawS(H6.tokens[4], "strike", W(21) + 10 * F);
+        pushOut(H6, W(22) - 0.42);
+        slideIn("mag", W(22) + 0.05, 900, 8); seg("mag", W(25), 0.7, { x: -380, y: 30, r: -6 }, "sine.inOut");
+        exitTo("mag", W(26) + 0.1, { x: -900, r: -20 }, 0.24);
+        seg("feather", W(26) - F, F, { o: 1, y: -260, r: -30 }, "none"); seg("feather", W(26), 1.6, { y: 0, r: 8 }, "sine.out"); seg("feather", W(26) + 1.6, 0.8, { y: -30, r: -4 }, "sine.inOut");
+        exitTo("feather", W(29) - 0.15, { y: -1300 }, 0.2);
+        const H7 = block("h7", 60, 230, 960, [[["دور", { s: 116 }], ["على", { s: 74 }], ["أحد", { s: 116 }], ["يعرف", { s: 160, hl: 1, hlc: "t" }]], [["يخفف", { s: 250, hl: 1, hlc: "b" }]], [["اللي", { s: 74 }], ["عندك.", { s: 130, under: 1 }]]], { lineGap: -20 });
+        cascade(H7.tokens.slice(0, 4), W(22) - 0.17); hl(H7.tokens[3], W(25) + 6 * F); rise(H7.tokens[4], W(26)); hl(H7.tokens[4], W(26) + 8 * F); punch(H7.tokens[4].tk, W(26) + 0.5);
+        cascade(H7.tokens.slice(5), W(27)); drawS(H7.tokens[6], "under", W(28) + 0.2);
+        heroExit(H7, W(29) - 0.32);
+
+        // ════════ S4 14.4-17.3: dark world, the numbers ════════
+        TL.to("#gDark", { opacity: 1, duration: 2 * F, ease: "none" }, W(29) - 0.1);
+        seg("mark", W(29) - 0.05, F, { o: 1, s: 0.3, r: -50 }, "none"); seg("mark", W(29), 0.4, { s: 1, r: 0 }, "back.out(1.8)");
+        seg("mark", W(32) - 0.15, 0.12, { s: 0.9 }, "power2.out"); seg("mark", W(32) - 0.03, 0.14, { s: 1.12 }, "power3.out"); seg("mark", W(32) + 0.11, 0.25, { s: 1 }, "sine.inOut");
+        // «الأرقام»: a gauge reads the page weight; the needle winds back (anticipation), swings into the green zone, settles (2-tween overshoot)
+        drop("gauge", W(32) + 0.1, -2);
+        TL.set("#needle2", { rotation: -90 }, 0);
+        TL.to("#needle2", { rotation: -104, duration: 5 * F, ease: "power2.out" }, W(34) - 0.1);
+        TL.to("#needle2", { rotation: 78, duration: 10 * F, ease: "power3.out" }, W(34) + 0.07);
+        TL.to("#needle2", { rotation: 64, duration: 9 * F, ease: "sine.inOut" }, W(34) + 0.4);
+        ["mark", "gauge"].forEach((id, i) => exitTo(id, W(35) - 0.2 + i * F, { y: -1300 }, 0.18));
+        const H8 = block("h8", 60, 250, 960, [[["في", { s: 96 }], ["فورتشن", { s: 150, col: "#00DB33" }], ["كود،", { s: 150, col: "#00DB33" }]], [["نبدا", { s: 96 }], ["من", { s: 96 }], ["الأرقام.", { s: 170, sel: 1, cur: [W(34) + 0.4, W(35) - 0.2] }]]], { dk: true, guides: [150, 330], lineGap: -6 });
+        guides(H8, W(29) - 0.05); cascade(H8.tokens.slice(0, 3), W(29)); cascade(H8.tokens.slice(3, 5), W(32)); kash(H8.tokens[5], W(34), 12 * F); sel(H8.tokens[5], W(34) + 0.3);
+        pushOut(H8, W(35) - 0.16);
+        TL.to("#gDark", { opacity: 0, duration: 2 * F, ease: "none" }, W(35) - 0.1);
+
+        // ════════ S5 17.3-22.5: three questions on torn notes ════════
+        drop("n1", W(35), -4); drop("n2", W(39) - 0.05, 3); drop("n3", W(42), -3);
+        nudge(["n1"], W(39) + 0.3); nudge(["n1", "n2"], W(42) + 0.3);
+        slideIn("vPhone", W(40) - 0.1, -800, -4, 0.3); exitTo("vPhone", W(42) - 0.15, { x: -900, r: -10 });
+        ["n1", "n2", "n3"].forEach((id, i) => exitTo(id, W(46) - 0.22 + i * F, { y: 1500, r: 14 }, 0.2));
+        const Q1 = block("q1", 60, 250, 960, [[["وش", { s: 200, id: "wsh" }], ["اللي", { s: 90 }], ["مبطي", { s: 150, circ: 1 }]], [["الصفحة؟", { s: 96 }]]], { lineGap: -24 });
+        rise(Q1.tokens[0], W(35)); punch(Q1.tokens[0].tk, W(35) + 0.2); cascade(Q1.tokens.slice(1, 3), W(36)); drawS(Q1.tokens[2], "circ", W(37) + 0.15, 12 * F); rise(Q1.tokens[3], W(38));
+        // shared word: «وش» stays put; the rest pushes through to «وين يطلع الزاير؟», then «وش» returns for the third question
+        [1, 2, 3].forEach((k, i) => { TL.to(Q1.tokens[k].w, { yPercent: -120, duration: 6 * F, ease: "power2.in" }, W(39) - 0.2 + i * F); TL.set(Q1.tokens[k].w, { opacity: 0 }, W(39) + 0.05 + i * F); });
+        TL.to(Q1.b.querySelectorAll(".draw"), { opacity: 0, duration: 3 * F }, W(39) - 0.18);
+        TL.to(Q1.tokens[0].tk, { scale: 0.55, x: 330, y: -40, opacity: 0.35, duration: 8 * F, ease: "expo.inOut" }, W(39) - 0.18);
+        TL.set(Q1.b, { visibility: "hidden" }, W(46) + 0.1);
+        const Q2 = block("q2", 60, 250, 960, [[["وين", { s: 170, hl: 1 }], ["يطلع", { s: 120 }], ["الزاير؟", { s: 120 }]]], {});
+        rise(Q2.tokens[0], W(39)); hl(Q2.tokens[0], W(39) + 6 * F); cascade(Q2.tokens.slice(1), W(40));
+        pushOut(Q2, W(42) - 0.16);
+        TL.to(Q1.tokens[0].tk, { scale: 1, x: 0, y: 0, opacity: 1, duration: 8 * F, ease: "expo.out" }, W(42) - 0.06);
+        const Q3 = block("q3", 60, 250, 960, [[["", { s: 200 }]], [["يحتاج", { s: 84 }], ["يشوف", { s: 84 }], ["أول؟", { s: 170, hl: 1, hlc: "b" }]]], { lineGap: -40 });
+        cascade(Q3.tokens.slice(1), W(43)); hl(Q3.tokens[3], W(45) + 6 * F);
+        TL.set(Q3.b, { y: 150 }, 0);
+        pushOut(Q3, W(46) - 0.2); TL.to(Q1.tokens[0].w, { yPercent: -120, duration: 6 * F, ease: "power2.in" }, W(46) - 0.2);
+
+        // ════════ S6 22.6-27.1: the work, same photos same quality ════════
+        ["g1", "g2", "g3", "g4"].forEach((id, i) => drop(id, W(46) + i * 0.07, [2, -2, 3, -3][i]));
+        seg("scan", W(47) - F, F, { o: 1 }, "none"); seg("scan", W(47), 1.5, { y: 1460 }, "power1.inOut"); seg("scan", W(47) + 1.5, F, { o: 0 }, "none");
+        ["g1", "g2", "g3", "g4"].forEach((id, i) => { const ok = P[id].el.querySelector(".ok"); TL.fromTo(ok, { opacity: 0, scale: 1.8 }, { opacity: 1, scale: 1, duration: 7 * F, ease: "back.out(2.4)", immediateRender: false }, W(47) + 0.25 + i * 0.32); });
+        ["g1", "g2", "g3", "g4"].forEach((id, i) => exitTo(id, W(56) - 0.25 + i * F, { y: -1500 }, 0.18));
+        const H9 = block("h9", 60, 250, 960, [[["اشتغلنا", { s: 170, hl: 1, hlc: "b" }]], [["على", { s: 72 }], ["كل", { s: 150, hl: 1 }], ["صورة", { s: 72 }], ["في", { s: 72 }], ["المعرض.", { s: 72 }]]], { lineGap: -10 });
+        rise(H9.tokens[0], W(46)); hl(H9.tokens[0], W(46) + 6 * F); cascade(H9.tokens.slice(1), W(47)); hl(H9.tokens[2], W(48) + 6 * F);
+        pushOut(H9, W(52) - 0.16);
+        const H10 = block("h10", 60, 250, 960, [[["و", { s: 120, id: "waw" }], ["نفس", { s: 210, id: "nafs" }]], [["الصور،", { s: 130, id: "sw1" }]]], { lineGap: -40 });
+        rise(H10.tokens[1], W(52)); rise(H10.tokens[2], W(53));
+        TL.set(H10.tokens[0].w, { yPercent: 115 }, 0); rise(H10.tokens[0], W(54) - 2 * F);
+        punch(H10.tokens[1].tk, W(54), 0.8);
+        TL.to(H10.tokens[2].w, { yPercent: -120, duration: 6 * F, ease: "power2.in" }, W(55) - 0.22);
+        const H11 = block("h11", 60, 250, 960, [[["", { s: 210 }]], [["الجودة.", { s: 150, hl: 1, under: 1 }]]], { lineGap: -40 });
+        rise(H11.tokens[1], W(55)); hl(H11.tokens[1], W(55) + 8 * F); drawS(H11.tokens[1], "under", W(55) + 0.45);
+        pushOut(H10, W(56) - 0.2); pushOut(H11, W(56) - 0.18);
+
+        // ════════ S7 27.1-30.1: forest, 34 -> 140 morph ════════
+        TL.to("#gForest", { opacity: 1, duration: 2 * F, ease: "none" }, W(56) - 0.1);
+        TL.to("#morph", { opacity: 1, duration: 3 * F }, W(56));
+        TL.set("#mB", { opacity: 0 }, 0);
+        seg("weight2", W(56) - F, F, { o: 1, y: -1300, r: 20 }, "none"); seg("weight2", W(56), 0.32, { y: 0, r: 3 }, "back.out(1.6)");
+        exitTo("weight2", W(59) - 0.1, { y: -1400, r: -30 }, 0.3);
+        seg("feather2", W(59) + 0.1, F, { o: 1, y: -700, r: -40 }, "none"); seg("feather2", W(59) + 0.1, 1.2, { y: 0, r: 6 }, "sine.out");
+        exitTo("feather2", W(62) - 0.25, { y: -1500 }, 0.2);
+        const H12 = block("h12", 60, 250, 960, [[["والحجم", { s: 110, ol: 1 }], ["صار", { s: 130, hl: 1, hlc: "w" }]]], { dk: true });
+        cascade(H12.tokens, W(56)); hl(H12.tokens[1], W(57) + 4 * F);
+        const H13 = block("h13", 60, 1460, 960, [[["بس.", { s: 190, col: "#121416" }]]], { scrap: "w", scrapBox: { left: "300px", right: "300px", top: "0px", bottom: "-20px" } });
+        slam(H13.tokens[0], W(61), 1); TL.fromTo(H13.b.querySelector(".scrap"), { scaleX: 0 }, { scaleX: 1, duration: 4 * F, ease: "expo.out", immediateRender: false }, W(61) - 2 * F);
+        pushOut(H12, W(62) - 0.2); pushOut(H13, W(62) - 0.18); TL.to("#morph", { opacity: 0, y: -400, duration: 6 * F, ease: "power2.in" }, W(62) - 0.22);
+        TL.to("#gForest", { opacity: 0, duration: 2 * F, ease: "none" }, W(62) - 0.08);
+
+        // ════════ S8 30.1-32.6: opens before you blink (real clip + instant phone) ════════
+        slideIn("vHappy", W(62) - 0.05, 1100, -3, 0.34);
+        drop("phone2", W(63) - 0.1, 5);
+        drop("manH", W(64), -2, { y0: -1700 });
+        exitTo("vHappy", W(67) - 0.2, { x: -1200, r: -12 }); exitTo("phone2", W(67) - 0.18, { y: 1500 }); exitTo("manH", W(67) - 0.16, { x: 1100, r: 10 });
+        const H14 = block("h14", 110, 1450, 860, [[["والمعرض", { s: 96 }], ["يفتح", { s: 96 }], ["قبل", { s: 96 }], ["ما", { s: 96 }], ["ترمش.", { s: 150, circ: 1 }]]], { scrap: "w", scrapBox: { left: "-20px", right: "-20px", top: "-6px", bottom: "-30px" } });
+        TL.fromTo(H14.b, { y: 260, rotation: -3, opacity: 0 }, { y: 0, rotation: 1, opacity: 1, duration: 8 * F, ease: "back.out(1.6)", immediateRender: false }, W(62) - 4 * F);
+        cascade(H14.tokens.slice(0, 4), W(62)); slam(H14.tokens[4], W(66), 1); drawS(H14.tokens[4], "circ", W(66) + 0.2, 12 * F);
+        pushOut(H14, W(67) - 0.2); TL.to(H14.b.querySelector(".scrap"), { y: 400, duration: 6 * F, ease: "power2.in" }, W(67) - 0.18);
+
+        // ════════ S9 32.6-35.0: «إذا موقعك يبطي وما تدري ليش» (real clip, desaturated) ════════
+        P.vConf.el.style.filter = "grayscale(0.7) contrast(1.05)";
+        drop("vConf", W(67), -2);
+        exitTo("vConf", W(73) - 0.2, { y: 1500, r: 10 });
+        const H15 = block("h15", 60, 250, 960, [[["إذا", { s: 96 }], ["موقعك", { s: 96 }], ["يبطي", { s: 170, hl: 1 }]], [["وما", { s: 96 }], ["تدري", { s: 96 }], ["ليش،", { s: 150, ol: 1, cur: [W(72) + 0.3, W(73) - 0.2] }]]], { guides: [175], lineGap: -14 });
+        cascade(H15.tokens.slice(0, 2), W(67)); rise(H15.tokens[2], W(69)); hl(H15.tokens[2], W(69) + 6 * F); cascade(H15.tokens.slice(3), W(70));
+        pushOut(H15, W(73) - 0.18);
+
+        // ════════ S10 35.0-end: CTA ════════
+        drop("cta", W(73), -2);
+        seg("stamp", W(75) - F, F, { o: 1, s: 2.6, r: -24 }, "none"); seg("stamp", W(75), 0.16, { s: 1, r: -12 }, "power3.in");
+        squash("cta", W(75) + 0.16); TL.set("#flashW", { opacity: 0.55 }, W(75) + 0.16); TL.set("#flashW", { opacity: 0 }, W(75) + 0.16 + F);
+        drop("logo", W(77) + 0.05, 2);
+        drop("manH2", W(78), 3, { y0: -1800 });
+        const H16 = block("h16", 150, 620, 780, [[["اطلب", { s: 96 }], ["فحص", { s: 230, hl: 1 }]], [["لموقعك،", { s: 150, under: 1 }]]], { z: 24, lineGap: 0 });
+        rise(H16.tokens[0], W(73) + 0.15); rise(H16.tokens[1], W(74)); hl(H16.tokens[1], W(74) + 6 * F); punch(H16.tokens[1].tk, W(75) + 0.2);
+        rise(H16.tokens[2], W(76)); drawS(H16.tokens[2], "under", W(76) + 0.3);
+        const H17 = block("h17", 60, 1215, 690, [[["وخل", { s: 76 }], ["فورتشن", { s: 80, col: "#006A39" }], ["كود", { s: 80, col: "#006A39" }]], [["تقول", { s: 64 }], ["لك", { s: 64 }], ["وش", { s: 64 }], ["اللي", { s: 64 }], ["مبطيه.", { s: 96, sel: 1 }]]], { z: 24, lineGap: 8 });
+        cascade(H17.tokens.slice(0, 3), W(77) - 0.05); cascade(H17.tokens.slice(3, 7), W(80)); kash(H17.tokens[7], W(84) - 2 * F, 12 * F); sel(H17.tokens[7], W(84) + 0.35);
+
+        // hits: 1-frame blur on beats, the single invert on the biggest hit (34 -> 140 lands on «كيلو»)
+        const blurHit = (t) => { TL.set("#cam", { filter: "blur(3.5px)" }, t); TL.set("#cam", { filter: "none" }, t + F); };
+        [0.27, W(9), W(16), W(21), W(61)].forEach(blurHit);
+        TL.set("#flash", { opacity: 1 }, W(60)); TL.set("#flash", { opacity: 0 }, W(60) + F);
+
+        ["cta", "manBg", "n1", "n2", "n3"].forEach((id) => P[id].el.classList.add("cut"));
+        // safe-zone QA: every piece is a key visual except pure decoration (paper backing, bursts, shadows, scan, slab)
+        const DECO = new Set(["burst", "burst2", "manBg", "ctc1", "slab", "scan", "cta"]);
+        for (const id in P) if (!DECO.has(id)) P[id].el.dataset.key = id;
+        prepSegs();
+        // ════════ per-frame state (exact on seek) ════════
+        const grains = $$(".grain"), curs = $$(".cur"), cam = $("#cam");
+        const gooBlur = $("#gooBlur"), gooA = $("#gooA"), gooD = $("#gooD"), mA = $("#mA"), mB = $("#mB");
+        const scrImg = $("#scrImg"), skel = $("#skel"), spinner = $("#spinner");
+        function sync() {
+          const t = TL.time(), f = Math.floor(t * 12), tq = f / 12;
+          for (const id in P) evalPiece(P[id], tq, f);
+          // camera on twos: slow drift + +-2 px shake at scale 1.02
+          const drift = 1.02 + 0.02 * Math.sin(tq * 0.45);
+          cam.style.transform = `translate(${((hash(f * 3 + 1) - 0.5) * 4).toFixed(2)}px, ${((hash(f * 3 + 2) - 0.5) * 4).toFixed(2)}px) scale(${drift.toFixed(4)})`;
+          const g = Math.floor(t * 15) % 6; grains.forEach((im, i) => { im.style.opacity = i === g ? 0.6 : 0; });
+          curs.forEach((c) => { const on = +c.dataset.on, off = +c.dataset.off; c.style.opacity = t >= on && t < off && Math.floor((t - on) / 0.5) % 2 === 0 ? 1 : 0; });
+          // slow load (S2): skeleton + spinner, the screenshot reveals in stepped chunks and stalls at 38 %
+          const p = cl((tq - W(11) - 0.4) / 3.0), rev = Math.floor(p * 6) / 6 * 38;
+          scrImg.style.clipPath = `inset(0 0 ${(100 - rev).toFixed(1)}% 0)`;
+          skel.style.clipPath = `inset(${(rev * 11.0).toFixed(0)}px 0 0 0)`; spinner.style.transform = `rotate(${(f * 45) % 360}deg)`;
+          // morph «٣٤ ميقا» -> «١٤٠ كيلو» (blur + alpha clamp + displacement), stepped at 12 fps
+          const m = cl((tq - W(58)) / (W(60) - W(58)));
+          const pk = Math.sin(Math.PI * m);
+          gooBlur.setAttribute("stdDeviation", (pk * 22).toFixed(1));
+          gooA.setAttribute("slope", (1 + pk * 13).toFixed(2)); gooA.setAttribute("intercept", (-pk * 4.2).toFixed(2));
+          gooD.setAttribute("scale", (pk * 50).toFixed(1));
+          const e = m * m * (3 - 2 * m);
+          mA.style.opacity = Math.min(1, (1 - e) * 1.6).toFixed(3); mB.style.opacity = Math.min(1, e * 1.6).toFixed(3);
+        }
+        TL.eventCallback("onUpdate", sync);
+        window.addEventListener("hf-seek", sync);
+        // safe-zone QA hook: elements under a running text tween (entrance/exit) count as in transit
+        window.__qaTransit = (time) => {
+          const out = new Set();
+          TL.getChildren(true, true, false).forEach((tw) => {
+            const s = tw.startTime(), e = s + tw.totalDuration();
+            if (time > s && time < e) (tw.targets() || []).forEach((el) => { if (el && el.nodeType === 1) out.add(el); });
+          });
+          return out;
+        };
+        window.__timelines["main"] = TL; TL.seek(0); sync();
+      }
+      window.__hf = window.__hf || {};
+      window.__hf.buildReady = window.__hf.buildReady || {};
+      window.__hf.buildReady["main"] = build();
+    </script>
+  </body>
+</html>

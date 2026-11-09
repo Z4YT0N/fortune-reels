@@ -18,3 +18,39 @@ __pycache__/
 # reference videos (large, restorable with yt-dlp from research/refs-2026-11/INDEX.md)
 research/refs-*/videos/
 vendor/flow-direct/test/
+
+# generated media (kept on disk / Drive, not in git) — added 2026-11-09 for the GitHub push
+*.mp4
+*.mov
+*.webm
+*.mkv
+*.wav
+reels/*/gen/
+reels/*/shots/
+reels/*/assets/video/
+reels/*/keys/*.png
+reels/*/audio/
+reels/*/refs/
+reels/*/study/
+posts/**/gen/
+.scratch-*
+node_modules/
+# images/archives are outputs: keep only engine-level references (brand, cut-outs, style bible, sfx, fonts)
+*.png
+*.jpg
+*.jpeg
+*.webp
+*.zip
+*.mp3
+!assets/**
+!research/style-bible-2026-11/*
+!reels/*/keys/contact-sheet.jpg
+# re-ignore heavy restorable assets after the !assets/** whitelist
+assets/models/*.fbx
+assets/sfx-library/*
+!assets/sfx-library/owner-pack-2026-11/
+assets/sfx-library/owner-pack-2026-11/*music*
+assets/voice-samples-2026-11/
+
+# third-party clone, restored from vendor/google-flow-mcp-patches (see SETUP.md)
+vendor/google-flow-mcp/

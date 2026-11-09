@@ -1,0 +1,14 @@
+Use the reference image ONLY for its visual language: a real studio photograph of a person cut out and placed on a flat, slightly textured paper background, with surreal oversized real props, soft natural studio light, a gentle contact shadow under the subject, and plenty of empty paper space at the top for a headline. Do NOT copy the person, the megaphones, the composition or any text from the reference.
+
+New scene, vertical 9:16:
+A Saudi businessman in his late 30s, white thobe, red-and-white shemagh with black agal, short beard, sits on a plain black office chair in the lower half of the frame. In front of him on a small desk is an open silver laptop; its screen shows only a big grey loading spinner on a white page. He leans back with one hand on his forehead, bored and frustrated, waiting. Next to the desk stands an oversized real brass-and-glass hourglass, almost as tall as him, with sand running. A few printed photos of a luxury gallery lie scattered on the desk.
+
+Background: a flat light grey paper (#F0F1F2) with visible fine paper fibres and a few soft wrinkles, no walls, no room, no horizon. The ONLY accent colour is one small strip of bright green tape (#00DB33) holding a photo to the desk. No maroon, no red background.
+
+Photography style (very important, it must NOT look AI-generated):
+- Real editorial photoshoot, shot on a full-frame camera with a 50mm lens at f/4, Kodak Portra 400 film look.
+- Natural skin with pores, small asymmetries, real fabric wrinkles on the thobe, slightly imperfect lighting.
+- Matte, slightly muted colours, soft contrast. No HDR, no glossy plastic skin, no glow, no perfect symmetry, no cinematic teal-orange grade.
+- Visible fine film grain over the whole image.
+
+No text, no letters, no logos, no watermark anywhere in the image.

@@ -1,0 +1,10 @@
+{
+  "name": "reel-gallery-weight-v2",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "npx --yes hyperframes@0.8.152 preview",
+    "check": "npx --yes hyperframes@0.8.152 check",
+    "render": "npx --yes hyperframes@0.8.152 render --output renders/gallery-weight-v2.mp4"
+  }
+}

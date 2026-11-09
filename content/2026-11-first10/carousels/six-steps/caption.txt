@@ -1,0 +1,18 @@
+Most software projects fail at step one: nobody defined the goal.
+
+Here is how we run every project, and what you sign off at each step:
+
+01 Understand: the written goal and scope
+02 Quote and timeline: the contract, with scope, price and dates fixed
+03 Design: the key screens, before any code
+04 Build and test: each milestone, on a test link
+05 Launch: the go-live date
+06 Support: the support plan
+
+No step starts until the one before it is approved. That is what keeps scope, price and timeline from drifting.
+
+Planning a website, app or system? Comment "review" and we'll send a first-impression review of your site, or DM us.
+
+www.fortunecode.org | +20 10 98066484
+
+#SoftwareDevelopment #ProjectManagement #WebDevelopment #ProductDesign

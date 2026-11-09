@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8">
+<link rel="stylesheet" href="common.css">
+<style>
+html,body { width:1080px; height:1350px; }
+.wm { fill:none; stroke:#fff; stroke-width:7; stroke-linecap:round; stroke-linejoin:round; filter:url(#rough); }
+.ax { font-family:Plex; font-size:30px; fill:#8d9195; }
+.chip { position:absolute; background:#1b1e21; border:2px solid rgba(255,255,255,.3); border-radius:14px; padding:4px 20px 0; font-size:34px; white-space:nowrap; box-shadow:0 14px 30px rgba(0,0,0,.55); }
+.src { position:absolute; font-family:Plex; direction:ltr; font-size:20px; color:#8d9195; white-space:nowrap; }
+</style></head>
+<body>
+<div id="stage"></div>
+<svg class="marks" width="1080" height="1350" style="z-index:40"></svg>
+<script src="footer.js"></script>
+<script>document.querySelector('svg.marks').innerHTML = '<defs><filter id="rough"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="4"/><feDisplacementMap in="SourceGraphic" scale="3"/></filter></defs><g id="mk"></g>';</script>
+<script>const PAGE_W = 1080;</script>
+<script src="kit.js"></script>
+<script>
+brand(1);
+glow(640, 700, 420, .55);
+ct(1, 160, 'موقعك ياخذ أكثر من <span class="g">٣ ثواني</span>؟', 62);
+ct(1, 246, 'شوف وش يصير لزوار الجوال:', 46, '', 'mute');
+
+/* chart: x = seconds 0..5 (LTR), y = share of mobile visitors still on the page */
+const X0 = 150, X1 = 930, Y100 = 470, Y0 = 930, xs = s => X0 + s / 6 * (X1 - X0), ys = p => Y0 - p / 100 * (Y0 - Y100);
+const x3 = xs(3), y47 = ys(47);
+let g = '';
+for (const p of [0, 50, 100]) g += `<line x1="${X0}" x2="${X1}" y1="${ys(p)}" y2="${ys(p)}" stroke="rgba(255,255,255,${p ? .10 : .25})" stroke-width="2" ${p ? 'stroke-dasharray="6 10"' : ''}/>`
+  + `<text class="ax" x="${X0 - 18}" y="${ys(p) + 10}" text-anchor="end">${['', '', '', '', '', '٥٠٪', '', '', '', '', '١٠٠٪'][p / 10]}</text>`;
+for (let s = 0; s <= 6; s++) g += `<text class="ax" x="${xs(s)}" y="${Y0 + 48}" text-anchor="middle" ${s === 3 ? 'style="fill:#fff; font-size:36px"' : ''}>${'٠١٢٣٤٥٦'[s]} ث</text>`;
+g += `<line x1="${x3}" x2="${x3}" y1="${Y100 - 30}" y2="${Y0}" stroke="rgba(255,255,255,.35)" stroke-width="2" stroke-dasharray="4 8"/>`;
+const line = `M${X0},${Y100} L${x3 - 20},${Y100} C ${x3 + 10},${Y100} ${x3 + 14},${y47} ${x3 + 60},${y47} L${X1},${y47}`;
+el(`<svg class="abs" width="1080" height="1350" style="left:0; top:0; overflow:visible; direction:ltr">
+  <defs><linearGradient id="fill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#00DB33" stop-opacity=".16"/><stop offset="1" stop-color="#00DB33" stop-opacity="0"/></linearGradient>
+  <filter id="gl" x="-20%" y="-50%" width="140%" height="200%"><feGaussianBlur stdDeviation="10" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
+  ${g}
+  <path d="${line} L${X1},${Y0} L${X0},${Y0} Z" fill="url(#fill)"/>
+  <path d="${line}" fill="none" stroke="#00DB33" stroke-width="9" stroke-linecap="round" filter="url(#gl)"/>
+  <circle cx="${X1}" cy="${y47}" r="11" fill="#00DB33" filter="url(#gl)"/>
+  <!-- dimension bracket: the 53% that left -->
+  <path d="M${X1 - 70},${Y100} H${X1 - 40} V${y47} H${X1 - 70}" fill="none" stroke="#fff" stroke-opacity=".6" stroke-width="3"/>
+</svg>`, 20);
+// big stat inside the gap
+el(`<div class="abs" style="left:auto; right:${1080 - (X1 - 90)}px; top:${Y100 + 30}px; text-align:right; white-space:nowrap">
+  <div style="font-size:112px; font-weight:700; line-height:1.1; color:var(--g); text-shadow:0 0 50px rgba(0,219,51,.5)">٥٣٪</div>
+  <div style="font-size:40px; font-weight:700; line-height:1.2">يطلعون</div></div>`, 30);
+el(`<div class="abs mute" style="left:${X0 + 20}px; top:${Y100 - 70}px; font-size:30px; white-space:nowrap">الزوار الباقين بالصفحة</div>`, 30);
+
+ct(1, 1040, 'يعني أكثر من نص زوارك… <span class="g">راحوا</span>.', 50);
+el(`<div class="src" style="left:50%; transform:translateX(-50%); top:1118px">Source: Google / DoubleClick, The Need for Mobile Speed (2016) · 10,000+ mobile sites</div>`, 30);
+el(`<div class="abs" style="left:${X0}px; top:${Y0 + 66}px; font-size:22px; color:#6d7175; white-space:nowrap">رسم توضيحي لرقم واحد: أكثر من ٣ ثواني ← ٥٣٪ يطلعون</div>`, 30);
+el(`<div class="chip" style="left:84px; top:330px; display:flex; gap:12px; align-items:center; font-size:30px; font-weight:600; transform:rotate(-3deg)">${SAVE_ICON}احفظه</div>`, 31);
+
+document.fonts.ready.then(() => {
+  fitLines('.t', 900);
+  // white hand-drawn marker: circle the drop + arrow from a note
+  const W = (d, st = '') => M.insertAdjacentHTML('beforeend', `<path class="wm" d="${d}" style="${st}"/>`);
+  const cx = x3 + 20, cy = (Y100 + y47) / 2, rx = 62, ry = 150;
+  W(`M${cx + rx * .9},${cy - ry * .7} C ${cx + rx * 1.25},${cy + ry * .9} ${cx - rx * .3},${cy + ry * 1.15} ${cx - rx},${cy + ry * .2} C ${cx - rx * 1.25},${cy - ry * .8} ${cx + rx * .1},${cy - ry * 1.2} ${cx + rx * .95},${cy - ry * .45}`);
+  const nx = 290, ny = 660;
+  el(`<div class="abs" style="left:${nx - 140}px; top:${ny - 20}px; font-size:52px; font-weight:700; color:#fff; transform:rotate(-5deg); white-space:nowrap">هنا!</div>`, 41);
+  W(`M${nx + 40},${ny + 60} C ${nx + 120},${ny + 140} ${cx - 160},${cy + 120} ${cx - rx - 10},${cy + 40}`);
+  const a = Math.atan2(40 - 120, (cx - rx - 10) - (cx - 160)), L = 34;
+  const hx = cx - rx - 10, hy = cy + 40;
+  W(`M${hx - L * Math.cos(a - .55)},${hy - L * Math.sin(a - .55)} L${hx},${hy} L${hx - L * Math.cos(a + .55)},${hy - L * Math.sin(a + .55)}`);
+  document.body.dataset.ready = 1;
+});
+</script>
+</body></html>

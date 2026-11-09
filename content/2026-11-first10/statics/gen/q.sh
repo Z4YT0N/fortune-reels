@@ -1,0 +1,10 @@
+#!/bin/bash
+cd E:/Library/01-Workspace/Fortune/fortune-reels
+P=12f3c7f0-27a8-4e0f-bb43-b8a4b64a0b36
+S=E:/Library/01-Workspace/Fortune/fortune-reels/content/2026-11-first10/statics/gen
+T=E:/Library/01-Workspace/Fortune/fortune-reels/content/2026-11-first10/stories/gen
+mkdir -p $S/a $S/b $T/c
+bash vendor/flow-locked.sh flow_agent_generate "{\"project_id\":\"$P\",\"kind\":\"image\",\"prompt\":\"Photoreal product still life: a heavy old black cast-iron weight on the left and a single delicate white feather on the right, both resting on a dark matte desk surface, lots of empty dark space above them, near-black background #121416, soft green #00DB33 rim light from behind tracing the edges of both objects and a faint green glow spill on the desk, dramatic studio lighting, shallow depth of field, shot on 50mm, no text, no letters, no logos\",\"aspect\":\"3:4\",\"download_dir\":\"$S/a\"}" > $S/a.log 2>&1
+bash vendor/flow-locked.sh flow_agent_generate "{\"project_id\":\"$P\",\"kind\":\"image\",\"prompt\":\"Photoreal top-down view at a slight angle of a dark matte desk: a single clean blank white A4 sheet of paper lying flat in the right half of the frame with a black fountain pen resting across its bottom corner, the left half of the desk empty and dark, near-black background #121416, soft green #00DB33 rim light grazing the paper edges and pen, subtle green glow, dramatic low-key lighting, the paper is completely blank with no writing, no text, no letters, no logos\",\"aspect\":\"3:4\",\"download_dir\":\"$S/b\"}" > $S/b.log 2>&1
+bash vendor/flow-locked.sh flow_agent_generate "{\"project_id\":\"$P\",\"kind\":\"image\",\"prompt\":\"Photoreal close-up of a heavy closed steel padlock resting on the keys of a dark laptop keyboard, dark room, near-black background #121416, strong green #00DB33 rim light outlining the padlock and green glow reflecting on the keys, lots of dark empty space above the padlock, cinematic low-key lighting, shallow depth of field, no text, no letters, no logos\",\"aspect\":\"9:16\",\"download_dir\":\"$T/c\"}" > $T/c.log 2>&1
+echo done

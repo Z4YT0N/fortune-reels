@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8">
+<link rel="stylesheet" href="common.css">
+<style>
+html,body { width:5400px; height:1350px; }
+.dev { position:absolute; -webkit-mask-image: radial-gradient(ellipse 52% 50% at 50% 52%, #000 58%, transparent 100%); }
+.chip { position:absolute; background:#1b1e21; border:2px solid rgba(255,255,255,.28); border-radius:22px; box-shadow:0 20px 44px rgba(0,0,0,.65), 0 0 40px rgba(0,219,51,.18); white-space:nowrap; font-weight:600; }
+.num { color:var(--g); font-family:Plex; }
+.pill { display:inline-block; background:var(--g); color:var(--bg); border-radius:16px; padding:0 26px 8px; line-height:1.25; }
+.ol { display:inline-block; border:2px solid rgba(255,255,255,.35); border-radius:16px; padding:0 22px; }
+</style></head>
+<body>
+<div id="stage"></div>
+<svg class="marks" width="5400" height="1350" style="z-index:35"><defs>
+  <filter id="rough"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="4"/><feDisplacementMap in="SourceGraphic" scale="3"/></filter>
+  <filter id="tglow" x="-5%" y="-50%" width="110%" height="200%"><feGaussianBlur stdDeviation="9" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+</defs><g id="mk"></g></svg>
+<script src="footer.js"></script><script src="screens.js"></script>
+<script>
+const W = 1080, S = (i, x) => (i - 1) * W + x;
+const stage = document.getElementById('stage'), M = document.getElementById('mk');
+function el(html, z = 10) { const d = document.createElement('div'); d.innerHTML = html.trim(); const n = d.firstChild; if (!n.style.zIndex) n.style.zIndex = z; stage.appendChild(n); return n; }
+function ct(i, top, html, size, st = '', cls = '') { return el(`<div class="t ${cls}" style="left:${S(i, 540)}px; top:${top}px; font-size:${size}px; ${st}">${html}</div>`, 30); }
+function glow(cx, cy, r, a = 1) { el(`<div class="glow" style="left:${cx - r}px; top:${cy - r}px; width:${2 * r}px; height:${2 * r}px; opacity:${a}"></div>`, 1); }
+// place a 896x1200 device photo so its screen centre lands on (cx, cy); returns the screen quad
+function device(src, quad, cx, cy, width, z = 5) {
+  const k = width / 896, sx = quad.reduce((a, p) => a + p[0], 0) / 4, sy = quad.reduce((a, p) => a + p[1], 0) / 4;
+  const left = cx - sx * k, top = cy - sy * k;
+  el(`<img class="dev" src="${src}" style="left:${left}px; top:${top}px; width:${width}px">`, z);
+  return quad.map(([x, y]) => [left + x * k, top + y * k]);
+}
+function onScreen(node, w, h, Q, z = 6, radius = 0) { node.style.transform = quadTransform(w, h, Q); node.style.zIndex = z; node.style.borderRadius = radius + 'px'; stage.appendChild(node);
+  const sh = document.createElement('div'); sh.className = 'abs'; sh.style.cssText = `left:0;top:0;width:${w}px;height:${h}px;transform-origin:0 0;transform:${quadTransform(w, h, Q)};background:linear-gradient(115deg, rgba(255,255,255,.09), rgba(255,255,255,0) 38%);border-radius:${radius}px;z-index:${z + 1}`; stage.appendChild(sh); }
+
+/* brand frame: one outline running through all five slides */
+el(`<div class="frame" style="left:40px; top:40px; width:${5400 - 80}px; height:1140px"></div>`, 50);
+for (let i = 1; i <= 5; i++) { el(`<img class="logo" src="assets/logo-en-h-primary-white.svg" style="left:${S(i, 540)}px; top:82px; transform:translateX(-50%)">`, 50); foot(S(i, 66), 1208, 948); }
+
+/* glows, some sitting on the seams */
+for (let i = 1; i <= 5; i++) glow(S(i, 540), 700, 520, .85);
+for (let s = 1; s <= 4; s++) glow(s * W, 860, 300, .55);
+
+/* devices + screens */
+const CY = 700;
+onScreen(siteUI(), 1280, 796, device('gen/p1_laptop.png', [[178,473],[718,473],[723,812],[172,812]], S(1, 540), CY, 1000), 6, 4);
+onScreen(storeUI(), 430, 940, device('gen/p2_phone.png', [[341,358],[555,358],[555,826],[341,826]], S(2, 540), CY, 1250), 6, 30);
+onScreen(dashUI(), 1280, 832, device('gen/g1_tablet.png', [[192,440],[706,440],[722,785],[178,785]], S(3, 540), CY, 1000), 6, 10);
+onScreen(appUI(), 430, 940, device('gen/g2_hand_phone.png', [[315,318],[574,323],[576,869],[319,870]], S(4, 540), CY - 15, 1100), 6, 40);
+onScreen(aiUI(), 1280, 744, device('gen/g3_monitor.png', [[162,485],[733,485],[733,817],[162,817]], S(5, 540), CY - 50, 960), 6, 2);
+
+/* copy */
+ct(1, 140, 'خدماتنا', 150, 'line-height:1; color:var(--g); text-shadow:0 0 50px rgba(0,219,51,.4)');
+ct(1, 312, 'من أول موقع… لين موظف ذكي', 48);
+const P = [
+  ['٠١', 'موقع شركتك', 'يبدأ من <bdi>٥٬٦٠٠</bdi> ريال', ''],
+  ['٠٢', 'متجر إلكتروني', 'يبدأ من <bdi>٥٬٦٠٠</bdi> ريال', 'يبيع عنك وأنت نايم'],
+  ['٠٣', 'نظام لشركتك', 'يبدأ من <bdi>١٨٬٨٠٠</bdi> ريال', 'كل شغلك في شاشة وحدة'],
+  ['٠٤', 'تطبيق جوال', 'يبدأ من <bdi>١٢٬٠٠٠</bdi> ريال', 'شركتك في جيب عميلك'],
+  ['٠٥', 'موظف ذكاء اصطناعي', 'يبدأ من <bdi>٢٬٥٠٠</bdi> ريال', 'يرد على عملائك وأنت مشغول'],
+];
+P.forEach(([n, t, price, sub], k) => {
+  const i = k + 1;
+  if (i > 1) { ct(i, 140, `<span class="num">${n}</span>  ${t}`, 96); ct(i, 268, sub, 46, '', 'mute'); }
+  else ct(i, 1000, `<span class="num">${n}</span>  ${t}`, 64);
+  ct(i, i > 1 ? 1036 : 1080, `<span class="pill">${price}</span>`, 46);
+});
+ct(3, 330, '<bdi>ERP</bdi> · <bdi>CRM</bdi> · فواتير · مخزون', 34, 'color:var(--g)');
+ct(5, 1116, 'وش يناسب شركتك؟ راسلنا واتساب', 36, 'font-weight:600');
+
+/* objects crossing the seams: the order travels from site to AI */
+const chips = [
+  [1, 770, `<div style="display:flex; gap:18px; align-items:center; padding:14px 24px 10px 18px"><div style="width:84px; height:84px; border-radius:14px; background:#1d3b2a; position:relative"><div style="position:absolute; left:28px; top:16px; width:28px; height:54px; border-radius:8px; background:#00DB33; box-shadow:0 0 14px #00DB33"></div></div><div><div style="font-size:34px">أضف للسلة</div><div style="font-size:28px; color:#00DB33">١٢٠ ر.س</div></div></div>`, -5],
+  [2, 880, `<div style="display:flex; gap:16px; align-items:center; padding:16px 26px 10px"><span style="width:22px; height:22px; border-radius:50%; background:#00DB33; box-shadow:0 0 14px #00DB33"></span><div><div style="font-size:34px">طلب جديد</div><div style="font-size:26px; color:#BBBDBF">وصل للنظام تلقائيًا</div></div></div>`, 4],
+  [3, 780, `<div style="display:flex; gap:16px; align-items:center; padding:16px 26px 10px"><div style="width:56px; height:56px; border-radius:16px; background:#121416; border:2px solid #00DB33; display:flex; align-items:center; justify-content:center"><img src="assets/icon-green.svg" style="width:32px"></div><div><div style="font-size:34px">طلبك في الطريق</div><div style="font-size:26px; color:#BBBDBF">إشعار للعميل</div></div></div>`, -4],
+  [4, 880, `<div style="padding:16px 30px 10px"><div style="font-size:26px; color:#BBBDBF">العميل يسأل:</div><div style="font-size:36px">متى يوصل طلبي؟</div></div>`, 4],
+];
+const C = [];
+chips.forEach(([s, y, html, rot]) => { const n = el(`<div class="chip" style="left:${s * W}px; top:${y}px; transform:translate(-50%,-50%) rotate(${rot}deg)">${html}</div>`, 40); C.push(n); });
+
+document.fonts.ready.then(() => {
+  fitLines('.t', 900);
+  // one glowing thread from slide 1 to slide 5, passing under every crossing object
+  const pts = [[S(1, 180), 960]];
+  C.forEach((n, k) => { const r = n.getBoundingClientRect(); pts.push([r.left + r.width / 2, r.top + r.height / 2]); pts.push([S(k + 2, 540) + (k % 2 ? 0 : 0), k % 2 ? 1000 : 1010]); });
+  pts[pts.length - 1] = [S(5, 540), 990];
+  let d = `M${pts[0][0]},${pts[0][1]}`;
+  for (let k = 1; k < pts.length; k++) { const [x0, y0] = pts[k - 1], [x1, y1] = pts[k], mx = (x0 + x1) / 2; d += ` C ${mx},${y0} ${mx},${y1} ${x1},${y1}`; }
+  M.insertAdjacentHTML('beforeend', `<path d="${d}" fill="none" stroke="#00DB33" stroke-width="6" stroke-linecap="round" filter="url(#tglow)" opacity=".9"/>`);
+  for (const [x, y] of pts) M.insertAdjacentHTML('beforeend', `<circle cx="${x}" cy="${y}" r="9" fill="#00DB33" filter="url(#tglow)"/>`);
+  document.body.dataset.ready = 1;
+});
+</script>
+</body></html>

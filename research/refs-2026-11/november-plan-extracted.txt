@@ -1,0 +1,363 @@
+Instagram calendar (13 posts: 10 Reels, 2 Carousels, 1 Static)
+Times are KSA time, proposed (evening peak) until analytics confirm. Hooks and CTAs are in Fusha. [E] engagement · [F] profile growth · [L] lead.
+Date
+Time
+Format
+Pillar
+Persona
+Topic
+Hook
+Outline
+CTA
+Objective
+KPI
+Nov 7
+8:00 PM
+Reel
+Proof
+Founder
+Taj gallery 34 MB → 140 KB
+معرض صور بحجم ٣٤ ميغابايت أصبح ١٤٠ كيلوبايت.
+Split screen: slow vs fast load; one line on the method; Taj logo reveal
+[F]
+Awareness, positioning
+Reach, 3-sec hold, saves
+Nov 9
+8:00 PM
+Reel
+Point of view
+Founder
+Premium site = slow site?
+هل يجب أن يكون الموقع الفاخر بطيئًا؟
+Myth vs reality; Taj 3D logo stays fast on ordinary laptops
+[E]
+Discussion, reach
+Comments, shares
+Nov 11
+8:00 PM
+Carousel 1
+Delivery
+Marketing mgr
+5 questions before signing with a software company
+خمسة أسئلة قبل أن توقّع مع أي شركة برمجة.
+5 slides, one question each, why it matters; last slide: how we answer
+[E]
+Authority, saves
+Saves, shares
+Nov 14
+8:00 PM
+Reel
+Engineering
+IT mgr
+Ambatt security audit
+فحصنا موقعًا قبل إطلاقه فوجدنا وأصلحنا ١٤ مشكلة.
+Audit screen, issues list turning resolved, short close
+[F]
+Credibility
+Retention, profile visits
+Nov 16
+8:00 PM
+Reel
+Craft
+Marketing mgr
+Ambatt JS 2.2 → 1.2 MB, video 2 MB → 613 KB
+ملف جافاسكربت من ٢٫٢ إلى ١٫٢ ميغابايت.
+Before/after numbers, motion bar charts
+[E]
+Education, shares
+Shares, saves
+Nov 18
+8:00 PM
+Reel
+Point of view
+Institutional lead
+One language is not enough
+هل يكفي أن نترجم الموقع؟
+Taj in Arabic (RTL) and English side by side; what changes in layout
+[E]
+Positioning with government buyers
+Comments, saves
+Nov 21
+8:00 PM
+Reel
+Proof
+Founder
+Malahi: four worlds, one checkout
+أربعة عوالم وعملية دفع واحدة.
+Cinematic flow, unified checkout, QR ticket. Publish only after written NDA approval; swap to Taj if not approved
+[F]
+Desirability
+Reach, retention
+Nov 23
+8:00 PM
+Static
+Brand
+Founder
+Positioning line
+هندسة تثق بها.
+One line, generous space, logo only
+[F]
+Brand identity
+Reach, follows
+Nov 25
+8:00 PM
+Reel
+Point of view
+Marketing mgr
+Will AI replace designers and developers?
+هل سيحلّ الذكاء الاصطناعي محل المصمم والمطوّر؟
+Our position in 3 points, one example from our process (confirm example before shoot)
+[E]
+Discussion, expertise
+Comments, shares
+Nov 26
+8:00 PM
+Carousel 2
+Ownership
+Marketing mgr
+Edit content without a developer
+كم مرة انتظرت مطوّرًا لتعديل جملة؟
+Slides: problem, custom admin studio, what you can edit, close
+[L]
+Lead gen
+DMs, saves
+Nov 28
+8:00 PM
+Reel
+Engineering
+IT mgr
+Ambatt: rotation instead of 3D models
+لماذا لم نستخدم نموذجًا ثلاثي الأبعاد؟
+Behind-the-scenes of the turntable-rotation decision
+[E]
+Credibility
+Retention
+Nov 29
+8:00 PM
+Reel
+Delivery
+Founder
+Why projects drift
+لماذا تتأخر معظم المشاريع؟
+Scene: unclear scope vs written scope; our 6-step method in one frame
+[L]
+Lead gen
+Qualified DMs
+Nov 30
+8:00 PM
+Reel
+Proof
+Founder / Institutional
+Taj: challenge, decision, craft, proof
+مجموعة متنوعة، ومنصة واحدة.
+Fixed arc: fragmented group, one system, logo, speed proof
+[L]
+Lead gen, positioning
+Link clicks, DMs
+LinkedIn calendar (13 posts: 3 Motion videos, 6 Carousels, 4 Statics)
+English, KSA time, 9:00 AM on Sunday to Thursday (proposed, to be validated). Motion videos are animation only: no dialogue, no voice-over, text on screen only. [E] engagement · [F] profile growth · [L] lead.
+Date
+Time
+Format
+Pillar
+Persona
+Topic
+Hook
+Outline
+CTA
+Objective
+KPI
+Nov 8
+9:00 AM
+Static
+Proof
+Marketing mgr
+Taj gallery 34 MB to 140 KB
+A 34 MB gallery now loads as 140 KB.
+One graphic, two numbers, one line on how
+[F]
+Credibility
+Impressions, follows
+Nov 10
+9:00 AM
+Carousel
+Delivery
+Founder
+Idea to operation in 6 steps
+Most software projects fail at step one: nobody defined the goal.
+Slides: understand, quote and timeline, design, build and test, launch, support. Close with what the client approves at each step
+[L]
+Lead gen
+Clicks, qualified DMs
+Nov 11
+9:00 AM
+Static
+Point of view
+Founder
+Fixed scope, price, timeline
+Drift starts when scope lives in a chat thread.
+Text statement: scope, price and timeline in the contract, and why
+[E]
+Discussion
+Comments
+Nov 12
+9:00 AM
+Motion 1
+Proof
+Marketing mgr / IT
+The 34 MB gallery
+Animated (no voice): a page struggles to load
+Heavy images pile up, loader spins, compress, page opens instantly; end card with 34 MB to 140 KB
+[F]
+Awareness
+Views, 3-sec views, completion
+Nov 15
+9:00 AM
+Carousel
+Engineering
+IT manager
+What our Ambatt audit found
+We found and fixed 14 issues before launch.
+Slides: why audit, what the review covers (generic categories only), the 14 result, handoff note
+[E]
+Credibility
+Saves, shares
+Nov 17
+9:00 AM
+Static
+Craft
+Institutional lead
+Taj in Arabic (RTL) and English
+Arabic is not a translated layer.
+Side-by-side RTL and LTR screens, one line
+[E]
+Positioning
+Engagement
+Nov 19
+9:00 AM
+Carousel
+Ownership
+Marketing mgr
+Custom admin studio
+How many edits wait on a developer today?
+Slides: problem, studio concept, what teams control, handoff
+[L]
+Lead gen
+DMs
+Nov 22
+9:00 AM
+Motion 2
+Proof
+Founder / Institutional
+Taj: one group, one system
+Animated: scattered pieces assemble
+Separate shapes drift, align into one grid, logo appears; end card text
+[F]
+Positioning
+Views, completion
+Nov 23
+9:00 AM
+Carousel
+Delivery
+Founder
+5 questions before hiring a software studio
+Five questions most buyers never ask.
+Scope, price, timeline, handoff, content ownership
+[E]
+Authority
+Saves, shares
+Nov 25
+9:00 AM
+Static
+Point of view
+Marketing mgr
+Beautiful or fast?
+You do not have to choose between beautiful and fast.
+Statement plus one proof number from Ambatt or Taj
+[E]
+Discussion
+Comments
+Nov 26
+9:00 AM
+Carousel
+Craft
+Institutional lead
+Five Arabic-first design decisions
+Arabic-first interfaces are rebuilt, not mirrored.
+Slides on typography, layout direction, numerals, forms, content (verify details with design team)
+[L]
+Lead gen
+Qualified inquiries
+Nov 29
+9:00 AM
+Carousel
+Engineering
+IT manager
+Performance budgets
+JS cut from 2.2 MB to 1.2 MB.
+Ambatt numbers: JS, video 2 MB to 613 KB, how we approach it
+[E]
+Credibility
+Saves
+Nov 30
+9:00 AM
+Motion 3
+Proof
+IT manager / Founder
+14 issues to zero
+Animated: a checklist, 14 flags
+Flags light up, resolve one by one, launch button unlocks
+[L]
+Lead gen
+Views, clicks
+Daily Instagram Stories strategy
+Stories run every day from Nov 7. They extend the feed post of that week and move people from interest to conversation. Weekly rhythm:
+Day
+Theme
+Purpose
+Interaction
+CTA
+Supports
+Sat
+Repost the week's lead Reel with one added line
+Reach
+Emoji slider
+[E] Share to a colleague
+Awareness
+Sun
+Poll: a real industry question tied to the week's topic
+Learn audience
+Poll (2 options)
+[E] Vote
+Engagement, persona insight
+Mon
+Behind the scenes: design or code detail
+Craft proof
+Question sticker
+[E] Ask us
+Credibility
+Tue
+Quiz: guess the number (file size, issue count)
+Education
+Quiz
+[E] Answer
+Retention
+Wed
+Before/after frame from the week's case
+Proof
+This-or-that
+[F] Follow the Reels
+Positioning
+Thu
+"Ask the team" (software, AI, design)
+Trust
+Questions box
+[L] DM us your project question
+Lead gen
+Fri
+Weekly recap with link to case study
+Conversion
+Link sticker
+[L] View the case, book a session
+Lead gen, profile visits
+Rules: one idea per Story set, 3 to 5 frames, only approved names and numbers. Track DMs separately and tag qualified ones.

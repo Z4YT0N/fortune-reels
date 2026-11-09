@@ -52,3 +52,14 @@ length:   ~<s> s, <w> words
 keyword:  <word>  (promise: <what the team must do>)
 sources:  <n> verified
 ```
+
+## Script rules from the owner's 8 references (2026-11-07, MANDATORY)
+Full source: `knowledge/content-engine/13-reel-craft-8-refs.md` (+ `research/refs-2026-11/batch-2026-11-07/analysis-*.md`).
+- **Skeleton:** hook (1-3 s) → lock-in (2-3 sentences) → body 1 → rehook 1 → body 2 → rehook 2 → optional body 3 / closing → CTA with an aligned lead magnet.
+- **Triple hook:** context in audio + visual + text before f25, then a lean (proof, pain or shock), then a contrarian snapback.
+- **Rhythm:** never 3 long lines in a row. Lines of 5 words or fewer are open loops («خلنا نشوف.»، «بس فيه مشكلة.»), and each lands on a cut or graphic change.
+- **Visual hook:** one subject + a contradicting text line + an arrow to the subject + one curious detail.
+- **Opening:** speech and a composed frame at f0, no greeting.
+- **Framework:** name it, and nest it in threes.
+- **Pace:** Gulf VO at 2.6-3.0 words/s, a new visual about every 2.4 s.
+- **Comment-keyword CTA:** one keyword everywhere and a free asset on the same topic. Only promise it once the DM automation exists.

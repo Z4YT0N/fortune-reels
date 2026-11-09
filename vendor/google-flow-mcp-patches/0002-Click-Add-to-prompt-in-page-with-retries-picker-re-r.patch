@@ -1,0 +1,32 @@
+From 328bc72a9313502d9858ec655435087fdb2caea5 Mon Sep 17 00:00:00 2001
+From: Fortune Code <fortunecodec@gmail.com>
+Date: Sat, 7 Nov 2026 16:56:43 +0300
+Subject: [PATCH 2/2] Click 'Add to prompt' in-page with retries (picker
+ re-renders)
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+---
+ src/ui.ts | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/src/ui.ts b/src/ui.ts
+index cbfb0fa..f0379ab 100644
+--- a/src/ui.ts
++++ b/src/ui.ts
+@@ -215,7 +215,12 @@ export class FlowUi {
+     }
+     await item.click();
+     await this.page.waitForFunction((el) => (el as Element).classList.contains('asset-item-active'), await item.elementHandle(), { timeout: 5_000 });
+-    await this.page.getByText('Add to prompt', { exact: true }).click();
++    // the picker re-renders and detaches the button; click it in-page with retries (2026-11-07)
++    for (let i = 0; i < 10; i++) {
++      const ok = await this.page.evaluate(() => { const el = [...document.querySelectorAll('button')].find((b) => (b.textContent || '').trim() === 'Add to prompt' && (b as HTMLElement).offsetParent); if (el) { (el as HTMLElement).click(); return true; } return false; }).catch(() => false);
++      if (ok) break;
++      await this.page.waitForTimeout(500);
++    }
+     await this.page.waitForTimeout(800);
+     const kinds = await this.chipKinds();
+     if (kinds.length !== before + 1 || kinds[kinds.length - 1] !== kind) {
+-- 
+2.54.0.windows.1
+

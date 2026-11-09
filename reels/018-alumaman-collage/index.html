@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="ar" data-resolution="portrait">
+  <!-- Reel 018 v2 (owner 2026-11-08: «الشباك» -> «النافذة», «نصنع في مصنعنا بالأحساء»; voice X3; old-clock times go through T()). Reel 018, Alum Aman, in the reel-006 style. Functions ported from reels/006-gallery-continuity/test.tpl (ink #00DB33 -> teal #0199a2).
+       Fonts: Thmanyah Serif Display = hero/stress words; Thmanyah Sans = labels, connectors, UI, contact.
+       One named move per line (voice clock = audio/vo.json, W1). Positions measured on assets/video/bg.mp4 (snap/grid.jpg):
+         «سكرت النافذة،»            design-tool frame label on a paper scrap: paper wipe, inkIn «سكرت», snap «النافذة» (scribble -> 1 f teal flash -> word)
+         «والغبار داخل؟»           «والغبار» fly: rides the dust stream in from off-screen left on a curve; «داخل؟» echoStack; both blown out right with the dust
+         «العيب مو بالغبار،»       blurIn connectors + marker strike through «بالغبار»
+         «العيب بالنافذة.»          teal dimension pill on the opening's dimension arrow: typeOn (one growing string) + block cursor
+         label exit                the falling frame knocks the S1 label off (back.in up, blur)
+         «في ألمنيوم نظم أمان،»    zoom-out reveal (3x -> 1 in 0.28 s), jolted by the slam at IMPACT
+         «نصنع في مصنعنا بالأحساء،/ونركب بالشرقية،»  two labels fly in on curves from off-screen, hl wipe on «بالأحساء»
+         «بالموعد المكتوب بالعقد.»  object carries text: a contract scrap is taped under the frame; teal stamp «مكتوب» presses (scale 2.4 -> 1) + squash + over
+         S2 exit                   the dive swallows everything (scale up toward the camera + blur)
+         «جودة تستاهل:»            kash: the long-tatweel «تستــــاهل» grows out of the short word while the camera dives
+         glass / silicone / rubber marker arrows draw to the panes and the gasket, each label rises at the arrow's end;
+                                   «ومطاط يتحمل الشمس» hits the glass from off-screen right and bounces back (over); hl «الشمس»
+         «وضمان مكتوب:»            tag on a drawn string drops with trails (3 ghosts) + squash, keeps swinging
+         ١٠ / ٥ / ٢                smear slam on each spoken number, label typeOn beside it, teal hl on the numbers
+         «وصيانة مجانية»           zigzag feather fall from off-screen top onto the screwdriver doodle; «مدى الحياة» blurIn
+         «ترتاح انت،»              rows of outline «ترتاح» BEHIND the man (fg-man.webm depth matte) + solid word in front, zoom-out
+         «والغبار برا.»            «والغبار» exits on a curve out through the window; «برا.» lands on the glass outside
+         night                     the K5 night sheet drops over the room (torn edge, trails, squash) = bg cut to K5 underneath
+         «تبني بيتك او ترممه؟»     masked push-through on a light paper strip
+         «احجز معاينة مجانية.»      CTA pill grows out of the night window's teal outline: selBox + cursor click + over
+         end card                  logo, alumaman.com, WhatsApp, @nozomaman: staggered blurIn; everything keeps a live breath
+       build.py fills 30.78 and WORDS. Hidden state is set at build time (gsap.set); only TL.to/fromTo(immediateRender:false) reveal. -->
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1080, height=1920">
+    <title>Alum Aman collage</title>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/MotionPathPlugin.min.js"></script>
+    <style>
+      @font-face { font-family: "TSD"; src: url("assets/fonts/thmanyahserifdisplay-Black.otf") format("opentype"); }
+      @font-face { font-family: "TSDB"; src: url("assets/fonts/thmanyahserifdisplay-Bold.otf") format("opentype"); }
+      @font-face { font-family: "TS"; src: url("assets/fonts/thmanyahsans-Bold.otf") format("opentype"); }
+      @font-face { font-family: "TSM"; src: url("assets/fonts/thmanyahsans-Medium.otf") format("opentype"); }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1080px; height: 1920px; overflow: hidden; background: #F0F1F2; }
+      #main { position: relative; width: 100%; height: 100%; overflow: hidden; font-family: "TSD", serif; color: #1d1d1d; }
+      #bgWrap { position: absolute; inset: 0; }
+      #bgWrap video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+      #stage { position: absolute; inset: 0; }
+      .el { position: absolute; direction: rtl; will-change: transform; }
+      .ln { display: flex; flex-direction: row; justify-content: flex-start; align-items: baseline; white-space: nowrap; }
+      .tk { position: relative; display: inline-block; margin: 0 0.06em; }
+      .m { display: inline-block; overflow: hidden; padding: 0.12em 0.14em 0.30em; margin: -0.12em -0.14em -0.30em; vertical-align: bottom; }
+      .w { display: inline-block; line-height: 1.2; }
+      .sans { font-family: "TS", sans-serif; }
+      .sansm { font-family: "TSM", sans-serif; }
+      .box { position: absolute; left: -0.12em; right: -0.12em; top: 0.18em; bottom: 0.02em; background: #0199a2; transform: scaleX(0); transform-origin: right center; z-index: -1; }
+      .scrap { background: #F0F1F2; box-shadow: 2px 3px 8px rgba(29,29,29,0.28), 6px 10px 26px rgba(29,29,29,0.16);
+               clip-path: polygon(0 5%, 8% 0, 22% 4%, 38% 0, 55% 4%, 72% 0, 88% 4%, 100% 0, 98% 50%, 100% 96%, 84% 100%, 64% 96%, 44% 100%, 24% 96%, 6% 100%, 0 95%, 2% 50%); }
+      .tape { position: absolute; width: 130px; height: 40px; background: rgba(214,216,212,0.88); box-shadow: 0 1px 3px rgba(29,29,29,0.15); }
+      .chip { background: #0199a2; color: #F0F1F2; border-radius: 10px; padding: 4px 24px 12px; }
+      svg.mk { position: absolute; overflow: visible; }
+      svg.mk path { fill: none; stroke: #0199a2; stroke-width: 11; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1; stroke-dashoffset: 1; }
+      .echo .w { color: transparent; -webkit-text-stroke: 4px #1d1d1d; }
+      .echoG .w { color: transparent; -webkit-text-stroke: 5px #0199a2; }
+      .echoL .w { color: transparent; -webkit-text-stroke: 4px #F0F1F2; }
+      .grain { position: absolute; inset: 0; width: 1080px; height: 1920px; mix-blend-mode: soft-light; opacity: 0; z-index: 30; }
+      #night { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; background: url("keys/K5.jpg") center / 1188px 2112px no-repeat;
+               clip-path: polygon(0 0, 100% 0, 100% 99%, 93% 100%, 86% 98.6%, 77% 100%, 66% 98.8%, 55% 100%, 44% 98.5%, 33% 100%, 22% 98.7%, 12% 100%, 0 98.8%);
+               box-shadow: 0 30px 60px rgba(0,0,0,0.5); opacity: 0; }
+    </style>
+  </head>
+  <body>
+    <div id="main" data-composition-id="main" data-start="0" data-duration="30.78" data-width="1080" data-height="1920">
+      <div id="bgWrap"><video id="bg" src="assets/video/bg.mp4" data-start="0" data-duration="30.78" data-media-start="0" data-track-index="0" muted playsinline></video></div>
+      <div id="stage" class="clip" data-start="0" data-duration="30.78" data-track-index="1">
+        <div id="behind" style="position:absolute;inset:0"></div>
+        <div id="fgWrap" style="position:absolute;inset:0;opacity:0"><video id="fg" src="assets/video/fg-man.webm" data-start="23.45" data-duration="2.55" data-media-start="0" data-track-index="3" muted playsinline style="position:absolute;inset:0;width:100%;height:100%"></video></div>
+        <div id="front" style="position:absolute;inset:0"></div>
+        <div id="night"></div>
+        <div id="end" style="position:absolute;inset:0"></div>
+        <img class="grain" src="assets/img/grain0.png" alt=""><img class="grain" src="assets/img/grain1.png" alt=""><img class="grain" src="assets/img/grain2.png" alt="">
+        <img class="grain" src="assets/img/grain3.png" alt=""><img class="grain" src="assets/img/grain4.png" alt=""><img class="grain" src="assets/img/grain5.png" alt="">
+      </div>
+      <!-- no <audio>: the mix is muxed after the render (IDM trap, owner 2026-11-07). -->
+    </div>
+    <script>
+      const D = 30.78;
+      const WORDS = [["سكرت", 0.0, 0.4], ["النافذة،", 0.44, 1.04], ["والغبار", 1.08, 1.52], ["داخل؟", 1.6, 2.08], ["العيب", 2.14, 2.48], ["مو", 2.53, 2.64], ["بالغبار،", 2.68, 3.28], ["العيب", 3.36, 3.68], ["بالنافذة.", 3.73, 4.48], ["في", 4.53, 4.64], ["ألمنيوم", 4.68, 5.2], ["نظم", 5.25, 5.52], ["أمان،", 5.52, 6.0], ["نصنع", 6.08, 6.4], ["في", 6.43, 6.48], ["مصنعنا", 6.56, 6.96], ["بالأحساء،", 7.01, 7.68], ["ونركب", 7.76, 8.24], ["بالشرقية،", 8.28, 8.96], ["بالموعد", 9.02, 9.52], ["المكتوب", 9.56, 10.08], ["بالعقد.", 10.14, 10.8], ["جودة", 10.84, 11.12], ["تستاهل:", 11.2, 11.84], ["زجاج", 11.92, 12.24], ["مزدوج", 12.32, 12.72], ["جارديان،", 12.8, 13.44], ["سيليكون", 13.48, 13.76], ["الماني،", 13.82, 14.48], ["ومطاط", 14.56, 15.12], ["يتحمل", 15.2, 15.6], ["الشمس.", 15.66, 16.24], ["وضمان", 16.28, 16.64], ["مكتوب:", 16.68, 17.36], ["عشر", 17.42, 17.6], ["سنين", 17.68, 18.0], ["على", 18.06, 18.24], ["الألمنيوم،", 18.26, 18.96], ["خمس", 19.04, 19.28], ["على", 19.32, 19.44], ["الصبغ،", 19.48, 20.0], ["وسنتين", 20.08, 20.64], ["على", 20.7, 20.88], ["الاكسسوارات.", 20.91, 21.76], ["وصيانة", 21.84, 22.32], ["مجانية", 22.4, 22.96], ["مدى", 23.07, 23.36], ["الحياة.", 23.42, 23.84], ["ترتاح", 23.89, 24.24], ["انت،", 24.34, 24.8], ["والغبار", 24.84, 25.36], ["برا.", 25.47, 25.92], ["تبني", 25.97, 26.24], ["بيتك", 26.32, 26.64], ["او", 26.69, 26.8], ["ترممه؟", 26.88, 27.44], ["احجز", 27.52, 27.84], ["معاينة", 27.92, 28.4], ["مجانية.", 28.48, 29.12]];
+      const W = (i) => WORDS[i][1];
+      const WARP = [[0.0, 0.0], [0.46, 0.44], [1.16, 1.08], [1.62, 1.6], [2.22, 2.14], [2.59, 2.53], [2.68, 2.68], [3.34, 3.36], [3.64, 3.73], [4.53, 4.53], [4.68, 4.68], [5.33, 5.25], [5.72, 5.52], [6.24, 6.08], [6.61, 7.01], [7.28, 7.76], [7.8, 8.28], [8.6, 9.02], [9.1, 9.56], [9.78, 10.14], [10.6, 10.84], [11.02, 11.2], [11.68, 11.92], [12.08, 12.32], [12.56, 12.8], [13.24, 13.48], [13.58, 13.82], [14.32, 14.56], [14.92, 15.2], [15.5, 15.66], [16.12, 16.28], [16.56, 16.68], [17.18, 17.42], [17.44, 17.68], [17.8, 18.06], [17.94, 18.26], [18.64, 19.04], [18.9, 19.32], [19.02, 19.48], [19.6, 20.08], [20.18, 20.7], [20.27, 20.91], [21.23, 21.84], [21.79, 22.4], [22.48, 23.07], [22.87, 23.42], [23.28, 23.89], [23.76, 24.34], [24.2, 24.84], [24.83, 25.47], [25.36, 25.97], [25.7, 26.32], [26.13, 26.69], [26.35, 26.88], [27.01, 27.52], [27.52, 27.92], [28.05, 28.48], [28.64, 29.12], [38.64, 39.120000000000005]]; // v2: [old clock, new clock] anchors (warp.py)
+      function T(t) { for (let k = 1; k < WARP.length; k++) if (t <= WARP[k][0]) { const [x0, y0] = WARP[k - 1], [x1, y1] = WARP[k]; return y0 + (t - x0) * (y1 - y0) / (x1 - x0); } return t; }
+      const E = (i) => WORDS[i][2];
+      const F = 1 / 30;
+      const TEAL = "#0199a2", INK = "#1d1d1d", PAPER = "#F0F1F2";
+      window.__timelines = window.__timelines || {};
+      const TL = gsap.timeline({ paused: true });
+      const stage = document.getElementById("stage"), front = document.getElementById("front"), behind = document.getElementById("behind"), endL = document.getElementById("end");
+      function grp(parent, x, y, tokens, opt = {}) {
+        const e = document.createElement("div"); e.className = "el " + (opt.cls || ""); Object.assign(e.style, { left: x + "px", top: y + "px" }, opt.style || {});
+        if (opt.w) e.style.width = opt.w + "px";
+        const L = document.createElement("div"); L.className = "ln"; e.appendChild(L);
+        const toks = tokens.map(([text, o]) => {
+          const tk = document.createElement("span"); tk.className = "tk " + (o.f || ""); tk.style.fontSize = (o.s || 80) + "px"; if (o.col) tk.style.color = o.col;
+          if (o.hl !== undefined) { const bx = document.createElement("span"); bx.className = "box"; tk.appendChild(bx); }
+          const m = document.createElement("span"); m.className = "m"; const w = document.createElement("span"); w.className = "w"; w.textContent = text;
+          m.appendChild(w); tk.appendChild(m); L.appendChild(tk); return { tk, w, m, o, text };
+        });
+        (parent || front).appendChild(e);
+        if (opt.right !== undefined) { e.style.left = "auto"; e.style.right = opt.right + "px"; }
+        gsap.set(e, { rotation: opt.r || 0, transformOrigin: opt.origin || "50% 50%" });
+        return { e, toks };
+      }
+      const V = (i) => W(i) - 0.03; // a word lands on its own spoken frame, never before
+      // ── 006 entrance library (hidden start state set at build time) ──
+      function rise(t, a, d = 0.36) { gsap.set(t.w, { yPercent: 118 }); TL.to(t.w, { yPercent: 0, duration: d, ease: "expo.out" }, a); }
+      function inkIn(t, a) { gsap.set(t.tk, { color: "#a3a5a7" }); gsap.set(t.w, { yPercent: 118 }); TL.to(t.w, { yPercent: 0, duration: 0.3, ease: "expo.out" }, a); TL.to(t.tk, { color: INK, duration: 0.25, ease: "sine.out" }, a + 0.3); }
+      function hl(t, a, flip = INK) { TL.fromTo(t.tk.querySelector(".box"), { scaleX: 0 }, { scaleX: 1, duration: 4 * F, ease: "expo.out", immediateRender: false }, a); TL.to(t.tk, { color: flip, duration: 2 * F }, a + 2 * F); }
+      function slam(t, a, dir = 1) {
+        gsap.set(t.tk, { opacity: 0 });
+        TL.fromTo(t.tk, { x: 240 * dir, scaleX: 1.4, skewX: -10 * dir, filter: "blur(9px)", opacity: 1 }, { x: -8 * dir, scaleX: 1, skewX: 0, filter: "blur(0px)", opacity: 1, duration: 3 * F, ease: "power3.out", immediateRender: false }, a);
+        TL.to(t.tk, { x: 0, duration: 0.3, ease: "sine.inOut" }, a + 3 * F);
+      }
+      function over(el, a, k = 0.07, d = 0.22) { TL.to(el, { scale: 1 + k, duration: d, ease: "power2.out" }, a); TL.to(el, { scale: 1, duration: 0.3, ease: "sine.inOut" }, a + d - 2 * F); }
+      function typeOn(el, str, t0, tEnd) {
+        el.textContent = ""; const ch = [...str]; const step = Math.min(1 / 14, (tEnd - t0) / ch.length);
+        for (let k = 1; k <= ch.length; k++) TL.set(el, { textContent: ch.slice(0, k).join("") }, t0 + (k - 1) * step);
+      }
+      function mark(parent, x, y, w, h, d, a, dur = 0.5, col) {
+        const s = document.createElementNS("http://www.w3.org/2000/svg", "svg"); s.setAttribute("class", "mk"); s.setAttribute("viewBox", `0 0 ${w} ${h}`);
+        Object.assign(s.style, { left: x + "px", top: y + "px", width: w + "px", height: h + "px" });
+        const p = document.createElementNS("http://www.w3.org/2000/svg", "path"); p.setAttribute("d", d); p.setAttribute("pathLength", "1"); if (col) p.style.stroke = col; s.appendChild(p);
+        (parent || front).appendChild(s);
+        TL.fromTo(p, { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: dur, ease: "power2.inOut", immediateRender: false }, a);
+        return s;
+      }
+      function selBox(el, a, aOff, col = INK) {
+        const s = document.createElement("div"); Object.assign(s.style, { position: "absolute", left: "-14px", right: "-14px", top: "-10px", bottom: "-6px", border: `4px dashed ${col}`, opacity: 0, pointerEvents: "none" });
+        [["-13px", "-13px", "auto", "auto"], ["auto", "-13px", "-13px", "auto"], ["-13px", "auto", "auto", "-13px"], ["auto", "auto", "-13px", "-13px"]].forEach(([l, tp, r, b]) => { const h = document.createElement("i"); Object.assign(h.style, { position: "absolute", width: "20px", height: "20px", background: TEAL, border: `4px solid ${col}`, left: l, top: tp, right: r, bottom: b }); s.appendChild(h); });
+        el.appendChild(s);
+        TL.fromTo(s, { opacity: 0, scale: 0.9 }, { opacity: 1, scale: 1, duration: 0.3, ease: "expo.out", immediateRender: false }, a);
+        TL.to(s, { opacity: 0, duration: 0.2, ease: "power2.in" }, aOff);
+        return s;
+      }
+      function blurIn(t, a) { gsap.set(t.tk, { opacity: 0, y: 14, filter: "blur(8px)" }); TL.to(t.tk, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.32, ease: "power2.out" }, a); }
+      function live(el, a, b, k = 0.035) { TL.fromTo(el, { scale: 1 }, { scale: 1 + k, duration: Math.max(0.3, b - a), ease: "sine.inOut", immediateRender: false }, a); }
+      function snap(parent, tok, a, flashEl) {
+        const r = tok.tk.getBoundingClientRect(), pr = parent.getBoundingClientRect();
+        const sc = mark(parent, r.left - pr.left, r.top - pr.top + r.height * 0.15, r.width, r.height * 0.7,
+          `M${r.width * 0.95} ${r.height * 0.45} C${r.width * 0.75} ${r.height * 0.05} ${r.width * 0.6} ${r.height * 0.7} ${r.width * 0.45} ${r.height * 0.3} S${r.width * 0.2} ${r.height * 0.6} ${r.width * 0.05} ${r.height * 0.25}`, a, 4 * F);
+        gsap.set(tok.w, { opacity: 0 });
+        TL.set(sc, { opacity: 0 }, a + 5 * F); TL.set(tok.w, { opacity: 1 }, a + 5 * F);
+        if (flashEl) { TL.set(flashEl, { backgroundColor: TEAL }, a + 5 * F); TL.set(flashEl, { backgroundColor: PAPER }, a + 6 * F); }
+      }
+      function fly(el, a, pts, d = 0.7, rot = 0) {
+        gsap.set(el, { opacity: 0 });
+        TL.set(el, { opacity: 1 }, a);
+        TL.fromTo(el, { x: pts[0].x, y: pts[0].y, rotation: rot }, { motionPath: { path: pts.slice(1).concat([{ x: 0, y: 0 }]), curviness: 1.25, fromCurrent: true }, rotation: 0, duration: d, ease: "power3.out", immediateRender: false }, a);
+      }
+      function echoStack(tok, a, n = 5, gap = 0.9, green, until) {
+        const r = tok.tk.getBoundingClientRect(), sr = stage.getBoundingClientRect(); const cl = [];
+        for (let k = 1; k <= n; k++) {
+          const c = document.createElement("div"); c.className = "el " + (green && k % 2 ? "echoG" : "echo");
+          Object.assign(c.style, { left: (r.left - sr.left) + "px", top: (r.top - sr.top) + "px", width: r.width + "px", fontSize: tok.tk.style.fontSize, lineHeight: "1.2", textAlign: "center" });
+          const w = document.createElement("span"); w.className = "w"; w.textContent = tok.text; c.appendChild(w); front.appendChild(c); cl.push(c);
+          gsap.set(c, { opacity: 0, y: -k * gap * r.height });
+          TL.set(c, { opacity: Math.max(0.2, 1 - k * 0.15) }, a);
+          TL.to(c, { y: 0, opacity: 0, duration: 0.42, ease: "power3.in" }, a + 0.05 + k * 2 * F);
+        }
+        return cl;
+      }
+      function trails(el, n = 3) { const o = []; for (let k = 1; k <= n; k++) { const c = el.cloneNode(true); c.style.opacity = 0; el.parentNode.insertBefore(c, el); o.push([c, k]); } return o; }
+      function rows(parent, word, y0, n, size, a, b, cls) {
+        const els = [];
+        for (let k = 0; k < n; k++) {
+          const row = document.createElement("div"); row.className = "el " + (cls ? cls[k % cls.length] : (k % 2 ? "echo" : "echoG"));
+          Object.assign(row.style, { left: "-400px", top: (y0 + k * size * 1.05) + "px", width: "1900px", whiteSpace: "nowrap", fontSize: size + "px", direction: "rtl" });
+          const sp = document.createElement("span"); sp.className = "w"; sp.style.lineHeight = "1"; sp.textContent = (word + "   ").repeat(8); row.appendChild(sp);
+          parent.appendChild(row); els.push(row);
+          gsap.set(row, { opacity: 0, x: k % 2 ? -200 : 200 });
+          TL.to(row, { opacity: 1, duration: 0.25 }, a + k * 2 * F);
+          TL.to(row, { x: k % 2 ? 200 : -200, duration: b - a, ease: "none" }, a);
+        }
+        return els;
+      }
+      function out(els, a, to, d = 0.25) { els.forEach((e) => TL.to(e, Object.assign({ opacity: 0, duration: d, ease: "power2.in" }, to), a)); }
+      function tape(parent, x, y, r) { const t = document.createElement("div"); t.className = "tape"; Object.assign(t.style, { left: x + "px", top: y + "px" }); gsap.set(t, { rotation: r }); parent.appendChild(t); return t; }
+
+      async function build() {
+        gsap.registerPlugin(MotionPathPlugin);
+        await document.fonts.ready;
+        await Promise.all([document.fonts.load("80px TSD", "النافذة"), document.fonts.load("80px TSDB", "النافذة"), document.fonts.load("80px TS", "النافذة"), document.fonts.load("80px TSM", "النافذة")]);
+        TL.to({}, { duration: D }, 0);
+        const IMPACT = 4.71, DIVE = T(10.58), MACRO = T(11.58), ROOM = T(17.2), S5 = T(21.2), NIGHT = T(25.4);
+
+        // ═══ S1: the old window lets the dust in ═══
+        // frame label: paper scrap wipes in on frame 0 (hook), «سكرت» two-tone ink, «النافذة» marker snap
+        const lab = grp(null, 0, 0, [["سكرت", { s: 104 }], ["النافذة،", { s: 124 }]], { cls: "scrap", origin: "100% 100%", style: { padding: "6px 36px 20px" }, right: 130 });
+        lab.e.style.top = "236px";
+        gsap.set(lab.e, { clipPath: "inset(0% 0% 0% 100%)" });
+        TL.to(lab.e, { clipPath: "inset(0% 0% 0% 0%)", duration: 0.28, ease: "expo.out" }, 0);
+        inkIn(lab.toks[0], 0.02); snap(lab.e, lab.toks[1], V(1) - 4 * F, lab.e); live(lab.e, 0.3, T(4.2), 0.03);
+        const cur = document.createElement("div"); Object.assign(cur.style, { position: "absolute", left: "10px", top: "40px", width: "10px", height: "120px", background: TEAL, opacity: 0 }); lab.e.appendChild(cur);
+        for (let t = 0.1; t < T(2.0); t += 0.4) { TL.set(cur, { opacity: 1 }, t); TL.set(cur, { opacity: 0 }, t + 0.2); }
+        // «والغبار» rides the dust in from off-screen left; «داخل؟» echo stack
+        const dust = grp(null, 0, 0, [["والغبار", { s: 112 }], ["داخل؟", { s: 150, col: TEAL }]], { right: 150, origin: "100% 50%" });
+        dust.e.style.top = "430px";
+        fly(dust.toks[0].tk, V(2) - 0.12, [{ x: -900, y: 420 }, { x: -420, y: 260 }, { x: -120, y: 60 }], 0.55, -18);
+        gsap.set(dust.toks[1].tk, { opacity: 0 }); TL.set(dust.toks[1].tk, { opacity: 1 }, V(3) + 0.12);
+        echoStack(dust.toks[1], V(3) - 0.2, 3, 0.32, true);
+        TL.fromTo(dust.toks[1].tk, { scale: 1.25 }, { scale: 1, duration: 0.25, ease: "back.out(2)", immediateRender: false }, V(3) + 0.12);
+        // blown out to the right with the dust (exits faster than entrances)
+        TL.to(dust.e, { motionPath: { path: [{ x: 120, y: 40 }, { x: 520, y: 180 }, { x: 1100, y: 420 }], curviness: 1.2 }, rotation: 14, filter: "blur(6px)", duration: 0.42, ease: "power3.in" }, W(4) - 0.12);
+        TL.set(dust.e, { opacity: 0 }, W(4) + 0.32);
+        // «العيب مو بالغبار،»: ROAR blur-in connectors + marker strike
+        const not = grp(null, 0, 0, [["العيب", { s: 72, f: "sans" }], ["مو", { s: 72, f: "sans" }], ["بالغبار،", { s: 96 }]], { right: 120 });
+        not.e.style.top = "450px";
+        [4, 5, 6].forEach((wi, k) => blurIn(not.toks[k], V(wi)));
+        live(not.e, V(4) + 0.3, W(7) - 0.1, 0.03);
+        const nb = not.toks[2].tk.getBoundingClientRect();
+        mark(null, nb.left - 10, nb.top + nb.height * 0.42, nb.width + 20, 40, `M${nb.width + 14} 22 C${nb.width * 0.7} 8 ${nb.width * 0.35} 34 6 18`, E(6) - 0.15, 0.2);
+        const strikeSvg = front.lastChild;
+        out([not.e, strikeSvg], W(7) - 0.12, { y: -120, filter: "blur(6px)" }, 0.2);
+        // «العيب بالنافذة.»: teal dimension pill on the opening's dimension arrow (y≈640), typed like a readout + cursor
+        const pill = document.createElement("div"); pill.className = "el chip sans"; Object.assign(pill.style, { left: "330px", top: "520px", width: "420px", height: "96px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "60px", direction: "rtl" }); front.appendChild(pill);
+        const pT = document.createElement("span"); pT.style.whiteSpace = "nowrap"; pill.appendChild(pT);
+        const pc = document.createElement("span"); Object.assign(pc.style, { display: "inline-block", width: "6px", height: "58px", background: PAPER, marginRight: "6px", opacity: 0 }); pill.appendChild(pc);
+        gsap.set(pill, { opacity: 0, scaleX: 0.15, transformOrigin: "50% 50%" });
+        TL.to(pill, { opacity: 1, scaleX: 1, duration: 0.26, ease: "expo.out" }, V(7) - 0.12);
+        typeOn(pT, "العيب بالنافذة", V(7), E(8) - 0.1);
+        for (let t = V(7); t < T(4.15); t += 0.4) { TL.set(pc, { opacity: 1 }, t); TL.set(pc, { opacity: 0 }, t + 0.2); }
+        live(pill, V(7) + 0.3, T(4.2), 0.03);
+        // the falling frame (S2 src: drops 4.15-4.75) knocks the S1 label and the pill off
+        TL.to(lab.e, { y: -360, rotation: -9, filter: "blur(6px)", opacity: 0, duration: 0.3, ease: "back.in(1.4)" }, T(4.18));
+        TL.to(pill, { y: 380, rotation: 12, opacity: 0, filter: "blur(5px)", duration: 0.26, ease: "power3.in" }, IMPACT - 0.24);
+
+        // ═══ S2: the new frame slams in ═══
+        const brandF = grp(null, 0, 0, [["في", { s: 60, f: "sans" }]], { right: 130 });
+        brandF.e.style.top = "290px";
+        blurIn(brandF.toks[0], V(9));
+        const brand = grp(null, 0, 0, [["ألمنيوم", { s: 116 }], ["نظم", { s: 116 }], ["أمان،", { s: 116, col: TEAL }]], { right: 205, origin: "50% 60%" });
+        brand.e.style.top = "236px";
+        gsap.set(brand.e, { opacity: 0 });
+        TL.fromTo(brand.e, { scale: 3.0, y: 160, opacity: 1 }, { scale: 1, y: 0, opacity: 1, duration: 0.28, ease: "expo.out", immediateRender: false }, V(10));
+        // the impact jolts the brand
+        TL.to([brand.e, brandF.e], { y: 18, rotation: -1.5, duration: 0.08, ease: "power2.out" }, IMPACT); TL.to([brand.e, brandF.e], { y: 0, rotation: 0, duration: 0.5, ease: "back.out(1.6)" }, IMPACT + 0.08);
+        live(brand.e, IMPACT + 0.6, DIVE, 0.03);
+        // made in Al-Ahsa / installed in the East: two labels fly in on curves from off-screen
+        const made = grp(null, 0, 0, [["نصنع", { s: 58, f: "sans" }], ["في", { s: 58, f: "sans" }], ["مصنعنا", { s: 84 }], ["بالأحساء،", { s: 84, hl: 1 }]], { right: 200 });
+        made.e.style.top = "430px";
+        fly(made.e, V(13) - 0.1, [{ x: 760, y: -260 }, { x: 300, y: 70 }], 0.55, 16); hl(made.toks[3], E(16) - 0.15, PAPER);
+        const inst = grp(null, 0, 0, [["ونركب", { s: 62, f: "sans" }], ["بالشرقية،", { s: 92 }]], { right: 330 });
+        inst.e.style.top = "560px";
+        fly(inst.e, V(17) - 0.1, [{ x: -820, y: 320 }, { x: -320, y: -60 }], 0.55, -14);
+        live(made.e, V(13) + 0.5, DIVE, 0.03); live(inst.e, V(17) + 0.5, DIVE, 0.03);
+        // the date in the contract: a contract scrap taped under the frame, the stamp presses «مكتوب»
+        const con = document.createElement("div"); con.className = "el scrap"; Object.assign(con.style, { left: "110px", top: "1110px", width: "640px", height: "270px" }); front.appendChild(con);
+        tape(con, 210, -14, -4);
+        const c1 = grp(con, 0, 26, [["بالموعد", { s: 64, f: "sans" }]], { right: 40 });
+        const c2 = grp(con, 0, 130, [["بالعقد.", { s: 88 }]], { right: 36 });
+        const stamp = document.createElement("div"); stamp.className = "el"; Object.assign(stamp.style, { left: "26px", top: "118px", border: `7px solid ${TEAL}`, borderRadius: "14px", color: TEAL, fontFamily: "TSD", fontSize: "74px", lineHeight: "1.15", padding: "0 26px 10px", direction: "rtl" }); stamp.textContent = "المكتوب"; con.appendChild(stamp);
+        gsap.set(con, { opacity: 0, y: 70, rotation: 6, transformOrigin: "50% 0%" });
+        TL.to(con, { opacity: 1, y: 0, rotation: -4, duration: 0.3, ease: "back.out(1.6)" }, V(19) - 0.22);
+        blurIn(c1.toks[0], V(19));
+        gsap.set(stamp, { opacity: 0, scale: 2.4, rotation: -14 });
+        TL.to(stamp, { opacity: 1, scale: 1, rotation: -8, duration: 0.13, ease: "power4.in" }, V(20) - 0.1);
+        TL.to(con, { scaleY: 0.9, scaleX: 1.05, duration: 3 * F, ease: "power2.out" }, V(20) + 0.03); TL.to(con, { scaleY: 1, scaleX: 1, duration: 0.35, ease: "back.out(2)" }, V(20) + 0.13);
+        over(stamp, V(20) + 0.12, 0.08);
+        rise(c2.toks[0], V(21));
+        live(con, V(21) + 0.3, DIVE, 0.025);
+        // the dive swallows S2: everything rushes toward the camera
+        [brand.e, brandF.e, made.e, inst.e, con].forEach((e, k) => TL.to(e, { scale: 2.2, opacity: 0, filter: "blur(10px)", x: (k % 2 ? -1 : 1) * 160, duration: 0.3, ease: "power3.in" }, DIVE - 0.12 + k * F));
+
+        // ═══ S3: the dive and the macro ═══
+        // «جودة تستاهل:»: kashida grows while the camera dives
+        const q1 = grp(null, 0, 0, [["جودة", { s: 120 }]], { right: 140 });
+        q1.e.style.top = "236px";
+        blurIn(q1.toks[0], V(22));
+        const qs = grp(null, 0, 0, [["تستاهل:", { s: 120, col: TEAL }]], { right: 430 });
+        const ql = grp(null, 0, 0, [["تستـــــاهل:", { s: 120, col: TEAL }]], { right: 430 });
+        qs.e.style.top = ql.e.style.top = "236px";
+        const shortW = qs.toks[0].tk.getBoundingClientRect().width, longW = ql.toks[0].tk.getBoundingClientRect().width;
+        const startPct = Math.max(0, 100 - (shortW / longW) * 100);
+        gsap.set(qs.toks[0].w, { yPercent: 118 });
+        TL.to(qs.toks[0].w, { yPercent: 0, duration: 0.3, ease: "expo.out" }, V(23));
+        gsap.set(ql.toks[0].w, { clipPath: "inset(-30% 0% -40% 100%)" });
+        TL.set(ql.toks[0].w, { clipPath: `inset(-30% 0% -40% ${startPct.toFixed(1)}%)` }, V(23) + 0.3);
+        TL.set(qs.e, { opacity: 0 }, V(23) + 0.3);
+        TL.to(ql.toks[0].w, { clipPath: "inset(-30% 0% -40% 0%)", duration: 0.75, ease: "sine.inOut" }, V(23) + 0.3);
+        live(q1.e, V(22) + 0.3, T(16.0), 0.03); live(ql.e, V(23) + 0.4, T(16.0), 0.03);
+        // marker callouts on the macro (panes x 420-615, gasket circle x 330-700 y 900-1400)
+        const SCR = { padding: "2px 22px 10px" };
+        const gl = grp(null, 0, 500, [["زجاج", { s: 60, f: "sans" }], ["مزدوج", { s: 60, f: "sans" }]], { cls: "scrap", style: SCR, right: 140, r: 2 });
+        const gl2 = grp(null, 0, 610, [["جارديان،", { s: 80 }]], { cls: "scrap", style: SCR, right: 160, r: -2 });
+        const si = grp(null, 70, 740, [["سيليكون", { s: 60, f: "sans" }], ["الماني،", { s: 80 }]], { cls: "scrap", style: SCR, r: -2 });
+        [[gl.e, V(24)], [gl2.e, V(26)], [si.e, V(27)]].forEach(([e, t]) => { gsap.set(e, { clipPath: "inset(0% 0% 0% 100%)" }); TL.to(e, { clipPath: "inset(0% 0% 0% 0%)", duration: 0.22, ease: "expo.out" }, t - 0.16); });
+        rise(gl.toks[0], V(24)); rise(gl.toks[1], V(25)); rise(gl2.toks[0], V(26));
+        const ar1 = mark(null, 560, 640, 110, 140, "M100 14 C70 30 40 60 18 120 M18 120 L14 84 M18 120 L48 100", V(24) - 0.1, 0.25);
+        rise(si.toks[0], V(27)); rise(si.toks[1], V(28));
+        const ar2 = mark(null, 300, 860, 170, 110, "M10 12 C60 20 110 50 150 96 M150 96 L112 90 M150 96 L146 58", V(27) - 0.1, 0.25);
+        const ru = grp(null, 0, 0, [["ومطاط", { s: 60, f: "sans" }], ["يتحمل", { s: 60, f: "sans" }], ["الشمس.", { s: 84, hl: 1 }]], { cls: "scrap", style: SCR, right: 130, r: 1.5 });
+        ru.e.style.top = "1150px";
+        // hits the glass from off-screen right and bounces back
+        gsap.set(ru.e, { opacity: 0 }); TL.set(ru.e, { opacity: 1 }, V(29) - 0.1);
+        TL.fromTo(ru.e, { x: 760 }, { x: -46, duration: 0.24, ease: "power3.in", immediateRender: false }, V(29) - 0.1);
+        TL.to(ru.e, { x: 0, duration: 0.45, ease: "back.out(3)" }, V(29) + 0.14);
+        hl(ru.toks[2], V(31) + 0.25, PAPER);
+        const ar3 = mark(null, 600, 1090, 150, 90, "M140 70 C100 60 60 40 20 12 M20 12 L58 14 M20 12 L36 46", V(29) + 0.2, 0.25);
+        [gl.e, gl2.e, si.e, ru.e].forEach((e) => live(e, W(26), T(16.0), 0.03));
+        out([q1.e, ql.e], T(16.0), { y: -160, filter: "blur(6px)" }, 0.22);
+        out([gl.e, gl2.e, ar1], T(15.95), { x: 260 }, 0.22); out([si.e, ar2], T(15.98), { x: -260 }, 0.22); out([ru.e, ar3], T(16.0), { y: 240 }, 0.22);
+
+        // ═══ the warranty tag: drops on a string, ghosts + squash; numbers slam on the voice ═══
+        const TAGT = V(32) - 0.28;
+        const str = document.createElementNS("http://www.w3.org/2000/svg", "svg"); Object.assign(str.style, { position: "absolute", left: "0", top: "0", width: "1080px", height: "1920px", overflow: "visible" });
+        str.innerHTML = `<path d="M737 210 C729 232 723 250 719 272" fill="none" stroke="${INK}" stroke-width="5" stroke-linecap="round" pathLength="1" stroke-dasharray="1" stroke-dashoffset="1"/>`; front.appendChild(str);
+        const tag = document.createElement("div"); tag.className = "el scrap"; Object.assign(tag.style, { left: "515px", top: "262px", width: "430px", height: "500px" }); front.appendChild(tag);
+        const hole = document.createElement("div"); Object.assign(hole.style, { position: "absolute", left: "196px", top: "14px", width: "30px", height: "30px", borderRadius: "50%", border: `5px solid ${INK}` }); tag.appendChild(hole);
+        const th = grp(tag, 0, 52, [["وضمان", { s: 52, f: "sans" }], ["مكتوب:", { s: 70 }]], { right: 30 });
+        const rowsT = [[34, "١٠", "على الألمنيوم", 37], [38, "٥", "على الصبغ", 40], [41, "٢", "على الاكسسوارات", 43]].map(([wi, num, lab2, wl], k) => {
+          const g = grp(tag, 0, 150 + k * 112, [[num, { s: 104, hl: 1 }]], { right: 34 });
+          const l = document.createElement("span"); l.className = "el sansm"; Object.assign(l.style, { right: "150px", top: (186 + k * 112) + "px", fontSize: "40px", whiteSpace: "nowrap", direction: "rtl" }); tag.appendChild(l);
+          return { g, l, wi, lab2, wl };
+        });
+        gsap.set(tag, { opacity: 0, y: -620, rotation: 10, transformOrigin: "47% 0%" });
+        TL.set(tag, { opacity: 1 }, TAGT);
+        TL.to(tag, { y: 0, rotation: -7, duration: 0.3, ease: "power3.in" }, TAGT);
+        trails(tag, 3).forEach(([c, k]) => { gsap.set(c, { y: -620, rotation: 10, transformOrigin: "47% 0%" }); TL.set(c, { opacity: 0.35 - k * 0.09 }, TAGT); TL.to(c, { y: 0, rotation: -7, duration: 0.3, ease: "power3.in" }, TAGT + k * 2 * F); TL.set(c, { opacity: 0 }, TAGT + 0.3 + k * 2 * F); });
+        TL.to(tag, { scaleY: 0.84, scaleX: 1.07, duration: 3 * F, ease: "power2.out" }, TAGT + 0.3); TL.to(tag, { scaleY: 1, scaleX: 1, duration: 0.35, ease: "back.out(2)" }, TAGT + 0.3 + 3 * F);
+        TL.to(tag, { rotation: 3, duration: 0.5, ease: "sine.inOut" }, TAGT + 0.4); TL.to(tag, { rotation: -2, duration: 0.7, ease: "sine.inOut" }, TAGT + 0.9); TL.to(tag, { rotation: 1, duration: 1.0, ease: "sine.inOut" }, TAGT + 1.6);
+        TL.to(str.querySelector("path"), { strokeDashoffset: 0, duration: 0.15, ease: "power2.out" }, TAGT + 0.28);
+        blurIn(th.toks[0], V(32)); blurIn(th.toks[1], V(33));
+        rowsT.forEach(({ g, l, wi, lab2, wl }) => { slam(g.toks[0], V(wi), 1); hl(g.toks[0], V(wi) + 0.18, PAPER); typeOn(l, lab2, V(wi) + 0.1, V(wi) + 0.1 + [...lab2].length / 14); });
+        // the tag drops out with the cut to the doodle (exit faster than the entrance)
+        TL.to(tag, { y: 1700, rotation: 28, duration: 0.3, ease: "power3.in" }, E(43) - 0.14); TL.set(tag, { opacity: 0 }, E(43) + 0.18);
+        TL.to(str, { opacity: 0, duration: 0.12 }, E(43) - 0.14);
+
+        // ═══ S4/S5: the room. «وصيانة مجانية» falls like a feather onto the screwdriver doodle ═══
+        const mt = grp(null, 0, 0, [["وصيانة", { s: 98 }], ["مجانية", { s: 98, hl: 1 }]], { right: 140, origin: "70% 0%" });
+        mt.e.style.top = "470px";
+        gsap.set(mt.e, { opacity: 0, filter: "blur(10px)" });
+        TL.set(mt.e, { opacity: 1 }, V(44) - 0.2);
+        TL.fromTo(mt.e, { x: 240, y: -560 }, { motionPath: { path: [{ x: -160, y: -420 }, { x: 140, y: -270 }, { x: -110, y: -130 }, { x: 50, y: -40 }, { x: 0, y: 0 }], curviness: 1.6, fromCurrent: true }, duration: 0.9, ease: "sine.out", immediateRender: false }, V(44) - 0.2);
+        [[V(44) - 0.2, 10], [V(44) + 0.05, -10], [V(44) + 0.3, 7], [V(44) + 0.52, -2], [V(44) + 0.72, 0]].forEach(([t, r]) => TL.to(mt.e, { rotation: r, duration: 0.27, ease: "sine.inOut" }, t));
+        TL.to(mt.e, { filter: "blur(0px)", duration: 0.6, ease: "expo.out" }, V(44) - 0.2);
+        hl(mt.toks[1], V(45) + 0.45, PAPER);
+        const life = grp(null, 0, 0, [["مدى", { s: 62, f: "sans" }], ["الحياة.", { s: 62, f: "sans" }]], { right: 140 });
+        life.e.style.top = "600px";
+        blurIn(life.toks[0], V(46)); blurIn(life.toks[1], V(47));
+        live(mt.e, V(45) + 0.6, T(23.2), 0.03); live(life.e, V(46) + 0.3, T(23.2), 0.03);
+        out([mt.e, life.e], T(22.98), { y: -180, filter: "blur(6px)" }, 0.2);
+        // «ترتاح انت،»: rows of outline «ترتاح» BEHIND the man (depth matte) + the solid word in front
+        TL.to("#fgWrap", { opacity: 1, duration: 0.15, ease: "none" }, T(23.05)); TL.set("#fgWrap", { opacity: 0 }, NIGHT - 0.02);
+        const rr = rows(behind, "ترتاح", 860, 5, 130, V(48) - 0.1, NIGHT, ["echoG", "echo"]);
+        const rest = grp(null, 0, 0, [["ترتاح", { s: 150 }], ["انت،", { s: 80, f: "sans" }]], { right: 140 });
+        rest.e.style.top = "250px";
+        gsap.set(rest.toks[0].tk, { opacity: 0 });
+        TL.fromTo(rest.toks[0].tk, { scale: 3.0, y: 140, opacity: 1 }, { scale: 1, y: 0, opacity: 1, duration: 0.28, ease: "expo.out", immediateRender: false }, V(48));
+        blurIn(rest.toks[1], V(49));
+        live(rest.e, V(48) + 0.3, T(25.2), 0.04);
+        // «والغبار» leaves on a curve out through the window; «برا.» lands on the glass, outside
+        const dus = grp(null, 0, 0, [["والغبار", { s: 92 }]], { right: 150 });
+        dus.e.style.top = "420px";
+        blurIn(dus.toks[0], V(50));
+        TL.to(dus.e, { x: 30, duration: 0.1, ease: "sine.out" }, E(50) - 0.1);
+        TL.to(dus.e, { motionPath: { path: [{ x: -200, y: 150 }, { x: -470, y: 420 }, { x: -900, y: 560 }], curviness: 1.3 }, rotation: -24, scale: 0.6, filter: "blur(5px)", duration: 0.45, ease: "power3.in" }, E(50) - 0.02);
+        const outW = grp(null, 230, 780, [["برا.", { s: 128, col: TEAL }]], { w: 300 });
+        gsap.set(outW.e, { opacity: 0 });
+        TL.fromTo(outW.e, { opacity: 1, scale: 0.4, x: -120, filter: "blur(8px)" }, { opacity: 1, scale: 1, x: 0, filter: "blur(0px)", duration: 0.3, ease: "back.out(2.2)", immediateRender: false }, V(51));
+        // night: the K5 sheet drops over the room (bg cuts to K5 under it at NIGHT)
+        const night = document.getElementById("night");
+        gsap.set(night, { y: -1960 });
+        TL.set(night, { opacity: 1 }, NIGHT - 0.36);
+        TL.to(night, { y: 0, duration: 0.34, ease: "power3.in" }, NIGHT - 0.36);
+        trails(night, 2).forEach(([c, k]) => { gsap.set(c, { y: -1960 }); TL.set(c, { opacity: 0.3 - k * 0.1 }, NIGHT - 0.36); TL.to(c, { y: 0, duration: 0.34, ease: "power3.in" }, NIGHT - 0.36 + k * 2 * F); TL.set(c, { opacity: 0 }, NIGHT - 0.02 + k * 2 * F); });
+        TL.to(night, { y: 26, duration: 3 * F, ease: "power2.out" }, NIGHT - 0.02); TL.to(night, { y: 0, duration: 0.3, ease: "back.out(2)" }, NIGHT + 3 * F);
+        TL.set(night, { opacity: 0 }, NIGHT + 0.5);
+        TL.set([rest.e, outW.e, dus.e], { opacity: 0 }, NIGHT - 0.04); out(rr, T(24.55), { filter: "blur(4px)" }, 0.3);
+
+        // ═══ end: night. question strip, CTA from the window outline, contact ═══
+        const strip = document.createElement("div"); strip.className = "el scrap"; Object.assign(strip.style, { left: "90px", top: "470px", width: "900px", height: "150px" }); endL.appendChild(strip);
+        gsap.set(strip, { rotation: -2.5, scaleX: 0, transformOrigin: "100% 50%" });
+        TL.to(strip, { scaleX: 1, duration: 0.3, ease: "expo.out" }, V(52) - 0.2);
+        const qn = grp(strip, 0, 10, [["تبني", { s: 64, f: "sans" }], ["بيتك", { s: 92 }], ["او", { s: 64, f: "sans" }], ["ترممه؟", { s: 92, col: TEAL }]], { right: 40 });
+        [52, 53, 54, 55].forEach((wi, k) => rise(qn.toks[k], V(wi)));
+        live(strip, V(52) + 0.3, D, 0.02);
+        const logo = document.createElement("img"); logo.src = "assets/brand/logo.png"; Object.assign(logo.style, { position: "absolute", left: "215px", top: "236px", width: "650px" }); endL.appendChild(logo);
+        gsap.set(logo, { opacity: 0, y: 20, filter: "blur(8px)" });
+        TL.to(logo, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.4, ease: "power2.out" }, NIGHT + 0.25);
+        live(logo, NIGHT + 0.6, D, 0.025);
+        const cta = document.createElement("div"); cta.className = "el chip sans"; Object.assign(cta.style, { left: "200px", top: "665px", width: "680px", height: "130px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "70px", direction: "rtl", borderRadius: "18px" }); endL.appendChild(cta);
+        const ctaT = document.createElement("span"); ctaT.textContent = "احجز معاينة مجانية"; ctaT.style.whiteSpace = "nowrap"; cta.appendChild(ctaT);
+        gsap.set(cta, { opacity: 0, scaleX: 0.08, scaleY: 0.6, y: 420, transformOrigin: "50% 50%" });
+        TL.to(cta, { opacity: 1, y: 0, scaleX: 1, scaleY: 1, duration: 0.34, ease: "expo.out" }, V(56) - 0.12);
+        gsap.set(ctaT, { opacity: 0, filter: "blur(8px)" }); TL.to(ctaT, { opacity: 1, filter: "blur(0px)", duration: 0.25 }, V(56) + 0.05);
+        selBox(cta, V(57), D, PAPER);
+        const arrow = document.createElementNS("http://www.w3.org/2000/svg", "svg"); Object.assign(arrow.style, { position: "absolute", left: "760px", top: "775px", width: "64px", height: "80px", overflow: "visible" });
+        arrow.innerHTML = `<path d="M4 4 L4 64 L20 50 L32 76 L42 71 L30 46 L52 46 Z" fill="${INK}" stroke="${PAPER}" stroke-width="4" stroke-linejoin="round"/>`; endL.appendChild(arrow);
+        gsap.set(arrow, { opacity: 0, x: 160, y: 240 });
+        TL.to(arrow, { opacity: 1, x: 0, y: 0, duration: 0.4, ease: "power3.out" }, V(57) - 0.2);
+        TL.to(arrow, { scale: 0.82, duration: 3 * F, transformOrigin: "0 0" }, V(58)); TL.to(arrow, { scale: 1, duration: 0.2 }, V(58) + 3 * F);
+        TL.to(cta, { scale: 0.94, duration: 3 * F, ease: "power2.out" }, V(58)); over(cta, V(58) + 3 * F, 0.06);
+        live(cta, V(58) + 0.6, D, 0.02);
+        // contact: Latin runs isolated LTR so the number and the handle keep their order inside the RTL page
+        [['<bdi dir="ltr">alumaman.com</bdi>', 830], ['<span>واتساب</span>&nbsp;&nbsp;<bdi dir="ltr">+966 56 634 3386</bdi>', 892], ['<bdi dir="ltr">@nozomaman</bdi>', 954]].forEach(([h, y], k) => {
+          const e = document.createElement("div"); e.className = "sans"; e.dir = "rtl";
+          Object.assign(e.style, { position: "absolute", left: "0", top: y + "px", width: "1080px", textAlign: "center", fontSize: (k === 1 ? 46 : 44) + "px", color: PAPER, whiteSpace: "nowrap" });
+          e.innerHTML = h; endL.appendChild(e);
+          gsap.set(e, { opacity: 0, y: 14, filter: "blur(8px)" });
+          TL.to(e, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.32, ease: "power2.out" }, T(27.6) + k * 0.12);
+        });
+
+        const grains = Array.from(document.querySelectorAll(".grain"));
+        for (let f = 0; f < D * 30; f += 2) grains.forEach((g, i) => TL.set(g, { opacity: i === (f / 2) % 6 ? 0.5 : 0 }, f * F));
+        window.__timelines["main"] = TL; TL.seek(0);
+      }
+      window.__hf = window.__hf || {}; window.__hf.buildReady = window.__hf.buildReady || {};
+      window.__hf.buildReady["main"] = build();
+    </script>
+  </body>
+</html>

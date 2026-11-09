@@ -8,11 +8,25 @@
 Owner approved the checkpoint 2026-11-08 («حلو فشخ»): script, voice W1, K0–K5 and the transition map.
 NOT sent on WhatsApp; the orchestrator reviews and sends.
 
-## Script (57 words), voice W1
-سكرت الشباك، والغبار داخل؟ العيب مو بالغبار، العيب بالشباك. في ألمنيوم نظم أمان، نصنع بالأحساء، ونركب بالشرقية، بالموعد المكتوب بالعقد. جودة تستاهل: زجاج مزدوج جارديان، سيليكون الماني، ومطاط يتحمل الشمس. وضمان مكتوب: عشر سنين على الألمنيوم، خمس على الصبغ، وسنتين على الاكسسوارات. وصيانة مجانية مدى الحياة. ترتاح انت، والغبار برا. تبني بيتك او ترممه؟ احجز معاينة مجانية.
+## v2 (owner 2026-11-08): wording changes
+- «الشباك» → «النافذة» («سكرت النافذة،», «العيب بالنافذة.»); «نصنع بالأحساء» → «نصنع في مصنعنا بالأحساء».
+- Applied in script.txt, the voice, the on-screen label, the dimension pill, the made-in label, `wa-cap.txt` (hashtag #نوافذ_ألمنيوم) and this note.
+- No «شباك» is left in the text layer; the only mention is the template's changelog comment.
+- Voice: X1 27.76 s, X2 27.60 s, X3 29.12 s (same clone and settings). **Picked X3**: no stretch, 2.03 words/s, «النافذة» 0.60 s, «بالنافذة» 0.75 s, «مصنعنا» 0.40 s, all heard right by STT.
+  - X2 rejected: the hook question was read as a statement («داخل.»).
+  - All three takes STT-read «في ألمنيوم» as «فيه ألمنيوم» (spelling of a Gulf «في»; W1 did not). Ear-check it.
+- Re-anchoring (`warp.py`): old-clock times are mapped through the word starts (old word i → new i, or i+2 after «نصنع»). This covers `film.py` segments, `make_cues.py` cues, the template's absolute times (`T()`) and the word indices (+2 from 14).
+  - Slam: IMPACT pinned to 4.71 (S2 impact frame at 4.707), on «ألمنيوم» (4.68).
+  - Matte re-cut at 23.45 s for 2.55 s.
+  - Segment speeds: S1 ×0.54 / ×1.23, S2 ×1.16 / ×0.49, S3 ×2.02 / ×0.54, S4 ×0.64, S5 ×0.68.
+- Fit fixes: the made-in label moved 50 px left (it rested at x 999); the «داخل؟» echo stack tightened (3 copies) so it no longer hides «النافذة».
+- v1 kept as `alumaman-collage-v1.mp4` (with `script-v1.txt`, `reel-v1.tpl`, `film-v1.py`, `make_cues-v1.py`, `audio/vo-v1.json`).
+
+## Script (59 words), voice X3 (v2)
+سكرت النافذة، والغبار داخل؟ العيب مو بالغبار، العيب بالنافذة. في ألمنيوم نظم أمان، نصنع في مصنعنا بالأحساء، ونركب بالشرقية، بالموعد المكتوب بالعقد. جودة تستاهل: زجاج مزدوج جارديان، سيليكون الماني، ومطاط يتحمل الشمس. وضمان مكتوب: عشر سنين على الألمنيوم، خمس على الصبغ، وسنتين على الاكسسوارات. وصيانة مجانية مدى الحياة. ترتاح انت، والغبار برا. تبني بيتك او ترممه؟ احجز معاينة مجانية.
 
 - Voice: clone hKxOF1e0PGHjtctJDcOl, eleven_v3, stability 0.5, plain text, no tashkeel.
-- 28.64 s, no time-stretch.
+- 29.12 s, no time-stretch (v1 W1: 28.64 s).
 - STT diffs are spelling and hamza only.
 - «وربل» was cut: all three takes of the first script said "ribble".
 - Takes and STT: `audio/`. Accent unverified until the owner listens.

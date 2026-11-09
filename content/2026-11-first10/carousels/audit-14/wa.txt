@@ -1,0 +1,25 @@
+كاروسيل لينكدإن - ١٥ نوفمبر - "لقينا وصلحنا ١٤ مشكلة قبل الإطلاق" (٦ سلايدات 1080x1350، انجليزي، بدون اسم العميل).
+الصورة: لوحة الشرائح. والملف المضغوط فيه السلايدات بجودة كاملة.
+تحتاج موافقتك: سلايد ٥ "Handoff note" (اللي فحصناه، اللي صلحناه، اللي لازم يتراقب) - هل فعلا سلمنا للعميل ملاحظة تسليم مكتوبة؟ لو لا نشيل السلايد.
+
+الكابشن المقترح:
+We found and fixed 14 issues before launch.
+
+Before a company platform went live, we ran a pre-launch security review. Launch day is the worst day to find a hole: after it, every issue is live, public and urgent. Before it, it's a fix on our list.
+
+Examples of what a pre-launch review covers:
+- Access permissions
+- Form input validation
+- Security headers
+- Exposed keys or config
+- Dependency updates
+- Rate limiting
+- Error messages that leak information
+
+Result: 14 found, 14 fixed, all before launch day. Each fix goes into a handoff note for the client's team, so the next update doesn't undo it.
+
+Launching soon? Comment "review" and we'll send a first-impression review of your site.
+
+www.fortunecode.org | +20 10 98066484
+
+#WebSecurity #CyberSecurity #SoftwareDevelopment #QA

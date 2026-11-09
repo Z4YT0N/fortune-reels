@@ -1,0 +1,18 @@
+فيديو لينكدإن ١٢ نوفمبر، ٩ الصبح (Motion 1): «The 34 MB gallery».
+أنيميشن بس، من غير صوت بشري ولا مزيكا: مؤثرات صوتية بس، ومفهوم من غير صوت كمان. إنجليزي على الشاشة، ١٠٨٠×١٣٥٠ (٤:٥)، ١٨٫٥ ثانية.
+القصة: صفحة معرض تقيلة ٣٤ ميجا، الصور بتتكوّم واللودر بيلف ← نضغط كل صورة ← التاج يبقى ١٤٠ كيلو والصفحة تفتح فورًا ← الخاتمة: 34 MB → 140 KB. Same photos. Same quality. + اللوجو + الموقع + الرقم الجديد. اسم العميل مش ظاهر.
+
+الكابشن المقترح للينكدإن:
+A 34 MB gallery page. Nobody waits for that.
+
+On one client site, the photo gallery weighed 34 MB. On a phone, the loader just kept spinning.
+
+We didn't remove a single photo. We worked on every image in the gallery.
+
+34 MB → 140 KB. Same photos. Same quality. The page now opens instantly.
+
+If your site feels slow and you're not sure why, comment "review" and we'll send you a first-impression review of your site. Or send us a DM.
+
+www.fortunecode.org · +20 10 98066484
+
+#WebPerformance #WebDevelopment #PageSpeed #UX #FortuneCode

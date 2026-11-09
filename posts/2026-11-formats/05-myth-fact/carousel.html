@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8">
+<link rel="stylesheet" href="common.css">
+<style>
+html,body { width:5400px; height:1350px; }
+.dev { position:absolute; -webkit-mask-image: radial-gradient(ellipse 52% 50% at 50% 50%, #000 60%, transparent 100%); }
+.tag { position:absolute; transform:translateX(-50%); border:2px solid rgba(255,255,255,.35); border-radius:30px; padding:4px 30px 0; font-size:36px; color:#BBBDBF; white-space:nowrap; }
+.myth { color:#b4b8bc; word-spacing:.25em; }
+.ico { position:absolute; width:76px; height:76px; border-radius:50%; display:flex; align-items:center; justify-content:center; transform:translateX(-50%); }
+.ico svg { width:40px; height:40px; fill:none; stroke-width:4; stroke-linecap:round; stroke-linejoin:round; }
+.ico.x { background:#2a2d31; border:2px solid #5a5e63; } .ico.x svg { stroke:#c9ccd0; }
+.ico.ok { background:var(--g); box-shadow:0 0 30px rgba(0,219,51,.55); } .ico.ok svg { stroke:#121416; }
+.big { color:var(--g); text-shadow:0 0 50px rgba(0,219,51,.4); line-height:1; }
+.pill { display:inline-block; background:var(--g); color:var(--bg); border-radius:16px; padding:0 24px; }
+.rule { position:absolute; height:2px; background:linear-gradient(90deg, transparent, rgba(255,255,255,.25), transparent); }
+/* Plex: room under the baseline for pills/chips/labels */
+.pill { line-height:1.28; padding-bottom:6px; }
+.chip { padding-bottom:10px; font-weight:600; }
+.lbl { padding-bottom:10px; font-weight:700; }
+</style></head>
+<body>
+<div id="stage"></div>
+<svg class="marks" width="5400" height="1350" style="z-index:40"><defs><filter id="rough"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="4"/><feDisplacementMap in="SourceGraphic" scale="3"/></filter></defs><g id="mk"></g></svg>
+<script src="footer.js"></script><script src="screens.js"></script>
+<script>
+const W = 1080, S = (i, x) => (i - 1) * W + x;
+const stage = document.getElementById('stage'), M = document.getElementById('mk');
+function el(html, z = 10) { const d = document.createElement('div'); d.innerHTML = html.trim(); const n = d.firstChild; if (!n.style.zIndex) n.style.zIndex = z; stage.appendChild(n); return n; }
+const P = (d, cls = 'mk', st = '') => M.insertAdjacentHTML('beforeend', `<path class="${cls}" d="${d}" style="${st}"/>`);
+function ct(i, top, html, size, st = '', cls = '') { return el(`<div class="t ${cls}" style="left:${S(i, 540)}px; top:${top}px; font-size:${size}px; ${st}">${html}</div>`, 30); }
+function glow(cx, cy, r, a = 1) { el(`<div class="glow" style="left:${cx - r}px; top:${cy - r}px; width:${2 * r}px; height:${2 * r}px; opacity:${a}"></div>`, 1); }
+function device(src, quad, cx, cy, width, z = 5) {
+  const k = width / 896, sx = quad.reduce((a, p) => a + p[0], 0) / 4, sy = quad.reduce((a, p) => a + p[1], 0) / 4, left = cx - sx * k, top = cy - sy * k;
+  el(`<img class="dev" src="${src}" style="left:${left}px; top:${top}px; width:${width}px">`, z);
+  return quad.map(([x, y]) => [left + x * k, top + y * k]);
+}
+function onScreen(node, w, h, Q, z = 6, radius = 0) { node.style.transform = quadTransform(w, h, Q); node.style.zIndex = z; node.style.borderRadius = radius + 'px'; stage.appendChild(node); }
+const X = '<svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg>', OK = '<svg viewBox="0 0 24 24"><path d="M5 12.5 10 17 19 7"/></svg>';
+const strikes = [];
+
+for (let i = 1; i <= 5; i++) {
+  el(`<div class="frame" style="left:${S(i, 40)}px; top:40px; width:1000px; height:1140px"></div>`, 50);
+  el(`<img class="logo" src="assets/logo-en-h-primary-white.svg" style="left:${S(i, 540)}px; top:82px; transform:translateX(-50%)">`, 50);
+  foot(S(i, 66), 1208, 948);
+}
+
+/* ===== 1: cover ===== */
+glow(S(1, 540), 820, 520, .95);
+ct(1, 150, '<span class="g">٣</span> خرافات عن المواقع', 96);
+ct(1, 280, 'تكلّفك عملاء… وأنت ما تدري', 50, '', 'mute');
+onScreen(siteUI(), 1280, 796, device('gen/p3_laptop_side.png', [[87,567],[538,540],[586,868],[134,946]], S(1, 540), 760, 1000), 6, 4);
+el(`<div class="ico x" style="left:${S(1, 860)}px; top:470px; width:110px; height:110px; transform:translateX(-50%) rotate(-8deg)">${X}</div>`, 31);
+ct(1, 1070, 'كم وحدة منها كنت مصدّقها؟ اسحب', 44);
+
+/* ===== myth slides ===== */
+const myths = [
+  { i: 2, myth: 'الموقع الحلو يكفي', big: '<bdi>٥٠</bdi> <span style="font-size:.38em">ملّي ثانية</span>',
+    fact: ['بهالوقت يحكم الزائر على شكل موقعك،', 'ويفضّل البسيط الواضح على المزحوم.'],
+    after: 'الحلو لازم يكون <span class="g">واضح</span> و<span class="g">سريع</span>.',
+    src: 'المصدر: <bdi>Lindgaard et al. (2006)</bdi> · <bdi>Google Research (2012)</bdi>' },
+  { i: 3, myth: 'ثانية زيادة ما تفرق', big: '<bdi>+٨٫٤٪</bdi>',
+    fact: ['موقع جوال أسرع بـ <span class="g">٠٫١ ثانية</span> بس', 'رفع التحويل في متاجر التجزئة'],
+    after: 'عُشر ثانية… والفرق <span class="g">مبيعات</span>.',
+    src: 'المصدر: <bdi>Deloitte for Google, Milliseconds Make Millions (2020)</bdi>' },
+  { i: 4, myth: 'نسخة الجوال مو مهمة', big: '',
+    fact: ['جوجل يقيّم ويرتّب موقعك', 'بنسخة <span class="g">الجوال</span> أول.'],
+    after: 'جوال ناقص؟ توقّع تخسر <span class="g">زيارات</span>.',
+    src: 'المصدر: <bdi>Google Search Central, mobile-first indexing</bdi>' },
+];
+myths.forEach((m, k) => {
+  const i = m.i;
+  glow(S(i, 540), 760, 480, .8);
+  el(`<div class="tag" style="left:${S(i, 540)}px; top:150px">خرافة ${['١', '٢', '٣'][k]} · يقولون</div>`, 30);
+  el(`<div class="ico x" style="left:${S(i, 540)}px; top:226px">${X}</div>`, 30);
+  strikes.push(ct(i, 318, m.myth, 80, '', 'myth'));
+  el(`<div class="rule" style="left:${S(i, 140)}px; width:800px; top:446px"></div>`, 30);
+  el(`<div class="ico ok" style="left:${S(i, 540)}px; top:472px">${OK}</div>`, 30);
+  ct(i, 560, '<span class="g">الحقيقة:</span>', 52);
+});
+// myth 1 — 50 ms
+ct(2, 636, myths[0].big, 200, '', 'big');
+myths[0].fact.forEach((l, j) => ct(2, 870 + j * 62, l, 46));
+ct(2, 1046, myths[0].after, 44);
+ct(2, 1124, myths[0].src, 22, '', 'mute');
+// myth 2 — +8.4 %
+ct(3, 636, myths[1].big, 220, '', 'big');
+myths[1].fact.forEach((l, j) => ct(3, 880 + j * 62, l, 46));
+ct(3, 1030, myths[1].after, 44);
+ct(3, 1124, myths[1].src, 22, '', 'mute');
+// myth 3 — phone + mobile-first
+myths[2].fact.forEach((l, j) => ct(4, 626 + j * 60, l, 48));
+onScreen(appMini(), 430, 940, device('gen/g2_hand_phone.png', [[315,318],[574,323],[576,869],[319,870]], S(4, 540), 968, 440), 6, 20);
+ct(4, 760, myths[2].after, 40, '', 'mute');
+ct(4, 1124, myths[2].src, 22, '', 'mute');
+
+/* ===== 5: CTA ===== */
+glow(S(5, 540), 840, 520, .95);
+ct(5, 150, 'تبي تعرف وش يشوف الزائر', 56);
+ct(5, 226, 'في أول <span class="g">٥٠ ملّي ثانية</span>؟', 56);
+ct(5, 340, 'اكتب', 70);
+ct(5, 430, 'انطباع', 190, '', 'big');
+ct(5, 668, 'بالتعليقات، ونرسل لك', 48);
+ct(5, 736, '<span class="pill">انطباعنا الأول عن موقعك</span>', 50);
+ct(5, 820, 'مجانًا، وبصراحة.', 44, '', 'mute');
+el(`<div class="abs" style="left:${S(5, 540)}px; top:1050px; transform:translateX(-50%); display:flex; gap:16px; align-items:center; background:#1b1e21; border:2px solid rgba(255,255,255,.3); border-radius:16px; padding:6px 26px 0; font-size:40px; white-space:nowrap">
+  <svg width="28" height="38" viewBox="0 0 30 40"><path d="M3 3 H27 V37 L15 27 L3 37 Z" fill="none" stroke="#00DB33" stroke-width="4" stroke-linejoin="round"/></svg>احفظ البوست وارجع له قبل الإطلاق</div>`, 31);
+
+// small mobile site for the phone on myth 3
+function appMini() {
+  return box(430, 940, '#f4f5f6', `
+    ${A('left:0; right:0; top:0; height:150px; background:#121416')}
+    ${A('right:26px; top:70px; font-size:32px; color:#fff', 'شركتك')}
+    ${A('left:26px; top:78px; width:40px; height:6px; background:#fff; box-shadow:0 12px 0 #fff, 0 24px 0 #fff')}
+    ${A('left:0; right:0; top:150px; height:300px; background:url(gen/p5_photo_a.png) 50% 50%/cover')}
+    ${A('right:26px; top:480px; font-size:44px; line-height:1.2; color:#121416; white-space:nowrap', 'واضح على<br>الجوال.')}
+    ${A('right:26px; left:26px; top:620px; height:70px; border-radius:35px; background:#00DB33; color:#121416; font-size:30px; text-align:center; padding-top:12px', 'تواصل واتساب')}
+    ${A('right:26px; left:26px; top:720px; height:20px; border-radius:10px; background:#d5d8dc')}
+    ${A('right:26px; width:240px; top:756px; height:20px; border-radius:10px; background:#d5d8dc')}`);
+}
+
+document.fonts.ready.then(() => {
+  fitLines(".t", 860);
+  for (const n of strikes) { const r = n.getBoundingClientRect();
+    P(`M${r.left - 18},${r.top + r.height * .64} C ${r.left + r.width * .35},${r.top + r.height * .58} ${r.left + r.width * .7},${r.top + r.height * .64} ${r.right + 18},${r.top + r.height * .58}`, 'mk', 'stroke-width:7; opacity:.9'); }
+  // circle around the CTA word
+  const f = [...document.querySelectorAll('.t')].find(n => n.textContent === 'انطباع').getBoundingClientRect();
+  const cx = (f.left + f.right) / 2, cy = (f.top + f.bottom) / 2 + 20, rx = f.width / 2 + 70, ry = f.height / 2 + 30;
+  P(`M${cx + rx * .9},${cy - ry * .7} C ${cx + rx * 1.15},${cy + ry * .9} ${cx - rx * .3},${cy + ry * 1.15} ${cx - rx},${cy + ry * .2} C ${cx - rx * 1.2},${cy - ry * .8} ${cx + rx * .1},${cy - ry * 1.2} ${cx + rx * .95},${cy - ry * .45}`);
+  document.body.dataset.ready = 1;
+});
+</script>
+</body></html>

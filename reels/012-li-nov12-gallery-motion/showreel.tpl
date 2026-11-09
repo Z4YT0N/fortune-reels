@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+  <!-- 012 / LinkedIn Nov 12, 9 AM: "The 34 MB gallery". 1080x1350 (4:5), animation only, no voice, English on screen.
+       Engine and look from 008 (GSAP paused timeline, time-dependent motion BAKED as TL.set per frame, hidden state set at build time).
+       One continuous film: a dark browser window rises carrying a hanging 34 MB weight tag -> photos drop in and pile up, the window
+       sags, the loader crawls -> the cursor clicks "Compress every image" -> the pile flies into a grid, a selection box squeezes each
+       photo -> the 34 MB tag is struck and falls, a 140 KB tag hangs, the window floats -> reload: the page opens at once ->
+       the window swells into the dark end card; the 140 KB tag flies into the end line. Cursor = persistent thread.
+       build.py fills __D__. Beat times are the constants below (no VO). -->
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1080, height=1350">
+    <title>LinkedIn Nov 12 gallery motion</title>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/MotionPathPlugin.min.js"></script>
+    <style>
+      @font-face { font-family: "InterX"; src: url("assets/fonts/inter-lat-700.woff2") format("woff2"); font-weight: 700; }
+      @font-face { font-family: "InterX"; src: url("assets/fonts/inter-lat-800.woff2") format("woff2"); font-weight: 800; }
+      @font-face { font-family: "PlexA"; src: url("assets/fonts/IBMPlexSansArabic-Medium.ttf") format("truetype"); font-weight: 500; }
+      @font-face { font-family: "PlexA"; src: url("assets/fonts/IBMPlexSansArabic-SemiBold.ttf") format("truetype"); font-weight: 600; }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1080px; height: 1350px; overflow: hidden; background: #F0F1F2; }
+      #main { position: relative; width: 1080px; height: 1350px; overflow: hidden; font-family: "InterX", sans-serif; font-weight: 800; color: #121416; }
+      .abs { position: absolute; }
+      .nw { white-space: nowrap; }
+      .plex { font-family: "PlexA", sans-serif; font-weight: 600; }
+      #world { position: absolute; inset: 0; background: #F0F1F2; overflow: hidden; }
+      /* browser window: #win is the moving wrapper (not clipped, carries the hanging tag); #body is the clipped dark window */
+      #win { position: absolute; left: 120px; top: 280px; width: 840px; height: 620px; z-index: 10; transform-origin: 420px 0px; }
+      #body { position: absolute; inset: 0; border-radius: 40px; background: #121416; overflow: hidden;
+              box-shadow: 0 40px 70px rgba(18,20,22,0.32), 0 8px 18px rgba(18,20,22,0.22); }
+      .dot { position: absolute; top: 34px; width: 18px; height: 18px; border-radius: 50%; background: #3A3E43; }
+      #addr { position: absolute; left: 172px; right: 30px; top: 20px; height: 46px; border-radius: 999px; background: #1E2124; box-shadow: inset 0 0 0 2px #2E3237;
+              font-family: "PlexA", sans-serif; font-weight: 500; font-size: 25px; color: #8B9096; line-height: 46px; padding-left: 26px; direction: ltr; }
+      #prog { position: absolute; left: 0; top: 84px; height: 6px; width: 0; background: #00DB33; border-radius: 0 3px 3px 0; }
+      .slot { position: absolute; width: 180px; height: 180px; border-radius: 30px; background: #1E2124; box-shadow: inset 0 0 0 2px #2A2E32; }
+      .tile { position: absolute; left: 0; top: 0; width: 180px; height: 180px; border-radius: 30px; overflow: hidden; border: 5px solid #F0F1F2;
+              box-shadow: 0 16px 30px rgba(0,0,0,0.38), 0 3px 8px rgba(0,0,0,0.3); background: #333; }
+      .tile img { width: 100%; height: 100%; object-fit: cover; display: block; }
+      .fname { position: absolute; left: 10px; bottom: 10px; padding: 2px 12px 4px; border-radius: 999px; background: rgba(18,20,22,0.82); color: #F0F1F2;
+               font-family: "PlexA", sans-serif; font-weight: 500; font-size: 19px; white-space: nowrap; }
+      .tag { position: absolute; border-radius: 34px; white-space: nowrap; display: flex; align-items: baseline; justify-content: center; }
+      .pill { position: absolute; border-radius: 999px; white-space: nowrap; display: flex; align-items: center; justify-content: center; }
+      .ripple { position: absolute; width: 110px; height: 110px; margin: -55px 0 0 -55px; border-radius: 50%; border: 5px solid #00DB33; opacity: 0; }
+      #cur { position: absolute; left: 0; top: 0; z-index: 50; width: 58px; height: 80px; transform-origin: 0 0; }
+      .grain { position: absolute; left: 0; top: 0; width: 1080px; height: 1350px; object-fit: cover; mix-blend-mode: soft-light; opacity: 0; z-index: 60; pointer-events: none; }
+    </style>
+  </head>
+  <body>
+    <div id="main" data-composition-id="main" data-start="0" data-duration="__D__" data-width="1080" data-height="1350">
+      <div id="stage" class="clip" data-start="0" data-duration="__D__" data-track-index="1" style="position:absolute;inset:0">
+        <div id="world"></div>
+        <svg id="cur" viewBox="-4 -4 40 52"><path d="M0 0 L0 38 L10 29 L17 45 L24 42 L17 26 L30 26 Z" fill="#F0F1F2" stroke="#121416" stroke-width="3" stroke-linejoin="round"/></svg>
+        <img class="grain" src="assets/img/grain0.png"><img class="grain" src="assets/img/grain1.png"><img class="grain" src="assets/img/grain2.png">
+        <img class="grain" src="assets/img/grain3.png"><img class="grain" src="assets/img/grain4.png"><img class="grain" src="assets/img/grain5.png">
+      </div>
+    </div>
+    <script>
+      window.__timelines = window.__timelines || {};
+      const D = __D__, FPS = 30, F = 1 / FPS;
+      const K = "#121416", G = "#00DB33", L = "#F0F1F2", GREY = "#8B9096", K2 = "#1E2124";
+      const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+      const lerp = (a, b, p) => a + (b - a) * p;
+      const ramp = (t, a, b) => clamp((t - a) / (b - a));
+      const expoOut = p => (p >= 1 ? 1 : 1 - Math.pow(2, -10 * p));
+      const el = (tag, cls, parent, css = {}, html = "") => { const e = document.createElement(tag); if (cls) e.className = cls; Object.assign(e.style, css); if (html) e.innerHTML = html; parent.appendChild(e); return e; };
+      const frames = (a, b, fn) => { for (let f = Math.max(0, Math.round(a * FPS)); f <= Math.round(b * FPS); f++) fn(f * F, f); };
+      const at = t => Math.max(0, t - 0.0004);
+
+      // ── beat clock (no voice: these ARE the beats) ──
+      const T_SLAM = 0.72;                       // "MB" slams, the window sags
+      const T_DROP0 = 2.2, T_DROPS = 0.27;       // 8 photos drop and pile up
+      const T_STILL = 4.45;                      // "Still loading..." sticker
+      const T_TAP = 4.95;                        // impatient taps
+      const T_TOOL = 5.95, T_CLICK1 = 6.5;       // toolbar arrives, click "Compress every image"
+      const T_GRID = 6.62, T_HOP = 7.25, T_HOPS = 0.17;  // pile -> grid, selection squeezes each photo
+      const T_STRIKE = 8.75, T_SNAP = 9.0, T_NEW = 9.32;  // 34 MB struck, string snaps, 140 KB hangs
+      const T_CLICK2 = 10.15;                    // reload
+      const T_HERO = 10.4;                       // "Opens instantly."
+      const T_CLICK3 = 12.55;                    // click the window -> it swells into the end card
+      const T_END = T_CLICK3 + 0.06;
+
+      async function build() {
+        await document.fonts.load('800 100px "InterX"'); await document.fonts.load('700 20px "InterX"'); await document.fonts.load('500 40px "PlexA"'); await document.fonts.load('600 40px "PlexA"'); await document.fonts.ready;
+        await Promise.all(Array.from(document.images).map(i => i.complete ? 0 : new Promise(r => { i.onload = i.onerror = r; })));
+        const TL = gsap.timeline({ paused: true });
+        const world = document.getElementById("world"), stage = document.getElementById("stage"), cur = document.getElementById("cur");
+        const fit = (e, maxW) => { const w = e.getBoundingClientRect().width; if (w > maxW) e.style.fontSize = (parseFloat(e.style.fontSize) * maxW / w) + "px"; };
+        const ripple = (x, y, t, col = G) => { const r = el("div", "ripple", stage, { left: x + "px", top: y + "px", borderColor: col, zIndex: 49 }); TL.fromTo(r, { opacity: 1, scale: 0.25 }, { opacity: 0, scale: 1.5, duration: 0.45, ease: "expo.out", immediateRender: false }, t); };
+        const press = t => { TL.to(cur, { scale: 0.78, duration: 0.06, ease: "power2.out" }, t - 0.06); TL.to(cur, { scale: 1, duration: 0.25, ease: "back.out(3)" }, t); };
+        const rectAt = (e, t) => { TL.seek(t); const r = e.getBoundingClientRect(); TL.seek(0); return r; };
+
+        // ═══ the window ═══
+        const win = el("div", "", world); win.id = "win";
+        const body = el("div", "", win); body.id = "body";
+        [36, 66, 96].forEach(x => el("div", "dot", body, { left: x + "px" }));
+        const reload = el("div", "abs", body, { left: "122px", top: "25px", width: "36px", height: "36px" },
+          `<svg viewBox="0 0 40 40" width="36" height="36"><path d="M31 20 A11 11 0 1 1 27.5 12" fill="none" stroke="#8B9096" stroke-width="4.5" stroke-linecap="round"/><path d="M22 7 L30 11 L25 18" fill="none" stroke="#8B9096" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`);
+        const addr = el("div", "", body); addr.id = "addr";
+        const addrT = el("span", "", addr, {}, "");
+        const prog = el("div", "", body); prog.id = "prog";
+        // empty photo slots (the layout the page is waiting for)
+        const GX = c => 30 + c * 200, GY = r => 120 + r * 200;
+        const slots = [];
+        for (let k = 0; k < 8; k++) slots.push(el("div", "slot", body, { left: GX(k % 4) + "px", top: GY(Math.floor(k / 4)) + "px" }));
+        // status row
+        const status = el("div", "abs plex nw", body, { left: "30px", top: "536px", height: "60px", display: "flex", alignItems: "center", gap: "18px", fontSize: "30px", color: L });
+        const spin = el("div", "", status, { width: "50px", height: "50px", flex: "0 0 50px" },
+          `<svg viewBox="0 0 120 120" width="50" height="50"><circle cx="60" cy="60" r="44" fill="none" stroke="#F0F1F2" stroke-opacity="0.16" stroke-width="16"/><circle cx="60" cy="60" r="44" fill="none" stroke="#00DB33" stroke-width="16" stroke-linecap="round" stroke-dasharray="80 400"/></svg>`);
+        const check = el("div", "abs", status, { left: "0", top: "5px", width: "50px", height: "50px", borderRadius: "50%", background: G, display: "flex", alignItems: "center", justifyContent: "center" },
+          `<svg viewBox="0 0 40 40" width="30" height="30"><path d="M9 21 L17 29 L31 12" fill="none" stroke="#121416" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/></svg>`);
+        const stT = el("span", "", status, {}, "Loading…");
+        const stP = el("span", "", status, { color: GREY }, "0%");
+        gsap.set(check, { scale: 0 });
+
+        // window rises from below at frame 0 (frame 1 already moves)
+        gsap.set(win, { y: 1100, rotation: -9 });
+        TL.to(win, { y: 0, rotation: 0, duration: 0.6, ease: "expo.out" }, 0);
+        // address types itself
+        const URL = "yourcompany.com/gallery"; let lu = "";
+        frames(0.15, 0.75, t => { const s = URL.slice(0, Math.round(URL.length * ramp(t, 0.15, 0.7))); if (s !== lu) { TL.set(addrT, { textContent: s }, at(t)); lu = s; } });
+
+        // ═══ the hanging weight tag (pivot = window bottom, x 580 in window coords) ═══
+        const PIV = { x: 580, y: 620 };
+        const mkTag = (big, unit, bg, col, ucol, size) => {
+          const g = el("div", "abs", win, { left: PIV.x + "px", top: PIV.y + "px", width: "0", height: "0", zIndex: 2 });
+          const str = el("div", "abs", g, { left: "-3px", top: "0", width: "6px", height: "60px", background: K, borderRadius: "3px" });
+          const tg = el("div", "tag", g, { top: "52px", background: bg, padding: `${size * 0.1}px ${size * 0.34}px ${size * 0.16}px`, gap: `${size * 0.16}px`, boxShadow: "0 24px 40px rgba(18,20,22,0.28)" });
+          const ring = el("div", "abs", tg, { left: "50%", top: "14px", width: "26px", height: "26px", marginLeft: "-13px", borderRadius: "50%", background: L, boxShadow: `inset 0 0 0 5px ${K}` });
+          const n = el("span", "", tg, { fontSize: size + "px", color: col, lineHeight: "1.05", display: "inline-block", transformOrigin: "50% 80%", marginTop: size * 0.18 + "px" }, big);
+          const u = el("span", "", tg, { fontSize: size * 0.62 + "px", color: ucol, lineHeight: "1.05", display: "inline-block", transformOrigin: "0% 80%" }, unit);
+          const r = tg.getBoundingClientRect(); tg.style.left = (-r.width / 2) + "px";
+          return { g, str, tg, n, u };
+        };
+        const A = mkTag("34", "MB", K, G, L, 150);
+        // pendulum: each event kicks the tag; baked per frame (seek-safe)
+        const kicksA = [[0.05, 26], [T_SLAM, -9]], kicksB = [[T_NEW, 22], [T_CLICK2, 5], [T_CLICK3, -6]];
+        const pend = (t, kicks) => kicks.reduce((s, [t0, a]) => t < t0 ? s : s + a * Math.exp(-3.1 * (t - t0)) * Math.sin(6.6 * (t - t0) + (a > 0 ? Math.PI / 2 : 0)), 0);
+        // the hook: counter rolls 0 -> 34, "MB" slams in
+        gsap.set(A.u, { opacity: 0, scale: 2.4 });
+        let la = "";
+        frames(0.18, 0.66, t => { const s = String(Math.round(34 * expoOut(ramp(t, 0.18, 0.66)))); if (s !== la) { TL.set(A.n, { textContent: s }, at(t)); la = s; } });
+        TL.set(A.n, { textContent: "34" }, 0.67);
+        TL.to(A.u, { opacity: 1, scale: 1, duration: 0.2, ease: "power4.out" }, T_SLAM);
+        TL.fromTo(A.n, { scaleX: 1.2, scaleY: 1.3 }, { scaleX: 1, scaleY: 1, duration: 0.55, ease: "elastic.out(1, 0.45)", immediateRender: false }, T_SLAM + 0.03);
+        // the weight drags the window down
+        TL.to(win, { y: 34, rotation: 1.2, duration: 0.1, ease: "power3.in" }, T_SLAM);
+        TL.to(win, { y: 26, duration: 0.4, ease: "back.out(2.5)" }, T_SLAM + 0.1);
+        TL.to(A.str, { scaleY: 1.08, transformOrigin: "50% 0%", duration: 0.1 }, T_SLAM); TL.to(A.str, { scaleY: 1, duration: 0.4, ease: "back.out(3)" }, T_SLAM + 0.1);
+
+        // the hook line, top-left: travels in on a curve from off-screen
+        const hook = el("div", "abs plex nw", world, { left: "100px", top: "132px", fontSize: "58px", color: K, display: "flex", gap: "16px" });
+        const hw = ["This", "gallery", "page", "weighs"].map((s, k) => el("span", "", hook, { display: "inline-block", color: k === 1 ? K : K }, s));
+        hw.forEach((w, k) => { gsap.set(w, { x: -700, y: 160, rotation: -20, opacity: 0 }); TL.set(w, { opacity: 1 }, 0.02 + k * 0.06);
+          TL.to(w, { motionPath: { path: [{ x: -260, y: -60 }, { x: 0, y: 0 }], curviness: 1.4 }, rotation: 0, duration: 0.5, ease: "power3.out" }, 0.02 + k * 0.06); });
+        // a marker arrow from the hook to the tag (designer-tool mark)
+        const arrow = el("div", "abs", world, { left: "660px", top: "150px", width: "360px", height: "900px", zIndex: 11 },
+          `<svg viewBox="0 0 360 900" width="360" height="900"><path d="M40 34 C 250 60, 340 450, 300 840" fill="none" stroke="#00DB33" stroke-width="8" stroke-linecap="round" stroke-dasharray="1400" stroke-dashoffset="1400"/><path d="M272 800 L300 846 L330 806" fill="none" stroke="#00DB33" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" opacity="0"/></svg>`);
+        const [arp, arh] = arrow.querySelectorAll("path");
+        TL.to(arp, { strokeDashoffset: 0, duration: 0.4, ease: "power2.out" }, 0.3);
+        TL.to(arh, { opacity: 1, duration: 0.05 }, 0.68);
+        TL.to(arrow, { opacity: 0, duration: 0.3 }, 1.7);
+
+        // ═══ the photos drop in and pile up ═══
+        const PILE = [[40, 300, -12], [236, 310, 9], [430, 298, -7], [612, 306, 13], [130, 220, 17], [340, 210, -15], [530, 224, 6], [260, 136, -5]];
+        const tiles = [];
+        for (let k = 0; k < 8; k++) {
+          const tl = el("div", "tile", win, { zIndex: 3 + k }, `<img src="assets/img/t${k + 1}.jpg">`);
+          const fn = el("div", "fname", tl, {}, `IMG_0${k + 1}.jpg`);
+          tl._fn = fn; tiles.push(tl);
+          const [px, py, pr] = PILE[k], td = T_DROP0 + k * T_DROPS;
+          gsap.set(tl, { x: px, y: -900, rotation: pr * 3, opacity: 0 });
+          TL.set(tl, { opacity: 1 }, td - 0.34);
+          TL.to(tl, { y: py, rotation: pr, duration: 0.34, ease: "power2.in" }, td - 0.34);
+          TL.to(tl, { scaleY: 0.86, scaleX: 1.08, transformOrigin: "50% 100%", duration: 0.05 }, td);
+          TL.to(tl, { scaleY: 1, scaleX: 1, duration: 0.35, ease: "back.out(3)" }, td + 0.05);
+          // every photo makes the page heavier
+          TL.to(win, { y: 26 + (k + 1) * 6, rotation: 1.2 + (k + 1) * 0.16, duration: 0.08, ease: "power3.in" }, td);
+          TL.to(win, { y: 22 + (k + 1) * 6, duration: 0.35, ease: "back.out(2.5)" }, td + 0.08);
+          kicksA.push([td, k % 2 ? 5 : -5]);
+        }
+        // hook exits as the pile grows
+        TL.to(hw, { y: -140, opacity: 0, filter: "blur(10px)", duration: 0.36, ease: "power2.in", stagger: 0.03 }, T_STILL - 0.4);
+        // loader crawls 0 -> 7 %
+        TL.to(spin, { rotation: 360 * 9, duration: T_GRID + 1.9, ease: "none" }, 0.3);
+        const crawl = t => t < 0.8 ? 0 : t < T_CLICK1 ? 7 * Math.pow(ramp(t, 0.8, T_CLICK1), 0.7) : 7;
+        let lp = "";
+        frames(0.8, T_CLICK1, t => { const p = crawl(t); TL.set(prog, { width: (p * 1.2) + "%" }, at(t)); const s = Math.floor(p) + "%"; if (s !== lp) { TL.set(stP, { textContent: s }, at(t)); lp = s; } });
+
+        // ═══ "Still loading…" sticker slaps onto the window's top edge ═══
+        const still = el("div", "pill plex", world, { left: "0", top: "0", fontSize: "56px", background: K, color: L, padding: "6px 44px 14px", zIndex: 20, boxShadow: "0 20px 40px rgba(18,20,22,0.3)" }, "Still loading…");
+        { const r = still.getBoundingClientRect(); still.style.left = (980 - r.width) + "px"; still.style.top = "172px"; }
+        gsap.set(still, { x: 900, y: -200, rotation: 30, opacity: 0 });
+        TL.set(still, { opacity: 1 }, T_STILL - 0.36);
+        TL.to(still, { motionPath: { path: [{ x: 420, y: -240 }, { x: 0, y: 0 }], curviness: 1.4 }, rotation: -4, duration: 0.42, ease: "power3.out" }, T_STILL - 0.36);
+        TL.to(still, { scaleX: 1.06, scaleY: 0.92, duration: 0.06 }, T_STILL + 0.06); TL.to(still, { scaleX: 1, scaleY: 1, duration: 0.35, ease: "back.out(3)" }, T_STILL + 0.12);
+        // impatient taps on the stuck page
+        gsap.set(cur, { x: 1150, y: 1400 });
+        TL.to(cur, { x: 470, y: 760, duration: 0.6, ease: "power3.inOut" }, T_TAP - 0.62);
+        press(T_TAP); ripple(470, 760, T_TAP, L);
+        press(T_TAP + 0.3); ripple(470, 760, T_TAP + 0.3, L);
+        TL.to(still, { x: -10, rotation: -7, duration: 0.08 }, T_TAP); TL.to(still, { x: 0, rotation: -4, duration: 0.3, ease: "back.out(3)" }, T_TAP + 0.08);
+
+        // ═══ the toolbar comes in; click "Compress every image" ═══
+        TL.to(still, { motionPath: { path: [{ x: 200, y: -120 }, { x: 900, y: -260 }], curviness: 1.3 }, rotation: 22, duration: 0.4, ease: "power3.in" }, T_TOOL - 0.25);
+        const tool = el("div", "pill", world, { left: "0", top: "0", height: "120px", background: K, padding: "0 14px 0 30px", gap: "22px", zIndex: 20, boxShadow: "0 24px 44px rgba(18,20,22,0.32)" });
+        const tIcons = el("div", "", tool, { display: "flex", gap: "18px", alignItems: "center" },
+          `<svg viewBox="0 0 40 40" width="40" height="40"><rect x="6" y="6" width="28" height="28" rx="4" fill="none" stroke="#5E6369" stroke-width="4" stroke-dasharray="6 5"/></svg>` +
+          `<svg viewBox="0 0 40 40" width="40" height="40"><path d="M8 32 L20 8 L32 32 Z" fill="none" stroke="#5E6369" stroke-width="4" stroke-linejoin="round"/></svg>`);
+        const cbtn = el("div", "pill plex", tool, { position: "relative", height: "92px", background: G, color: K, fontSize: "40px", padding: "0 34px 6px", gap: "14px" },
+          `<svg viewBox="0 0 40 40" width="38" height="38" style="margin-top:6px"><path d="M8 6 L20 18 L32 6 M8 34 L20 22 L32 34" fill="none" stroke="#121416" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Compress every image</span>`);
+        { const r = tool.getBoundingClientRect(); tool.style.left = (540 - r.width / 2) + "px"; tool.style.top = "112px"; }
+        gsap.set(tool, { x: 1200, y: 80, rotation: 14, opacity: 0 });
+        TL.set(tool, { opacity: 1 }, T_TOOL - 0.1);
+        TL.to(tool, { motionPath: { path: [{ x: 500, y: -90 }, { x: 0, y: 0 }], curviness: 1.4 }, rotation: 0, duration: 0.48, ease: "power3.out" }, T_TOOL - 0.1);
+        const cb = rectAt(cbtn, T_CLICK1);
+        const c1x = cb.left + cb.width * 0.56, c1y = cb.top + cb.height * 0.6;
+        TL.to(cur, { x: c1x, y: c1y, duration: 0.5, ease: "power3.inOut" }, T_CLICK1 - 0.52);
+        press(T_CLICK1); ripple(c1x, c1y, T_CLICK1);
+        TL.to(cbtn, { scale: 0.93, duration: 0.06 }, T_CLICK1 - 0.06); TL.to(cbtn, { scale: 1, duration: 0.25, ease: "back.out(3)" }, T_CLICK1);
+        TL.to(cur, { x: 1010, y: 600, duration: 0.5, ease: "power2.inOut" }, T_CLICK1 + 0.25);
+        TL.set(stT, { textContent: "Compressing…" }, T_CLICK1 + 0.1);
+        TL.set(stP, { textContent: "" }, T_CLICK1 + 0.1);
+        TL.to(prog, { opacity: 0, duration: 0.2 }, T_CLICK1 + 0.1);
+
+        // ═══ pile -> grid; the window straightens; selection box squeezes each photo ═══
+        tiles.forEach((tl, k) => {
+          const gx = GX(k % 4), gy = GY(Math.floor(k / 4)), [px, py] = PILE[k];
+          TL.to(tl, { motionPath: { path: [{ x: (px + gx) / 2 + (k % 2 ? -60 : 60), y: Math.min(py, gy) - 150 }, { x: gx, y: gy }], curviness: 1.3 }, rotation: 0, duration: 0.5, ease: "power3.inOut" }, T_GRID + k * 0.035);
+          TL.to(tl._fn, { opacity: 0, duration: 0.2 }, T_GRID + k * 0.035);
+          tl._x = gx; tl._y = gy;
+        });
+        TL.to(win, { y: 60, rotation: 0, duration: 0.5, ease: "power2.inOut" }, T_GRID);
+        const sel = el("div", "abs", win, { left: "0", top: "0", width: "200px", height: "200px", border: "5px dashed #00DB33", borderRadius: "38px", zIndex: 20 });
+        [[-9, -9], [-9, null], [null, -9], [null, null]].forEach(([l, tp]) => el("div", "abs", sel, { width: "18px", height: "18px", background: G, borderRadius: "4px", left: l === null ? "auto" : l + "px", right: l === null ? "-9px" : "auto", top: tp === null ? "auto" : tp + "px", bottom: tp === null ? "-9px" : "auto" }));
+        gsap.set(sel, { opacity: 0 });
+        const badges = tiles.map(tl => { const b = el("div", "abs", win, { left: (tl._x + 132) + "px", top: (tl._y + 132) + "px", width: "54px", height: "54px", borderRadius: "50%", background: G, display: "flex", alignItems: "center", justifyContent: "center", zIndex: 21, boxShadow: "0 0 0 4px #121416" },
+          `<svg viewBox="0 0 40 40" width="32" height="32"><path d="M9 21 L17 29 L31 12" fill="none" stroke="#121416" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/></svg>`); gsap.set(b, { scale: 0, opacity: 0 }); return b; });
+        tiles.forEach((tl, k) => {
+          const t = T_HOP + k * T_HOPS;
+          TL.set(sel, { x: tl._x - 10, y: tl._y - 10, opacity: 1 }, t);
+          TL.fromTo(sel, { scale: 1.12 }, { scale: 1, duration: T_HOPS * 0.9, ease: "back.out(3)", immediateRender: false }, t);
+          // the squeeze: squash, then back to the same crisp photo
+          TL.to(tl, { scaleX: 0.8, scaleY: 0.8, transformOrigin: "50% 50%", duration: 0.06, ease: "power3.in" }, t);
+          TL.to(tl, { scaleX: 1, scaleY: 1, duration: 0.32, ease: "back.out(3)" }, t + 0.06);
+          TL.set(badges[k], { opacity: 1 }, t + 0.08); TL.to(badges[k], { scale: 1, duration: 0.3, ease: "back.out(3)" }, t + 0.08);
+        });
+        TL.to(sel, { opacity: 0, duration: 0.15 }, T_HOP + 8 * T_HOPS);
+        TL.to(badges, { scale: 0, duration: 0.18, stagger: 0.015, ease: "power2.in" }, T_SNAP + 0.3);
+        TL.to(tool, { motionPath: { path: [{ x: -200, y: -100 }, { x: -1300, y: -60 }], curviness: 1.3 }, rotation: -18, duration: 0.42, ease: "power3.in" }, T_HOP + 8 * T_HOPS + 0.05);
+
+        // ═══ 34 MB is struck, the string snaps, the tag falls; 140 KB hangs; the window floats ═══
+        const strike = el("div", "abs", A.tg, { left: "18px", right: "18px", top: "56%", height: "14px", borderRadius: "7px", background: G, transformOrigin: "0% 50%", zIndex: 3 });
+        gsap.set(strike, { scaleX: 0 });
+        TL.to(strike, { scaleX: 1, duration: 0.2, ease: "power3.out" }, T_STRIKE);
+        TL.to(A.n, { color: GREY, duration: 0.15 }, T_STRIKE);
+        TL.to(A.str, { scaleY: 0, transformOrigin: "50% 0%", duration: 0.08 }, T_SNAP);
+        TL.to(A.tg, { motionPath: { path: [{ x: -170, y: 110 }, { x: -300, y: 380 }, { x: -260, y: 760 }], curviness: 1.2 }, rotation: -28, duration: 0.5, ease: "power2.in" }, T_SNAP);
+        TL.set(A.g, { autoAlpha: 0 }, T_SNAP + 0.62); TL.set(still, { autoAlpha: 0 }, T_TOOL + 0.2); TL.set(tool, { autoAlpha: 0 }, T_HOP + 8 * T_HOPS + 0.5);
+        // the window, freed, lifts and floats
+        TL.to(win, { y: -14, duration: 0.5, ease: "back.out(2.2)" }, T_SNAP + 0.04);
+        TL.to(win, { y: -4, duration: 1.1, ease: "sine.inOut" }, T_SNAP + 0.55);
+        TL.to(win, { y: -16, duration: 1.4, ease: "sine.inOut" }, T_SNAP + 1.65);
+        const B = mkTag("140", "KB", G, K, K, 112);
+        gsap.set(B.str, { scaleY: 0, transformOrigin: "50% 0%" }); gsap.set(B.tg, { scale: 0, opacity: 0, transformOrigin: "50% 0%" });
+        TL.to(B.str, { scaleY: 1, duration: 0.18, ease: "power2.out" }, T_NEW - 0.1);
+        TL.set(B.tg, { opacity: 1 }, T_NEW); TL.to(B.tg, { scale: 1, duration: 0.5, ease: "back.out(2)" }, T_NEW);
+        gsap.set(B.u, { opacity: 0, scale: 2.2 });
+        let lb = "";
+        frames(T_NEW, T_NEW + 0.45, t => { const s = String(Math.round(140 * expoOut(ramp(t, T_NEW, T_NEW + 0.45)))); if (s !== lb) { TL.set(B.n, { textContent: s }, at(t)); lb = s; } });
+        TL.set(B.n, { textContent: "140" }, T_NEW + 0.46);
+        TL.to(B.u, { opacity: 1, scale: 1, duration: 0.2, ease: "power4.out" }, T_NEW + 0.48);
+        TL.set(stT, { textContent: "Every image compressed" }, T_HOP + 8 * T_HOPS);
+        TL.set(spin, { opacity: 0 }, T_HOP + 8 * T_HOPS); TL.to(check, { scale: 1, duration: 0.35, ease: "back.out(3)" }, T_HOP + 8 * T_HOPS);
+        // baked pendulums (old tag until it falls, new tag after it hangs)
+        frames(0, T_SNAP, t => TL.set(A.g, { rotation: pend(t, kicksA) }, at(t)));
+        frames(T_NEW, D, t => TL.set(B.g, { rotation: pend(t, kicksB) * 0.9 }, at(t)));
+
+        // ═══ reload: the page opens at once ═══
+        const rl = rectAt(reload, T_CLICK2);
+        const c2x = rl.left + rl.width * 0.5, c2y = rl.top + rl.height * 0.55;
+        TL.to(cur, { x: c2x, y: c2y, duration: 0.55, ease: "power3.inOut" }, T_CLICK2 - 0.57);
+        press(T_CLICK2); ripple(c2x, c2y, T_CLICK2);
+        TL.to(reload, { rotation: 360, duration: 0.4, ease: "back.out(1.6)" }, T_CLICK2);
+        tiles.forEach(tl => TL.set(tl, { opacity: 0 }, T_CLICK2 + 0.02));
+        TL.set(check, { scale: 0 }, T_CLICK2 + 0.02); TL.set(stT, { textContent: "" }, T_CLICK2 + 0.02);
+        TL.set(prog, { width: "0%", opacity: 1 }, T_CLICK2 + 0.02);
+        TL.to(prog, { width: "100%", duration: 0.14, ease: "power2.out" }, T_CLICK2 + 0.04);
+        TL.to(prog, { opacity: 0, duration: 0.25 }, T_CLICK2 + 0.3);
+        tiles.forEach((tl, k) => { TL.set(tl, { opacity: 1 }, T_CLICK2 + 0.1 + k * 0.022); TL.fromTo(tl, { scale: 1.14 }, { scale: 1, duration: 0.3, ease: "back.out(2.6)", immediateRender: false }, T_CLICK2 + 0.1 + k * 0.022); });
+        TL.set(stT, { textContent: "Loaded" }, T_CLICK2 + 0.18); TL.set(stP, { textContent: "100%", color: G }, T_CLICK2 + 0.18);
+        TL.to(check, { scale: 1, duration: 0.3, ease: "back.out(3)" }, T_CLICK2 + 0.18);
+        TL.to(cur, { x: 1010, y: 1080, duration: 0.5, ease: "power2.inOut" }, T_CLICK2 + 0.35);
+        // hero line rides in on a curve: "Opens instantly."
+        const hero = el("div", "abs nw", world, { left: "100px", top: "116px", fontSize: "104px", display: "flex", gap: "26px", alignItems: "center", zIndex: 22 });
+        const hO = el("span", "", hero, { display: "inline-block", color: K }, "Opens");
+        const hI = el("span", "", hero, { display: "inline-block", color: K, background: G, borderRadius: "26px", padding: "0 22px 10px", margin: "0 -6px" }, "instantly.");
+        fit(hero, 880);
+        [hO, hI].forEach((w, k) => { gsap.set(w, { x: 1100, y: -140, rotation: 18, opacity: 0 }); TL.set(w, { opacity: 1 }, T_HERO + k * 0.12 - 0.3);
+          TL.to(w, { motionPath: { path: [{ x: 480, y: -170 }, { x: 0, y: 0 }], curviness: 1.4 }, rotation: 0, duration: 0.44, ease: "power3.out" }, T_HERO + k * 0.12 - 0.3); });
+        TL.fromTo(hI, { scale: 1.25 }, { scale: 1, duration: 0.4, ease: "back.out(3)", immediateRender: false }, T_HERO + 0.3);
+        TL.to(win, { scale: 1.02, duration: 1.6, ease: "sine.inOut" }, T_HERO + 0.3);
+
+        // ═══ click the window: it swells into the dark end card ═══
+        const wr = rectAt(body, T_CLICK3);
+        const dk = el("div", "abs", stage, { inset: "0", background: K, zIndex: 30, overflow: "hidden", clipPath: `inset(${wr.top}px ${1080 - wr.right}px ${1350 - wr.bottom}px ${wr.left}px round 40px)`, opacity: 0 });
+        const c3x = wr.left + wr.width * 0.62, c3y = wr.top + wr.height * 0.5;
+        TL.to(cur, { x: c3x, y: c3y, duration: 0.5, ease: "power3.inOut" }, T_CLICK3 - 0.52);
+        press(T_CLICK3); ripple(c3x, c3y, T_CLICK3);
+        TL.set(dk, { opacity: 1 }, T_END);
+        TL.to(dk, { clipPath: "inset(0px 0px 0px 0px round 0px)", duration: 0.5, ease: "expo.inOut" }, T_END);
+        TL.to(hero, { y: -160, opacity: 0, filter: "blur(10px)", duration: 0.3, ease: "power2.in" }, T_END - 0.05);
+        TL.to(cur, { x: 1150, y: 1420, duration: 0.5, ease: "power2.in" }, T_END + 0.2);
+        // end card content
+        const eLine = el("div", "abs nw", dk, { left: "0", width: "1080px", top: "250px", display: "flex", justifyContent: "center", alignItems: "center", gap: "34px", fontSize: "118px", color: L });
+        const eOld = el("span", "", eLine, { display: "inline-block", color: GREY, position: "relative" }, "34 MB");
+        const eStrike = el("div", "abs", eOld, { left: "-6px", right: "-6px", top: "54%", height: "12px", borderRadius: "6px", background: G, transformOrigin: "0% 50%" });
+        const eArr = el("span", "", eLine, { display: "inline-block", width: "110px", height: "70px" },
+          `<svg viewBox="0 0 110 70" width="110" height="70"><path d="M6 35 H96 M66 8 L100 35 L66 62" fill="none" stroke="#00DB33" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/></svg>`);
+        const eNew = el("span", "", eLine, { display: "inline-block", color: G }, "140 KB");
+        { const w = [eOld, eArr, eNew].reduce((s, e) => s + e.getBoundingClientRect().width, 0) + 2 * 34; if (w > 840) eLine.style.fontSize = (118 * 840 / w) + "px"; }
+        gsap.set([eOld, eArr], { opacity: 0 }); gsap.set(eStrike, { scaleX: 0 }); gsap.set(eNew, { opacity: 0 });
+        const E1 = T_END + 0.35;
+        TL.set(eOld, { opacity: 1 }, E1); TL.fromTo(eOld, { x: -500, rotation: -10 }, { x: 0, rotation: 0, duration: 0.45, ease: "power3.out", immediateRender: false }, E1);
+        TL.to(eStrike, { scaleX: 1, duration: 0.22, ease: "power3.out" }, E1 + 0.5);
+        TL.set(eArr, { opacity: 1 }, E1 + 0.65); TL.fromTo(eArr, { x: -80, scaleX: 0.3 }, { x: 0, scaleX: 1, duration: 0.35, ease: "back.out(2.4)", immediateRender: false }, E1 + 0.65);
+        // the hanging 140 KB tag flies into the end line
+        const tagR = rectAt(B.tg, T_END), newR = rectAt(eNew, E1 + 1.2);
+        const fly = el("div", "abs nw", stage, { left: tagR.left + "px", top: tagR.top + "px", width: tagR.width + "px", height: tagR.height + "px", borderRadius: "34px", background: G, color: K, zIndex: 31, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "112px", gap: "18px", opacity: 0, transformOrigin: "0 0" },
+          `<span>140</span><span style="font-size:69px">KB</span>`);
+        TL.set(fly, { opacity: 1 }, T_END); TL.set(B.g, { autoAlpha: 0 }, T_END);
+        const fx = newR.left - tagR.left, fy = newR.top - tagR.top, fs = newR.height / tagR.height;
+        TL.to(fly, { motionPath: { path: [{ x: fx * 0.2 + 120, y: fy * 0.5 + 60 }, { x: fx, y: fy }], curviness: 1.3 }, scale: fs, duration: 0.6, ease: "power3.inOut" }, E1 + 0.55);
+        TL.to(fly, { backgroundColor: "rgba(0,219,51,0)", color: G, duration: 0.25 }, E1 + 0.95);
+        TL.set(fly, { opacity: 0 }, E1 + 1.16); TL.set(eNew, { opacity: 1 }, E1 + 1.16);
+        TL.fromTo(eNew, { scale: 1.18 }, { scale: 1, duration: 0.4, ease: "back.out(3)", immediateRender: false }, E1 + 1.16);
+        // same photos, same quality (pills drop in like the tags did)
+        const pS = el("div", "pill plex", dk, { left: "0", top: "0", fontSize: "54px", background: L, color: K, padding: "4px 40px 12px" }, "Same photos.");
+        const pQ = el("div", "pill plex", dk, { left: "0", top: "0", fontSize: "54px", background: G, color: K, padding: "4px 40px 12px" }, "Same quality.");
+        { const a = pS.getBoundingClientRect().width, b = pQ.getBoundingClientRect().width, x0 = 540 - (a + 28 + b) / 2; pS.style.left = x0 + "px"; pQ.style.left = (x0 + a + 28) + "px"; pS.style.top = "470px"; pQ.style.top = "470px"; }
+        [[pS, E1 + 1.55, -4], [pQ, E1 + 1.95, 3]].forEach(([p, t, r]) => { gsap.set(p, { y: -700, rotation: r * 4, opacity: 0 }); TL.set(p, { opacity: 1 }, t - 0.35);
+          TL.to(p, { y: 0, rotation: r, duration: 0.42, ease: "back.out(1.5)" }, t - 0.35); });
+        // the photos come back as one quiet row: proof they are all still there
+        const row = el("div", "abs", dk, { left: "100px", top: "690px", width: "880px", height: "110px", display: "flex", gap: "16px" });
+        const rowT = [1, 2, 3, 4, 5, 6, 7].map(n => el("div", "", row, { width: "110px", height: "110px", borderRadius: "22px", overflow: "hidden", border: "4px solid #2A2E32" }, `<img src="assets/img/t${n}.jpg" style="width:100%;height:100%;object-fit:cover;display:block">`));
+        rowT.forEach((r, k) => { gsap.set(r, { y: 60, opacity: 0, scale: 0.7 }); TL.to(r, { y: 0, opacity: 1, scale: 1, duration: 0.4, ease: "back.out(2)" }, E1 + 2.3 + k * 0.05); });
+        // logo + contact
+        const logo = el("img", "abs", dk, { left: "330px", top: "930px", width: "420px" }); logo.src = "assets/brand/logo-white.svg";
+        gsap.set(logo, { opacity: 0, y: 30, filter: "blur(8px)" }); TL.to(logo, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.45, ease: "power3.out" }, E1 + 2.75);
+        const foot = el("div", "abs plex nw", dk, { left: "0", width: "1080px", top: "1110px", display: "flex", justifyContent: "center", gap: "56px", fontWeight: "500", fontSize: "40px", color: L, direction: "ltr" },
+          "<span>www.fortunecode.org</span><span style='color:#00DB33'>+20 10 98066484</span>");
+        gsap.set(foot, { opacity: 0, y: 30, filter: "blur(8px)" }); TL.to(foot, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.45, ease: "power3.out" }, E1 + 3.05);
+        // the end card keeps living
+        TL.to([eLine, pS, pQ, row, logo, foot], { scale: 1.025, duration: D - (E1 + 1.2), ease: "sine.inOut" }, E1 + 1.2);
+
+        // grain, every 2 frames
+        const grains = Array.from(document.querySelectorAll(".grain"));
+        for (let f = 0; f < D * FPS; f += 2) grains.forEach((g, i) => TL.set(g, { opacity: i === (f / 2) % 6 ? 0.42 : 0 }, f * F));
+        TL.set({}, {}, D);
+        window.__timelines["main"] = TL; TL.seek(0);
+      }
+      window.__hf = window.__hf || {}; window.__hf.buildReady = window.__hf.buildReady || {};
+      window.__hf.buildReady["main"] = build();
+    </script>
+  </body>
+</html>

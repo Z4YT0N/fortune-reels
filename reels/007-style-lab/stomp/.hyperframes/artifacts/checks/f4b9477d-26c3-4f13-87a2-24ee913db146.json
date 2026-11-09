@@ -1,0 +1,1438 @@
+{
+  "ok": false,
+  "strict": false,
+  "browserSkipped": false,
+  "lint": {
+    "ok": true,
+    "errorCount": 0,
+    "warningCount": 1,
+    "infoCount": 0,
+    "findings": [
+      {
+        "code": "nested_structure_needs_subcomposition",
+        "severity": "warning",
+        "message": "<div id=\"stage\"> is a timeline element that contains nested <div id=\"world\">. The timeline shows one row per top-level element, and the root composition is built only from sub-compositions.",
+        "selector": "#stage",
+        "dataAttributes": {},
+        "sourceFile": "E:\\Library\\01-Workspace\\Fortune\\fortune-reels\\reels\\007-style-lab\\stomp\\index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0
+        },
+        "time": 0,
+        "fixHint": "Move <div id=\"stage\"> and its contents into a sub-composition file and mount it with data-composition-src."
+      }
+    ],
+    "filesScanned": 1
+  },
+  "runtime": {
+    "ok": true,
+    "errorCount": 0,
+    "warningCount": 0,
+    "infoCount": 0,
+    "findings": []
+  },
+  "layout": {
+    "ok": false,
+    "errorCount": 12,
+    "warningCount": 7,
+    "infoCount": 11,
+    "findings": [
+      {
+        "code": "text_box_overflow",
+        "severity": "error",
+        "time": 1.622,
+        "selector": "#world > div:nth-of-type(3) > div:nth-of-type(2) > div:nth-of-type(1)",
+        "message": "Text extends outside its nearest visual/container box.",
+        "rect": {
+          "left": -62.2,
+          "top": 910,
+          "right": 880,
+          "bottom": 1110,
+          "width": 942.2,
+          "height": 200
+        },
+        "containerSelector": "#stage",
+        "text": "في موقع",
+        "fixHint": "Text is 942px x 200px inside 1080px x 1920px and overflows by up to 62px; widen the container to at least ~1142px, or allow wrapping with max-width/fitTextFontSize.",
+        "containerRect": {
+          "left": 0,
+          "top": 0,
+          "right": 1080,
+          "bottom": 1920,
+          "width": 1080,
+          "height": 1920
+        },
+        "overflow": {
+          "left": 62.2
+        },
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": -62.2,
+          "y": 910,
+          "width": 942.2,
+          "height": 200
+        },
+        "firstSeen": 1.622,
+        "lastSeen": 9.189,
+        "occurrences": 8,
+        "heldMs": 0,
+        "times": [
+          1.622,
+          2.703,
+          3.784,
+          4.865,
+          5.946,
+          7.027,
+          8.108,
+          9.189
+        ]
+      },
+      {
+        "code": "text_occluded",
+        "severity": "error",
+        "time": 3.784,
+        "selector": "#world > div:nth-of-type(3) > div:nth-of-type(1)",
+        "message": "Text is hidden beneath an opaque element.",
+        "rect": {
+          "left": 375.72,
+          "top": 418.15,
+          "right": 644.28,
+          "bottom": 591.19,
+          "width": 268.56,
+          "height": 173.04
+        },
+        "containerSelector": "#world > div:nth-of-type(9)",
+        "text": "صور",
+        "fixHint": "Give the text its own zone, raise its stacking order above the covering element, or mark intentional layering with data-layout-allow-occlusion.",
+        "coveredFraction": 1,
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 375.72,
+          "y": 418.15,
+          "width": 268.56,
+          "height": 173.04
+        },
+        "firstSeen": 1.622,
+        "lastSeen": 9.189,
+        "occurrences": 8,
+        "heldMs": 0,
+        "times": [
+          1.622,
+          2.703,
+          3.784,
+          4.865,
+          5.946,
+          7.027,
+          8.108,
+          9.189
+        ]
+      },
+      {
+        "code": "text_occluded",
+        "severity": "error",
+        "time": 3.784,
+        "selector": "#world > div:nth-of-type(3) > div:nth-of-type(2) > div:nth-of-type(1)",
+        "message": "Text is hidden beneath an opaque element.",
+        "rect": {
+          "left": -62.2,
+          "top": 910,
+          "right": 880,
+          "bottom": 1110,
+          "width": 942.2,
+          "height": 200
+        },
+        "containerSelector": "#world > div:nth-of-type(10)",
+        "text": "في موقع",
+        "fixHint": "Give the text its own zone, raise its stacking order above the covering element, or mark intentional layering with data-layout-allow-occlusion.",
+        "coveredFraction": 0.89,
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": -62.2,
+          "y": 910,
+          "width": 942.2,
+          "height": 200
+        },
+        "firstSeen": 1.622,
+        "lastSeen": 9.189,
+        "occurrences": 8,
+        "heldMs": 0,
+        "times": [
+          1.622,
+          2.703,
+          3.784,
+          4.865,
+          5.946,
+          7.027,
+          8.108,
+          9.189
+        ]
+      },
+      {
+        "code": "text_not_painted",
+        "severity": "error",
+        "time": 3.784,
+        "selector": "#world > div:nth-of-type(12) > div:nth-of-type(2)",
+        "message": "Text paints with an effectively transparent fill (-webkit-text-fill-color / color), so its glyphs are invisible.",
+        "rect": {
+          "left": 120.85,
+          "top": 741.75,
+          "right": 899.15,
+          "bottom": 926.75,
+          "width": 778.3,
+          "height": 185
+        },
+        "text": "عميلك",
+        "fixHint": "Set an explicit, opaque `color` on the text — and an explicit `-webkit-text-fill-color` if an ancestor makes the fill transparent. If the transparency is intentional gradient text, add `background-clip: text`.",
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 120.85,
+          "y": 741.75,
+          "width": 778.3,
+          "height": 185
+        },
+        "firstSeen": 3.784,
+        "lastSeen": 3.784,
+        "occurrences": 1,
+        "heldMs": 0,
+        "times": [
+          3.784
+        ]
+      },
+      {
+        "code": "text_not_painted",
+        "severity": "error",
+        "time": 4.865,
+        "selector": "#world > div:nth-of-type(12) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1)",
+        "message": "Text paints with an effectively transparent fill (-webkit-text-fill-color / color), so its glyphs are invisible.",
+        "rect": {
+          "left": 329.13,
+          "top": 567.47,
+          "right": 690.87,
+          "bottom": 568.97,
+          "width": 361.73,
+          "height": 1.5
+        },
+        "text": "يفتحه",
+        "fixHint": "Set an explicit, opaque `color` on the text — and an explicit `-webkit-text-fill-color` if an ancestor makes the fill transparent. If the transparency is intentional gradient text, add `background-clip: text`.",
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 329.13,
+          "y": 567.47,
+          "width": 361.73,
+          "height": 1.5
+        },
+        "firstSeen": 4.865,
+        "lastSeen": 9.189,
+        "occurrences": 5,
+        "heldMs": 0,
+        "times": [
+          4.865,
+          5.946,
+          7.027,
+          8.108,
+          9.189
+        ]
+      },
+      {
+        "code": "text_not_painted",
+        "severity": "error",
+        "time": 4.865,
+        "selector": "#world > div:nth-of-type(12) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(1)",
+        "message": "Text paints with an effectively transparent fill (-webkit-text-fill-color / color), so its glyphs are invisible.",
+        "rect": {
+          "left": 207.35,
+          "top": 582.2,
+          "right": 812.65,
+          "bottom": 704.01,
+          "width": 605.31,
+          "height": 121.81
+        },
+        "text": "من",
+        "fixHint": "Set an explicit, opaque `color` on the text — and an explicit `-webkit-text-fill-color` if an ancestor makes the fill transparent. If the transparency is intentional gradient text, add `background-clip: text`.",
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 207.35,
+          "y": 582.2,
+          "width": 605.31,
+          "height": 121.81
+        },
+        "firstSeen": 4.865,
+        "lastSeen": 9.189,
+        "occurrences": 5,
+        "heldMs": 0,
+        "times": [
+          4.865,
+          5.946,
+          7.027,
+          8.108,
+          9.189
+        ]
+      },
+      {
+        "code": "text_occluded",
+        "severity": "error",
+        "time": 5.946,
+        "selector": "#world > div:nth-of-type(12) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1)",
+        "message": "Text is hidden beneath an opaque element.",
+        "rect": {
+          "left": 320.89,
+          "top": 562.59,
+          "right": 699.11,
+          "bottom": 564.69,
+          "width": 378.22,
+          "height": 2.11
+        },
+        "containerSelector": "#world > div:nth-of-type(13)",
+        "text": "يفتحه",
+        "fixHint": "Give the text its own zone, raise its stacking order above the covering element, or mark intentional layering with data-layout-allow-occlusion.",
+        "coveredFraction": 1,
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 320.89,
+          "y": 562.59,
+          "width": 378.22,
+          "height": 2.11
+        },
+        "firstSeen": 5.946,
+        "lastSeen": 9.189,
+        "occurrences": 4,
+        "heldMs": 0,
+        "times": [
+          5.946,
+          7.027,
+          8.108,
+          9.189
+        ]
+      },
+      {
+        "code": "text_occluded",
+        "severity": "error",
+        "time": 5.946,
+        "selector": "#world > div:nth-of-type(12) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(1)",
+        "message": "Text is hidden beneath an opaque element.",
+        "rect": {
+          "left": 193.02,
+          "top": 575.25,
+          "right": 826.98,
+          "bottom": 696.58,
+          "width": 633.95,
+          "height": 121.33
+        },
+        "containerSelector": "#world > div:nth-of-type(13)",
+        "text": "من",
+        "fixHint": "Give the text its own zone, raise its stacking order above the covering element, or mark intentional layering with data-layout-allow-occlusion.",
+        "coveredFraction": 1,
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 193.02,
+          "y": 575.25,
+          "width": 633.95,
+          "height": 121.33
+        },
+        "firstSeen": 5.946,
+        "lastSeen": 9.189,
+        "occurrences": 4,
+        "heldMs": 0,
+        "times": [
+          5.946,
+          7.027,
+          8.108,
+          9.189
+        ]
+      },
+      {
+        "code": "text_occluded",
+        "severity": "error",
+        "time": 5.946,
+        "selector": "#world > div:nth-of-type(12) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(4) > div:nth-of-type(1)",
+        "message": "Text is hidden beneath an opaque element.",
+        "rect": {
+          "left": 316.74,
+          "top": 734.67,
+          "right": 703.26,
+          "bottom": 922.64,
+          "width": 386.51,
+          "height": 187.97
+        },
+        "containerSelector": "#world > div:nth-of-type(13)",
+        "text": "جواله",
+        "fixHint": "Give the text its own zone, raise its stacking order above the covering element, or mark intentional layering with data-layout-allow-occlusion.",
+        "coveredFraction": 1,
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 316.74,
+          "y": 734.67,
+          "width": 386.51,
+          "height": 187.97
+        },
+        "firstSeen": 5.946,
+        "lastSeen": 9.189,
+        "occurrences": 4,
+        "heldMs": 0,
+        "times": [
+          5.946,
+          7.027,
+          8.108,
+          9.189
+        ]
+      },
+      {
+        "code": "content_overlap",
+        "severity": "error",
+        "time": 9.189,
+        "selector": "#world > div:nth-of-type(3) > div:nth-of-type(1)",
+        "message": "Two text blocks overlap and may render unreadable.",
+        "rect": {
+          "left": 375.72,
+          "top": 418.15,
+          "right": 644.28,
+          "bottom": 591.19,
+          "width": 268.56,
+          "height": 173.04
+        },
+        "containerSelector": "#world > div:nth-of-type(17) > span:nth-of-type(3)",
+        "text": "صور",
+        "fixHint": "Give each block its own zone, or mark intentional layering with data-layout-allow-overlap.",
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 375.72,
+          "y": 418.15,
+          "width": 268.56,
+          "height": 173.04
+        },
+        "firstSeen": 0.374,
+        "lastSeen": 9.73,
+        "occurrences": 19,
+        "heldMs": 2620,
+        "times": [
+          0.374,
+          0.499,
+          7.11,
+          7.235,
+          7.36,
+          7.485,
+          7.609,
+          8.483,
+          8.607,
+          8.732,
+          8.857,
+          8.982,
+          9.106,
+          9.189,
+          9.231,
+          9.356,
+          9.481,
+          9.605,
+          9.73
+        ]
+      },
+      {
+        "code": "content_overlap",
+        "severity": "error",
+        "time": 9.189,
+        "selector": "#world > div:nth-of-type(3) > div:nth-of-type(2) > div:nth-of-type(1)",
+        "message": "Two text blocks overlap and may render unreadable.",
+        "rect": {
+          "left": 0,
+          "top": 910,
+          "right": 880,
+          "bottom": 1110,
+          "width": 880,
+          "height": 200
+        },
+        "containerSelector": "#world > div:nth-of-type(18) > div:nth-of-type(1) > span:nth-of-type(1)",
+        "text": "في موقع",
+        "fixHint": "Give each block its own zone, or mark intentional layering with data-layout-allow-overlap.",
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 910,
+          "width": 880,
+          "height": 200
+        },
+        "firstSeen": 7.11,
+        "lastSeen": 9.73,
+        "occurrences": 16,
+        "heldMs": 2620,
+        "times": [
+          7.11,
+          7.235,
+          7.36,
+          7.485,
+          7.609,
+          8.607,
+          8.732,
+          8.857,
+          8.982,
+          9.106,
+          9.189,
+          9.231,
+          9.356,
+          9.481,
+          9.605,
+          9.73
+        ]
+      },
+      {
+        "code": "content_overlap",
+        "severity": "error",
+        "time": 9.189,
+        "selector": "#world > div:nth-of-type(18) > div:nth-of-type(1) > span:nth-of-type(1)",
+        "message": "Two text blocks overlap and may render unreadable.",
+        "rect": {
+          "left": 663.88,
+          "top": 888,
+          "right": 917.04,
+          "bottom": 1051.11,
+          "width": 253.16,
+          "height": 163.11
+        },
+        "containerSelector": "#world > div:nth-of-type(20) > div:nth-of-type(1) > span:nth-of-type(1)",
+        "text": "صور",
+        "fixHint": "Give each block its own zone, or mark intentional layering with data-layout-allow-overlap.",
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 663.88,
+          "y": 888,
+          "width": 253.16,
+          "height": 163.11
+        },
+        "firstSeen": 8.607,
+        "lastSeen": 9.73,
+        "occurrences": 11,
+        "heldMs": 1123.0000000000011,
+        "times": [
+          8.607,
+          8.732,
+          8.857,
+          8.982,
+          9.106,
+          9.189,
+          9.231,
+          9.356,
+          9.481,
+          9.605,
+          9.73
+        ]
+      },
+      {
+        "code": "container_overflow",
+        "severity": "warning",
+        "time": 0.541,
+        "selector": "#world > div:nth-of-type(14) > div:nth-of-type(1)",
+        "message": "Nowrap text is wider than its container.",
+        "rect": {
+          "left": 1140,
+          "top": 423.55,
+          "right": 2588.31,
+          "bottom": 1246.45,
+          "width": 1448.31,
+          "height": 822.89
+        },
+        "containerSelector": "#world > div:nth-of-type(14)",
+        "fixHint": "Resize/reposition the child or container, or mark intentional overflow with data-layout-allow-overflow.",
+        "containerRect": {
+          "left": 1324.16,
+          "top": 0,
+          "right": 2404.16,
+          "bottom": 1920,
+          "width": 1080,
+          "height": 1920
+        },
+        "overflow": {
+          "left": 184.16,
+          "right": 184.15
+        },
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 1140,
+          "y": 423.55,
+          "width": 1448.31,
+          "height": 822.89
+        },
+        "firstSeen": 0.541,
+        "lastSeen": 9.189,
+        "occurrences": 9,
+        "heldMs": 0,
+        "times": [
+          0.541,
+          1.622,
+          2.703,
+          3.784,
+          4.865,
+          5.946,
+          7.027,
+          8.108,
+          9.189
+        ]
+      },
+      {
+        "code": "escaped_container",
+        "severity": "warning",
+        "time": 0.541,
+        "selector": "#world > div:nth-of-type(2)",
+        "message": "Positioned element renders far outside its offset parent — its coordinates were likely computed in a different frame (canvas/viewport pixels).",
+        "rect": {
+          "left": 133.21,
+          "top": -779.66,
+          "right": 886.79,
+          "bottom": -550.34,
+          "width": 753.59,
+          "height": 229.31
+        },
+        "containerSelector": "#world",
+        "text": "معرض",
+        "fixHint": "Compute left/top in the offset parent's frame (subtract its rect), or mark intentional placement with data-layout-allow-overflow.",
+        "containerRect": {
+          "left": 0,
+          "top": 0,
+          "right": 1080,
+          "bottom": 1920,
+          "width": 1080,
+          "height": 1920
+        },
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 133.21,
+          "y": -779.66,
+          "width": 753.59,
+          "height": 229.31
+        },
+        "firstSeen": 0.541,
+        "lastSeen": 9.189,
+        "occurrences": 9,
+        "heldMs": 0,
+        "times": [
+          0.541,
+          1.622,
+          2.703,
+          3.784,
+          4.865,
+          5.946,
+          7.027,
+          8.108,
+          9.189
+        ]
+      },
+      {
+        "code": "escaped_container",
+        "severity": "warning",
+        "time": 0.541,
+        "selector": "#world > div:nth-of-type(16)",
+        "message": "Positioned element renders far outside its offset parent — its coordinates were likely computed in a different frame (canvas/viewport pixels).",
+        "rect": {
+          "left": 1072.36,
+          "top": 1492.36,
+          "right": 5807.64,
+          "bottom": 6227.64,
+          "width": 4735.28,
+          "height": 4735.28
+        },
+        "containerSelector": "#world",
+        "text": "",
+        "fixHint": "Compute left/top in the offset parent's frame (subtract its rect), or mark intentional placement with data-layout-allow-overflow.",
+        "containerRect": {
+          "left": 0,
+          "top": 0,
+          "right": 1080,
+          "bottom": 1920,
+          "width": 1080,
+          "height": 1920
+        },
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 1072.36,
+          "y": 1492.36,
+          "width": 4735.28,
+          "height": 4735.28
+        },
+        "firstSeen": 0.541,
+        "lastSeen": 9.189,
+        "occurrences": 9,
+        "heldMs": 0,
+        "times": [
+          0.541,
+          1.622,
+          2.703,
+          3.784,
+          4.865,
+          5.946,
+          7.027,
+          8.108,
+          9.189
+        ]
+      },
+      {
+        "code": "canvas_overflow",
+        "severity": "warning",
+        "time": 1.622,
+        "selector": "#world > div:nth-of-type(3) > div:nth-of-type(2) > div:nth-of-type(1)",
+        "message": "Text extends outside the composition canvas.",
+        "rect": {
+          "left": -62.2,
+          "top": 910,
+          "right": 880,
+          "bottom": 1110,
+          "width": 942.2,
+          "height": 200
+        },
+        "containerSelector": "#main",
+        "text": "في موقع",
+        "fixHint": "Move the text inward, reduce its size, or mark intentional off-canvas animation with data-layout-allow-overflow.",
+        "containerRect": {
+          "left": 0,
+          "top": 0,
+          "right": 1080,
+          "bottom": 1920,
+          "width": 1080,
+          "height": 1920
+        },
+        "overflow": {
+          "left": 62.2
+        },
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": -62.2,
+          "y": 910,
+          "width": 942.2,
+          "height": 200
+        },
+        "firstSeen": 1.622,
+        "lastSeen": 9.189,
+        "occurrences": 8,
+        "heldMs": 0,
+        "times": [
+          1.622,
+          2.703,
+          3.784,
+          4.865,
+          5.946,
+          7.027,
+          8.108,
+          9.189
+        ]
+      },
+      {
+        "code": "escaped_container",
+        "severity": "warning",
+        "time": 3.784,
+        "selector": "#world > div:nth-of-type(8) > div:nth-of-type(1)",
+        "message": "Positioned element renders far outside its offset parent — its coordinates were likely computed in a different frame (canvas/viewport pixels).",
+        "rect": {
+          "left": 1400,
+          "top": 330,
+          "right": 2480,
+          "bottom": 550,
+          "width": 1080,
+          "height": 220
+        },
+        "containerSelector": "#world > div:nth-of-type(8)",
+        "text": "حجمه",
+        "fixHint": "Compute left/top in the offset parent's frame (subtract its rect), or mark intentional placement with data-layout-allow-overflow.",
+        "containerRect": {
+          "left": 0,
+          "top": 0,
+          "right": 1080,
+          "bottom": 1920,
+          "width": 1080,
+          "height": 1920
+        },
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 1400,
+          "y": 330,
+          "width": 1080,
+          "height": 220
+        },
+        "firstSeen": 3.784,
+        "lastSeen": 9.189,
+        "occurrences": 6,
+        "heldMs": 0,
+        "times": [
+          3.784,
+          4.865,
+          5.946,
+          7.027,
+          8.108,
+          9.189
+        ]
+      },
+      {
+        "code": "content_overlap",
+        "severity": "warning",
+        "time": 7.11,
+        "selector": "#world > div:nth-of-type(12) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(4) > div:nth-of-type(1)",
+        "message": "Two text blocks overlap and may render unreadable.",
+        "rect": {
+          "left": 316.74,
+          "top": 734.67,
+          "right": 703.26,
+          "bottom": 922.64,
+          "width": 386.52,
+          "height": 187.97
+        },
+        "containerSelector": "#world > div:nth-of-type(14) > div:nth-of-type(1)",
+        "text": "جواله",
+        "fixHint": "Give each block its own zone, or mark intentional layering with data-layout-allow-overlap.",
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 316.74,
+          "y": 734.67,
+          "width": 386.52,
+          "height": 187.97
+        },
+        "firstSeen": 7.11,
+        "lastSeen": 7.609,
+        "occurrences": 5,
+        "heldMs": 498.99999999999966,
+        "times": [
+          7.11,
+          7.235,
+          7.36,
+          7.485,
+          7.609
+        ]
+      },
+      {
+        "code": "content_overlap",
+        "severity": "warning",
+        "time": 8.607,
+        "selector": "#world > div:nth-of-type(19) > div:nth-of-type(1) > span:nth-of-type(1)",
+        "message": "Two text blocks overlap and may render unreadable.",
+        "rect": {
+          "left": 693.8,
+          "top": 888.05,
+          "right": 946.78,
+          "bottom": 1051.05,
+          "width": 252.98,
+          "height": 163
+        },
+        "containerSelector": "#world > div:nth-of-type(20) > div:nth-of-type(1) > span:nth-of-type(1)",
+        "text": "صور",
+        "fixHint": "Give each block its own zone, or mark intentional layering with data-layout-allow-overlap.",
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 693.8,
+          "y": 888.05,
+          "width": 252.98,
+          "height": 163
+        },
+        "firstSeen": 8.607,
+        "lastSeen": 8.982,
+        "occurrences": 4,
+        "heldMs": 375,
+        "times": [
+          8.607,
+          8.732,
+          8.857,
+          8.982
+        ]
+      },
+      {
+        "code": "canvas_overflow",
+        "severity": "info",
+        "time": 0.541,
+        "selector": "#world > div:nth-of-type(2)",
+        "message": "Text extends outside the composition canvas.",
+        "rect": {
+          "left": 133.21,
+          "top": -753.41,
+          "right": 886.79,
+          "bottom": -577.01,
+          "width": 753.58,
+          "height": 176.4
+        },
+        "containerSelector": "#main",
+        "text": "معرض",
+        "fixHint": "Move the text inward, reduce its size, or mark intentional off-canvas animation with data-layout-allow-overflow.",
+        "containerRect": {
+          "left": 0,
+          "top": 0,
+          "right": 1080,
+          "bottom": 1920,
+          "width": 1080,
+          "height": 1920
+        },
+        "overflow": {
+          "top": 753.41
+        },
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 133.21,
+          "y": -753.41,
+          "width": 753.58,
+          "height": 176.4
+        },
+        "firstSeen": 0.541,
+        "lastSeen": 9.189,
+        "occurrences": 9,
+        "heldMs": 0,
+        "times": [
+          0.541,
+          1.622,
+          2.703,
+          3.784,
+          4.865,
+          5.946,
+          7.027,
+          8.108,
+          9.189
+        ]
+      },
+      {
+        "code": "canvas_overflow",
+        "severity": "info",
+        "time": 0.541,
+        "selector": "#world > div:nth-of-type(14) > div:nth-of-type(1)",
+        "message": "Text extends outside the composition canvas.",
+        "rect": {
+          "left": 1140,
+          "top": 517.55,
+          "right": 2588.31,
+          "bottom": 1150.55,
+          "width": 1448.31,
+          "height": 633
+        },
+        "containerSelector": "#main",
+        "text": "ويطلع",
+        "fixHint": "Move the text inward, reduce its size, or mark intentional off-canvas animation with data-layout-allow-overflow.",
+        "containerRect": {
+          "left": 0,
+          "top": 0,
+          "right": 1080,
+          "bottom": 1920,
+          "width": 1080,
+          "height": 1920
+        },
+        "overflow": {
+          "right": 1508.31
+        },
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 1140,
+          "y": 517.55,
+          "width": 1448.31,
+          "height": 633
+        },
+        "firstSeen": 0.541,
+        "lastSeen": 9.189,
+        "occurrences": 9,
+        "heldMs": 0,
+        "times": [
+          0.541,
+          1.622,
+          2.703,
+          3.784,
+          4.865,
+          5.946,
+          7.027,
+          8.108,
+          9.189
+        ]
+      },
+      {
+        "code": "canvas_overflow",
+        "severity": "info",
+        "time": 3.784,
+        "selector": "#world > div:nth-of-type(8) > div:nth-of-type(1) > div:nth-of-type(1)",
+        "message": "Text extends outside the composition canvas.",
+        "rect": {
+          "left": 1739.82,
+          "top": 364.5,
+          "right": 2080.18,
+          "bottom": 514.5,
+          "width": 340.36,
+          "height": 150
+        },
+        "containerSelector": "#main",
+        "text": "حجمه",
+        "fixHint": "Move the text inward, reduce its size, or mark intentional off-canvas animation with data-layout-allow-overflow.",
+        "containerRect": {
+          "left": 0,
+          "top": 0,
+          "right": 1080,
+          "bottom": 1920,
+          "width": 1080,
+          "height": 1920
+        },
+        "overflow": {
+          "right": 1000.18
+        },
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 1739.82,
+          "y": 364.5,
+          "width": 340.36,
+          "height": 150
+        },
+        "firstSeen": 3.784,
+        "lastSeen": 9.189,
+        "occurrences": 6,
+        "heldMs": 0,
+        "times": [
+          3.784,
+          4.865,
+          5.946,
+          7.027,
+          8.108,
+          9.189
+        ]
+      },
+      {
+        "code": "panel_out_of_canvas",
+        "severity": "info",
+        "time": 3.784,
+        "selector": "#world > div:nth-of-type(11)",
+        "message": "Painted panel extends outside the composition canvas.",
+        "rect": {
+          "left": 33.75,
+          "top": 1030,
+          "right": 1113.75,
+          "bottom": 1921,
+          "width": 1080,
+          "height": 891
+        },
+        "containerSelector": "#main",
+        "text": "",
+        "fixHint": "Move the panel inward, or mark intentional off-canvas animation with data-layout-allow-overflow.",
+        "containerRect": {
+          "left": 0,
+          "top": 0,
+          "right": 1080,
+          "bottom": 1920,
+          "width": 1080,
+          "height": 1920
+        },
+        "overflow": {
+          "right": 33.75
+        },
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 33.75,
+          "y": 1030,
+          "width": 1080,
+          "height": 891
+        },
+        "firstSeen": 3.784,
+        "lastSeen": 3.784,
+        "occurrences": 1,
+        "heldMs": 0,
+        "times": [
+          3.784
+        ]
+      },
+      {
+        "code": "text_box_overflow",
+        "severity": "info",
+        "time": 9.189,
+        "selector": "#world > div:nth-of-type(17) > span:nth-of-type(3)",
+        "message": "Text extends outside its nearest visual/container box.",
+        "rect": {
+          "left": -48.32,
+          "top": 527.84,
+          "right": 587.55,
+          "bottom": 718.16,
+          "width": 635.87,
+          "height": 190.32
+        },
+        "containerSelector": "#stage",
+        "text": "على",
+        "fixHint": "Text is 636px x 190px inside 1080px x 1920px and overflows by up to 48px; widen the container to at least ~1128px, or allow wrapping with max-width/fitTextFontSize.",
+        "containerRect": {
+          "left": 0,
+          "top": 0,
+          "right": 1080,
+          "bottom": 1920,
+          "width": 1080,
+          "height": 1920
+        },
+        "overflow": {
+          "left": 48.32
+        },
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": -48.32,
+          "y": 527.84,
+          "width": 635.87,
+          "height": 190.32
+        },
+        "firstSeen": 9.189,
+        "lastSeen": 9.189,
+        "occurrences": 1,
+        "heldMs": 0,
+        "times": [
+          9.189
+        ]
+      },
+      {
+        "code": "canvas_overflow",
+        "severity": "info",
+        "time": 9.189,
+        "selector": "#world > div:nth-of-type(17) > span:nth-of-type(3)",
+        "message": "Text extends outside the composition canvas.",
+        "rect": {
+          "left": -48.32,
+          "top": 527.84,
+          "right": 587.55,
+          "bottom": 718.16,
+          "width": 635.87,
+          "height": 190.32
+        },
+        "containerSelector": "#main",
+        "text": "على",
+        "fixHint": "Move the text inward, reduce its size, or mark intentional off-canvas animation with data-layout-allow-overflow.",
+        "containerRect": {
+          "left": 0,
+          "top": 0,
+          "right": 1080,
+          "bottom": 1920,
+          "width": 1080,
+          "height": 1920
+        },
+        "overflow": {
+          "left": 48.32
+        },
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": -48.32,
+          "y": 527.84,
+          "width": 635.87,
+          "height": 190.32
+        },
+        "firstSeen": 9.189,
+        "lastSeen": 9.189,
+        "occurrences": 1,
+        "heldMs": 0,
+        "times": [
+          9.189
+        ]
+      },
+      {
+        "code": "text_occluded",
+        "severity": "info",
+        "time": 9.189,
+        "selector": "#world > div:nth-of-type(18) > div:nth-of-type(1) > span:nth-of-type(1)",
+        "message": "Text is hidden beneath an opaque element.",
+        "rect": {
+          "left": 663.88,
+          "top": 888,
+          "right": 917.04,
+          "bottom": 1051.11,
+          "width": 253.16,
+          "height": 163.11
+        },
+        "containerSelector": "#world > div:nth-of-type(21)",
+        "text": "صور",
+        "fixHint": "Give the text its own zone, raise its stacking order above the covering element, or mark intentional layering with data-layout-allow-occlusion.",
+        "coveredFraction": 0.67,
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 663.88,
+          "y": 888,
+          "width": 253.16,
+          "height": 163.11
+        },
+        "firstSeen": 9.189,
+        "lastSeen": 9.189,
+        "occurrences": 1,
+        "heldMs": 0,
+        "times": [
+          9.189
+        ]
+      },
+      {
+        "code": "text_occluded",
+        "severity": "info",
+        "time": 9.189,
+        "selector": "#world > div:nth-of-type(18) > div:nth-of-type(1) > span:nth-of-type(2)",
+        "message": "Text is hidden beneath an opaque element.",
+        "rect": {
+          "left": 102.93,
+          "top": 888,
+          "right": 628,
+          "bottom": 1051.11,
+          "width": 525.07,
+          "height": 163.11
+        },
+        "containerSelector": "#world > div:nth-of-type(21)",
+        "text": "أقل",
+        "fixHint": "Give the text its own zone, raise its stacking order above the covering element, or mark intentional layering with data-layout-allow-occlusion.",
+        "coveredFraction": 0.67,
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 102.93,
+          "y": 888,
+          "width": 525.07,
+          "height": 163.11
+        },
+        "firstSeen": 9.189,
+        "lastSeen": 9.189,
+        "occurrences": 1,
+        "heldMs": 0,
+        "times": [
+          9.189
+        ]
+      },
+      {
+        "code": "text_occluded",
+        "severity": "info",
+        "time": 9.189,
+        "selector": "#world > div:nth-of-type(20) > div:nth-of-type(1) > span:nth-of-type(1)",
+        "message": "Text is hidden beneath an opaque element.",
+        "rect": {
+          "left": 663.88,
+          "top": 888,
+          "right": 917.04,
+          "bottom": 1051.11,
+          "width": 253.16,
+          "height": 163.11
+        },
+        "containerSelector": "#world > div:nth-of-type(16)",
+        "text": "صور",
+        "fixHint": "Give the text its own zone, raise its stacking order above the covering element, or mark intentional layering with data-layout-allow-occlusion.",
+        "coveredFraction": 0.67,
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 663.88,
+          "y": 888,
+          "width": 253.16,
+          "height": 163.11
+        },
+        "firstSeen": 9.189,
+        "lastSeen": 9.189,
+        "occurrences": 1,
+        "heldMs": 0,
+        "times": [
+          9.189
+        ]
+      },
+      {
+        "code": "text_occluded",
+        "severity": "info",
+        "time": 9.189,
+        "selector": "#world > div:nth-of-type(20) > div:nth-of-type(1) > span:nth-of-type(2)",
+        "message": "Text is hidden beneath an opaque element.",
+        "rect": {
+          "left": 102.93,
+          "top": 888,
+          "right": 628,
+          "bottom": 1051.11,
+          "width": 525.07,
+          "height": 163.11
+        },
+        "containerSelector": "#world > div:nth-of-type(16)",
+        "text": "أقل",
+        "fixHint": "Give the text its own zone, raise its stacking order above the covering element, or mark intentional layering with data-layout-allow-occlusion.",
+        "coveredFraction": 0.67,
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 102.93,
+          "y": 888,
+          "width": 525.07,
+          "height": 163.11
+        },
+        "firstSeen": 9.189,
+        "lastSeen": 9.189,
+        "occurrences": 1,
+        "heldMs": 0,
+        "times": [
+          9.189
+        ]
+      },
+      {
+        "code": "content_overlap",
+        "severity": "info",
+        "time": 9.189,
+        "selector": "#world > div:nth-of-type(18) > div:nth-of-type(1) > span:nth-of-type(2)",
+        "message": "Two text blocks overlap and may render unreadable.",
+        "rect": {
+          "left": 102.93,
+          "top": 888,
+          "right": 628,
+          "bottom": 1051.11,
+          "width": 525.07,
+          "height": 163.11
+        },
+        "containerSelector": "#world > div:nth-of-type(20) > div:nth-of-type(1) > span:nth-of-type(2)",
+        "text": "أقل",
+        "fixHint": "Give each block its own zone, or mark intentional layering with data-layout-allow-overlap.",
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 102.93,
+          "y": 888,
+          "width": 525.07,
+          "height": 163.11
+        },
+        "firstSeen": 9.189,
+        "lastSeen": 9.189,
+        "occurrences": 1,
+        "heldMs": 0,
+        "times": [
+          9.189
+        ]
+      }
+    ],
+    "duration": 9.73,
+    "samples": [
+      0.541,
+      1.622,
+      2.703,
+      3.784,
+      4.865,
+      5.946,
+      7.027,
+      8.108,
+      9.189
+    ],
+    "transitionSamples": [],
+    "transitionSamplesDropped": 0,
+    "tolerance": 2,
+    "totalIssueCount": 30,
+    "truncated": false
+  },
+  "motion": {
+    "ok": true,
+    "errorCount": 0,
+    "warningCount": 0,
+    "infoCount": 0,
+    "findings": [],
+    "enabled": false,
+    "samples": 0
+  },
+  "contrast": {
+    "ok": true,
+    "errorCount": 0,
+    "warningCount": 3,
+    "infoCount": 0,
+    "findings": [
+      {
+        "code": "contrast_aa_failure",
+        "severity": "warning",
+        "message": "Contrast is 1:1; WCAG AA requires 3:1.",
+        "text": "صور",
+        "fg": "rgb(18,20,22)",
+        "bg": "rgb(18,20,22)",
+        "ratio": 1,
+        "requiredRatio": 3,
+        "suggestedColor": "rgb(97,98,100)",
+        "large": true,
+        "selector": "div > div > div > div:nth-of-type(3) > div:nth-of-type(1)",
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 375.7181396484375,
+          "y": 392.52532958984375,
+          "width": 268.563720703125,
+          "height": 224.94940185546875
+        },
+        "time": 7.027,
+        "times": [
+          7.027
+        ]
+      },
+      {
+        "code": "contrast_aa_failure",
+        "severity": "warning",
+        "message": "Contrast is 1.01:1; WCAG AA requires 3:1.",
+        "text": "في موقع",
+        "fg": "rgb(18,20,22)",
+        "bg": "rgb(18,22,24)",
+        "ratio": 1.01,
+        "requiredRatio": 3,
+        "suggestedColor": "rgb(98,99,101)",
+        "large": true,
+        "selector": "div > div > div > div:nth-of-type(3) > div:nth-of-type(2) > div:nth-of-type(1)",
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": -62.203125,
+          "y": 880,
+          "width": 942.203125,
+          "height": 260
+        },
+        "time": 7.027,
+        "times": [
+          7.027
+        ]
+      },
+      {
+        "code": "contrast_aa_failure",
+        "severity": "warning",
+        "message": "Contrast is 1.01:1; WCAG AA requires 3:1.",
+        "text": "جواله",
+        "fg": "rgb(18,20,22)",
+        "bg": "rgb(17,22,24)",
+        "ratio": 1.01,
+        "requiredRatio": 3,
+        "suggestedColor": "rgb(98,99,101)",
+        "large": true,
+        "selector": "div > div > div > div:nth-of-type(12) > div:nth-of-type(1) > div > div:nth-of-type(4) > div",
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 316.68597412109375,
+          "y": 707.170166015625,
+          "width": 386.6280517578125,
+          "height": 244.36297607421875
+        },
+        "time": 7.027,
+        "times": [
+          7.027
+        ]
+      }
+    ],
+    "enabled": true,
+    "samples": [
+      0.541,
+      2.703,
+      4.865,
+      7.027,
+      9.189
+    ],
+    "checked": 20,
+    "passed": 17
+  },
+  "hdr": {
+    "autoPromotion": null,
+    "inspection": "available"
+  },
+  "snapshots": {
+    "enabled": false,
+    "files": [],
+    "times": [],
+    "findingFiles": []
+  }
+}

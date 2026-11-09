@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="ar" data-resolution="portrait">
+  <!-- Reel 006 test (first ~12 s), type pass 2. Owner 2026-11-07: «التكست كله في مكان واحد… كأنه كابشنز عادي مش من ضمن التصميم».
+       Every line now LIVES in its scene and reacts to it (positions measured on bg.mp4, see NOTE.md):
+       S1 the words are the design tool's own labels (frame name over the selection box, a dimension pill on its edge),
+          «٣٤ ميجا» is a tag hanging off the iron weight; the impact jolts the labels; the crack swallows the tag.
+       S2 «عميلك» is marker-written with an arrow drawn to the man; «ويستنى» lives on a tape strip across him and stretches;
+          «ويطلع» whips out with his phone.
+       S3 «لا تدور على صور أقل» arrives as a push notification on his phone (tracked to the phone), struck through in marker;
+          «دور على أحد يعرف» is typed into the phone's search bar; «يخفف» lands above the phone like the feather.
+       build_test.py fills __D__ and WORDS. Previous column version: test-v2-column.tpl.bak -->
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1080, height=1920">
+    <title>Gallery continuity test</title>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      @font-face { font-family: "ZainL"; src: url("assets/fonts/zain-mob-long.ttf") format("truetype"); }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1080px; height: 1920px; overflow: hidden; background: #F0F1F2; }
+      #main { position: relative; width: 100%; height: 100%; overflow: hidden; font-family: "ZainL", sans-serif; color: #121416; }
+      #bgWrap { position: absolute; inset: 0; }
+      #bgWrap video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+      #stage { position: absolute; inset: 0; }
+      .el { position: absolute; direction: rtl; will-change: transform; }
+      .ln { display: flex; flex-direction: row; justify-content: flex-start; align-items: baseline; white-space: nowrap; }
+      .tk { position: relative; display: inline-block; margin: 0 0.06em; }
+      .m { display: inline-block; overflow: hidden; padding: 0.10em 0.14em 0.26em; margin: -0.10em -0.14em -0.26em; vertical-align: bottom; }
+      .w { display: inline-block; line-height: 1.12; }
+      .box { position: absolute; left: -0.14em; right: -0.14em; top: 0.14em; bottom: 0.04em; background: #00DB33; transform: scaleX(0); transform-origin: right center; z-index: -1; }
+      .scrap { background: #F0F1F2; box-shadow: 2px 3px 8px rgba(18,20,22,0.28), 6px 10px 26px rgba(18,20,22,0.16);
+               clip-path: polygon(0 5%, 8% 0, 22% 4%, 38% 0, 55% 4%, 72% 0, 88% 4%, 100% 0, 98% 50%, 100% 96%, 84% 100%, 64% 96%, 44% 100%, 24% 96%, 6% 100%, 0 95%, 2% 50%); }
+      .tape { position: absolute; width: 150px; height: 44px; background: rgba(226,222,206,0.85); box-shadow: 0 1px 3px rgba(18,20,22,0.15); }
+      .chip { background: #00DB33; border-radius: 10px; padding: 6px 22px 14px; }
+      svg.mk { position: absolute; overflow: visible; }
+      svg.mk path { fill: none; stroke: #00DB33; stroke-width: 12; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1; stroke-dashoffset: 1; }
+      #ph { position: absolute; left: 0; top: 0; width: 880px; height: 1540px; transform-origin: 0 0; opacity: 0; }
+      .notif { position: absolute; left: 40px; top: 96px; width: 800px; height: 112px; border-radius: 30px; background: rgba(250,250,248,0.97);
+               box-shadow: 0 6px 22px rgba(18,20,22,0.28); display: flex; align-items: center; padding: 0 26px; direction: rtl; gap: 18px; }
+      .appic { width: 64px; height: 64px; border-radius: 16px; background: #00DB33; flex: none; }
+      .search { position: absolute; left: 50px; top: 100px; width: 780px; height: 96px; border-radius: 48px; background: #ffffff; border: 4px solid #121416;
+                display: flex; align-items: center; padding: 0 30px; direction: rtl; gap: 14px; opacity: 0; }
+      .caret { width: 6px; height: 54px; background: #00DB33; opacity: 0; }
+      .grain { position: absolute; inset: 0; width: 1080px; height: 1920px; mix-blend-mode: soft-light; opacity: 0; z-index: 30; }
+    </style>
+  </head>
+  <body>
+    <div id="main" data-composition-id="main" data-start="0" data-duration="__D__" data-width="1080" data-height="1920">
+      <div id="bgWrap"><video id="bg" src="assets/video/bg.mp4" data-start="0" data-duration="__D__" data-media-start="0" data-track-index="0" muted playsinline></video></div>
+      <div id="stage" class="clip" data-start="0" data-duration="__D__" data-track-index="1">
+        <div id="ph">
+          <div class="notif" id="notif"><div class="appic"></div><div id="notifTxt" style="position:relative;flex:1;height:100%"></div></div>
+          <div class="search" id="search"><svg width="46" height="46" viewBox="0 0 50 50" style="flex:none"><circle cx="21" cy="21" r="14" fill="none" stroke="#121416" stroke-width="6"/><path d="M31 31 L44 44" stroke="#121416" stroke-width="7" stroke-linecap="round"/></svg><div id="searchTxt" style="position:relative;flex:1;height:100%"></div><div class="caret" id="caret"></div></div>
+        </div>
+        <img class="grain" src="assets/img/grain0.png" alt=""><img class="grain" src="assets/img/grain1.png" alt=""><img class="grain" src="assets/img/grain2.png" alt="">
+        <img class="grain" src="assets/img/grain3.png" alt=""><img class="grain" src="assets/img/grain4.png" alt=""><img class="grain" src="assets/img/grain5.png" alt="">
+      </div>
+      <audio id="mix" src="assets/audio/test-mix.mp3" data-start="0" data-duration="__D__" data-track-index="2" data-volume="1"></audio>
+    </div>
+    <script>
+      // Type pass 3 (owner 2026-11-07: «مبتستخدمش اي حاجه من اللي اتعلمتها» + words flashed: shown plain, hidden, then animated).
+      // Flash fix: every word is put in its hidden pre-entrance state at BUILD time (clip / mask / opacity), and no TL.set ever
+      // shows a word before its entrance tween runs.
+      // Craft (rules/text-motion.md), one move per carrier:
+      //   frame label    = paper wipes in on frame 1, two-tone ink (grey -> ink), kashida tail reveal on «صور», selection box with handles, block cursor
+      //   dimension pill = Arabic typewriter (ONE growing string, joins intact) + «كبيرة» overshoot as two stacked tweens
+      //   weight tag     = object carries text (drop + rotation settle), «٣٤» smear slam on the impact, «ميجا» highlight wipe after it lands
+      //   «عميلك»        = zoom-out reveal (fills the frame, pulls back in 0.28 s); «يفتحه من جواله» overlapping masked rise, grey -> ink
+      //   «ويستنى»       = kashida stretch: the second one grows out of the first and keeps stretching until «ويطلع»
+      //   «ويطلع»        = smear slam in, anticipation + back.in whip out with the phone
+      //   notification   = spring arrival (two stacked tweens) + two-tone ink with the voice + marker strike
+      //   search bar     = typewriter at the voice's pace + blinking caret
+      //   «يخفف»         = carried down like the feather (sine sway, rotation swings) + blur-in focus pull + highlight wipe
+      const D = __D__;
+      const WORDS = /*WORDS*/[];
+      const W = (i) => WORDS[i][1];
+      const F = 1 / 30;
+      window.__timelines = window.__timelines || {};
+      const TL = gsap.timeline({ paused: true });
+      const stage = document.getElementById("stage");
+      const ph = document.getElementById("ph");
+      function grp(parent, x, y, tokens, opt = {}) {
+        const e = document.createElement("div"); e.className = "el " + (opt.cls || ""); Object.assign(e.style, { left: x + "px", top: y + "px" }, opt.style || {});
+        if (opt.w) e.style.width = opt.w + "px";
+        const L = document.createElement("div"); L.className = "ln"; e.appendChild(L);
+        const toks = tokens.map(([text, o]) => {
+          const tk = document.createElement("span"); tk.className = "tk"; tk.style.fontSize = (o.s || 80) + "px"; if (o.col) tk.style.color = o.col;
+          if (o.hl !== undefined) { const bx = document.createElement("span"); bx.className = "box"; tk.appendChild(bx); }
+          const m = document.createElement("span"); m.className = "m"; const w = document.createElement("span"); w.className = "w"; w.textContent = text;
+          m.appendChild(w); tk.appendChild(m); L.appendChild(tk); return { tk, w, m, o, text };
+        });
+        (parent || stage).appendChild(e);
+        gsap.set(e, { rotation: opt.r || 0, transformOrigin: opt.origin || "50% 50%" });
+        return { e, toks };
+      }
+      const V = (i) => W(i) - 0.03; // a word lands on its own spoken frame, never before
+      // ── entrance library: each sets its hidden start state at build time ──
+      function rise(t, a, d = 0.36) { gsap.set(t.w, { yPercent: 115 }); TL.to(t.w, { yPercent: 0, duration: d, ease: "expo.out" }, a); }
+      function kash(t, a, d = 0.75) { gsap.set(t.w, { clipPath: "inset(-20% 0% -30% 100%)" }); TL.to(t.w, { clipPath: "inset(-20% 0% -30% 0%)", duration: d, ease: "expo.inOut" }, a); }
+      function inkIn(t, a) { gsap.set(t.tk, { color: "#a3a5a7" }); gsap.set(t.w, { yPercent: 115 }); TL.to(t.w, { yPercent: 0, duration: 0.3, ease: "expo.out" }, a); TL.to(t.tk, { color: "#121416", duration: 0.25, ease: "sine.out" }, a + 0.3); }
+      function hl(t, a) { TL.fromTo(t.tk.querySelector(".box"), { scaleX: 0 }, { scaleX: 1, duration: 4 * F, ease: "expo.out", immediateRender: false }, a); }
+      function slam(t, a, dir = 1) {
+        gsap.set(t.tk, { opacity: 0 });
+        TL.fromTo(t.tk, { x: 240 * dir, scaleX: 1.4, skewX: -10 * dir, filter: "blur(9px)", opacity: 1 }, { x: -8 * dir, scaleX: 1, skewX: 0, filter: "blur(0px)", opacity: 1, duration: 3 * F, ease: "power3.out", immediateRender: false }, a);
+        TL.to(t.tk, { x: 0, duration: 0.3, ease: "sine.inOut" }, a + 3 * F);
+      }
+      // overshoot = two stacked tweens: +k past rest, then a 50/50 settle starting 2 f before the first ends
+      function over(el, a, k = 0.07, d = 0.22) { TL.to(el, { scale: 1 + k, duration: d, ease: "power2.out" }, a); TL.to(el, { scale: 1, duration: 0.3, ease: "sine.inOut" }, a + d - 2 * F); }
+      // Arabic typewriter: ONE string grows, so the joins re-form naturally; finishes by tEnd
+      function typeOn(el, str, t0, tEnd) {
+        el.textContent = ""; const ch = [...str]; const step = Math.min(1 / 14, (tEnd - t0) / ch.length);
+        for (let k = 1; k <= ch.length; k++) TL.set(el, { textContent: ch.slice(0, k).join("") }, t0 + (k - 1) * step);
+      }
+      function mark(parent, x, y, w, h, d, a, dur = 0.5) {
+        const s = document.createElementNS("http://www.w3.org/2000/svg", "svg"); s.setAttribute("class", "mk"); s.setAttribute("viewBox", `0 0 ${w} ${h}`);
+        Object.assign(s.style, { left: x + "px", top: y + "px", width: w + "px", height: h + "px" });
+        const p = document.createElementNS("http://www.w3.org/2000/svg", "path"); p.setAttribute("d", d); p.setAttribute("pathLength", "1"); s.appendChild(p);
+        (parent || stage).appendChild(s);
+        TL.fromTo(p, { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: dur, ease: "power2.inOut", immediateRender: false }, a);
+        return s;
+      }
+      // selection box with handles around an element (design-tool language)
+      function selBox(el, a, aOff) {
+        const s = document.createElement("div"); Object.assign(s.style, { position: "absolute", left: "-14px", right: "-14px", top: "-8px", bottom: "-4px", border: "4px dashed #121416", opacity: 0, pointerEvents: "none" });
+        [["-13px", "-13px", "auto", "auto"], ["auto", "-13px", "-13px", "auto"], ["-13px", "auto", "auto", "-13px"], ["auto", "auto", "-13px", "-13px"]].forEach(([l, tp, r, b]) => { const h = document.createElement("i"); Object.assign(h.style, { position: "absolute", width: "20px", height: "20px", background: "#00DB33", border: "4px solid #121416", left: l, top: tp, right: r, bottom: b }); s.appendChild(h); });
+        el.appendChild(s);
+        TL.fromTo(s, { opacity: 0, scale: 0.9 }, { opacity: 1, scale: 1, duration: 0.3, ease: "expo.out", immediateRender: false }, a);
+        TL.to(s, { opacity: 0, duration: 0.2, ease: "power2.in" }, aOff);
+      }
+      function out(els, a, to, d = 0.25) { els.forEach((e) => TL.to(e, Object.assign({ opacity: 0, duration: d, ease: "power2.in" }, to), a)); }
+
+      async function build() {
+        await document.fonts.ready; await document.fonts.load("80px ZainL", "معرض");
+        TL.to({}, { duration: D }, 0);
+        const IMPACT = 2.35;
+
+        // ═══ S1: design-tool labels ═══
+        const lab = grp(null, 0, 0, [["معرض", { s: 92 }], ["صور", { s: 140 }]], { cls: "scrap", origin: "100% 100%", style: { padding: "0 34px 18px" } });
+        lab.e.style.left = "auto"; lab.e.style.right = "120px"; lab.e.style.top = "250px";
+        gsap.set(lab.e, { clipPath: "inset(0% 0% 0% 100%)" });
+        TL.to(lab.e, { clipPath: "inset(0% 0% 0% 0%)", duration: 0.3, ease: "expo.out" }, 0);
+        inkIn(lab.toks[0], 0.02); kash(lab.toks[1], V(1));
+        selBox(lab.e, V(1) + 0.45, V(5) + 0.1);
+        const cur = document.createElement("div"); Object.assign(cur.style, { position: "absolute", left: "8px", top: "34px", width: "12px", height: "120px", background: "#00DB33", opacity: 0 }); lab.e.appendChild(cur);
+        for (let t = 0.1; t < V(2) - 0.2; t += 0.4) { TL.set(cur, { opacity: 1 }, t); TL.set(cur, { opacity: 0 }, t + 0.2); }
+        // dimension pill: typed like a readout; «كبيرة» punches with a stacked overshoot
+        const pill = document.createElement("div"); pill.className = "el chip"; Object.assign(pill.style, { right: "120px", top: "418px", display: "flex", alignItems: "baseline", gap: "12px" }); stage.appendChild(pill);
+        const pA = document.createElement("span"); pA.style.fontSize = "50px"; const pB = document.createElement("span"); pB.style.fontSize = "74px"; pB.style.display = "inline-block";
+        pill.appendChild(pA); pill.appendChild(pB);
+        gsap.set(pill, { opacity: 0, scaleX: 0.2, transformOrigin: "100% 50%" });
+        TL.to(pill, { opacity: 1, scaleX: 1, duration: 0.3, ease: "expo.out" }, V(2) - 0.1);
+        typeOn(pA, "في موقع شركة", V(2), V(5) - 0.02); typeOn(pB, "كبيرة،", V(5), V(5) + 0.35); over(pB, V(5) + 0.35, 0.09);
+        // tag: carried by the weight; «٣٤» slams on the impact; «ميجا» gets the wipe after it lands
+        const tag = document.createElement("div"); tag.className = "el scrap"; Object.assign(tag.style, { left: "250px", top: "1170px", width: "320px", height: "240px" }); stage.appendChild(tag);
+        const tg1 = grp(tag, 18, 16, [["حجمه", { s: 58 }]], { w: 290 });
+        const tg2 = grp(tag, 4, 86, [["٣٤", { s: 120 }], ["ميجا", { s: 86, hl: 1 }]], { w: 310 });
+        gsap.set(tag, { opacity: 0, y: -420, rotation: 10, transformOrigin: "80% 0%" });
+        TL.set(tag, { opacity: 1 }, IMPACT - 0.3);
+        TL.to(tag, { y: 0, rotation: -9, duration: 0.3, ease: "power3.in" }, IMPACT - 0.3);
+        TL.to(tag, { rotation: -4, duration: 0.18, ease: "power2.out" }, IMPACT); TL.to(tag, { rotation: -6, duration: 0.4, ease: "sine.inOut" }, IMPACT + 0.16);
+        rise(tg1.toks[0], V(6)); slam(tg2.toks[0], Math.max(V(7), IMPACT)); rise(tg2.toks[1], V(9)); hl(tg2.toks[1], V(9) + 0.3);
+        // the impact jolts the labels
+        [lab.e, pill].forEach((e, k) => { TL.to(e, { y: 16 + k * 6, rotation: k ? 2.5 : -2, duration: 0.08, ease: "power2.out" }, IMPACT); TL.to(e, { y: 0, rotation: k ? 1 : -1, duration: 0.5, ease: "back.out(1.4)" }, IMPACT + 0.08); });
+        // the ink burst eats S1: labels fly up, the tag is pulled into the crack (exits faster than entrances)
+        out([lab.e, pill], W(10) - 0.28, { y: -260, filter: "blur(6px)", ease: "back.in(1.3)" });
+        out([tag], W(10) - 0.28, { y: 320, rotation: 30 });
+
+        // ═══ S2 ═══
+        const cl = grp(null, 420, 262, [["عميلك", { s: 132 }]], { w: 540, origin: "75% 50%" });
+        gsap.set(cl.e, { opacity: 0 });
+        TL.fromTo(cl.e, { scale: 3.4, x: -260, y: 520, opacity: 1 }, { scale: 1, x: 0, y: 0, opacity: 1, duration: 0.28, ease: "expo.out", immediateRender: false }, V(10));
+        const op = grp(null, 360, 424, [["يفتحه", { s: 62 }], ["من", { s: 62 }], ["جواله،", { s: 62, hl: 1 }]], { w: 600 });
+        [11, 12, 13].forEach((wi, k) => inkIn(op.toks[k], V(wi)));
+        hl(op.toks[2], V(13) + 0.35);
+        const ar = mark(null, 470, 520, 300, 150, "M290 8 C230 40 170 90 80 122 M80 122 L122 96 M80 122 L116 142", 4.95, 0.3);
+        // «ويستنى» strip: the second «ويستنى» grows out of the first and keeps stretching
+        const strip = document.createElement("div"); strip.className = "el scrap"; Object.assign(strip.style, { left: "60px", top: "1240px", width: "900px", height: "150px" }); stage.appendChild(strip);
+        gsap.set(strip, { rotation: -3, scaleX: 0, transformOrigin: "100% 50%" });
+        TL.to(strip, { scaleX: 1, duration: 0.35, ease: "expo.out" }, V(14) - 0.15);
+        const w1 = grp(strip, 30, 4, [["ويستنى،", { s: 104 }]], { w: 840 });
+        rise(w1.toks[0], V(14));
+        const w2 = grp(strip, 30, 4, [["ويستنـــــــــــى،", { s: 104 }]], { w: 840 });
+        const shortW = w1.toks[0].tk.getBoundingClientRect().width, longW = w2.toks[0].tk.getBoundingClientRect().width;
+        const startPct = Math.max(0, 100 - (shortW / longW) * 100);
+        gsap.set(w2.toks[0].w, { clipPath: "inset(-20% 0% -30% 100%)" });
+        TL.set(w2.toks[0].w, { clipPath: `inset(-20% 0% -30% ${startPct.toFixed(1)}%)` }, V(15));
+        TL.set(w1.e, { opacity: 0 }, V(15));
+        TL.to(w2.toks[0].w, { clipPath: "inset(-20% 0% -30% 0%)", duration: W(16) - V(15), ease: "sine.inOut" }, V(15));
+        // «ويطلع»: smear slam in, whip out with the phone
+        const go = grp(null, 90, 640, [["ويطلع.", { s: 150, hl: 1 }]], { w: 470 });
+        slam(go.toks[0], V(16), 1); hl(go.toks[0], V(16) + 0.2);
+        out([cl.e, op.e, ar], 6.7, { y: -220 });
+        out([strip], 6.9, { y: 260, rotation: -8 });
+        TL.to(go.e, { x: 30, duration: 0.12, ease: "sine.out" }, 7.5);
+        TL.to(go.e, { x: -720, skewX: 12, filter: "blur(8px)", duration: 0.28, ease: "back.in(1.4)" }, 7.62);
+
+        // ═══ S3: on his phone (bezel box tracked every 0.1 s on bg.mp4) ═══
+        const K = [[7.95, 230, 690, 470], [8.0, 210, 590, 552], [8.2, 172, 420, 712], [8.4, 158, 360, 768], [8.6, 142, 330, 804], [8.8, 130, 308, 830], [9.0, 122, 296, 848], [9.2, 118, 340, 854], [9.4, 116, 374, 858], [9.6, 114, 390, 864], [10.0, 110, 386, 872], [10.5, 106, 382, 880], [D, 106, 380, 880]];
+        gsap.set(ph, { x: K[0][1], y: K[0][2], scale: K[0][3] / 880 });
+        TL.set(ph, { opacity: 1 }, K[0][0]);
+        for (let i = 1; i < K.length; i++) TL.to(ph, { x: K[i][1], y: K[i][2], scale: K[i][3] / 880, duration: K[i][0] - K[i - 1][0], ease: "none" }, K[i - 1][0]);
+        const nt = grp(document.getElementById("notifTxt"), 0, 12, [["لا", { s: 64 }], ["تدور", { s: 46 }], ["على", { s: 46 }], ["صور", { s: 58 }], ["أقل.", { s: 58 }]]);
+        nt.e.style.left = "auto"; nt.e.style.right = "0px";
+        nt.toks.forEach((t, k) => { gsap.set(t.tk, { color: "#b4b6b8" }); TL.to(t.tk, { color: "#121416", duration: 0.15 }, V(17 + k)); });
+        const notif = document.getElementById("notif");
+        gsap.set(notif, { y: -170, opacity: 0 });
+        TL.to(notif, { y: 14, opacity: 1, duration: 0.3, ease: "power3.out" }, 8.05); TL.to(notif, { y: 0, duration: 0.3, ease: "sine.inOut" }, 8.29);
+        mark(notif, 120, 36, 330, 50, "M320 30 C240 18 150 34 70 24 C40 20 20 28 6 22", V(21) + 0.3, 0.18);
+        TL.to(notif, { y: -170, opacity: 0, duration: 0.22, ease: "power2.in" }, W(22) - 0.3);
+        const search = document.getElementById("search");
+        gsap.set(search, { opacity: 0, scaleX: 0.6 });
+        TL.to(search, { opacity: 1, scaleX: 1, duration: 0.3, ease: "expo.out" }, W(22) - 0.15);
+        const sT = document.createElement("span"); sT.style.fontSize = "56px"; sT.style.whiteSpace = "nowrap"; document.getElementById("searchTxt").appendChild(sT);
+        typeOn(sT, "دور على أحد يعرف", V(22), W(25) + 0.3);
+        const caret = document.getElementById("caret");
+        for (let t = W(22) - 0.1; t < D - 0.3; t += 0.5) { TL.set(caret, { opacity: 1 }, t); TL.set(caret, { opacity: 0 }, t + 0.25); }
+        const lite = grp(null, 230, 236, [["يخفف", { s: 130, hl: 1 }], ["اللي عندك.", { s: 60 }]], { w: 730, origin: "70% 0%" });
+        gsap.set(lite.e, { opacity: 0, y: -220, x: 60, rotation: -9, filter: "blur(12px)" });
+        TL.set(lite.e, { opacity: 1 }, V(26) - 0.15);
+        TL.to(lite.e, { y: 0, duration: 0.85, ease: "sine.out" }, V(26) - 0.15);
+        TL.to(lite.e, { x: -30, rotation: 4, duration: 0.42, ease: "sine.inOut" }, V(26) - 0.15);
+        TL.to(lite.e, { x: 0, rotation: -2, duration: 0.45, ease: "sine.inOut" }, V(26) + 0.27);
+        TL.to(lite.e, { filter: "blur(0px)", duration: 0.5, ease: "expo.out" }, V(26) - 0.15);
+        hl(lite.toks[0], V(26) + 0.55); rise(lite.toks[1], V(27));
+
+        const grains = Array.from(document.querySelectorAll(".grain"));
+        for (let f = 0; f < D * 30; f += 2) grains.forEach((g, i) => TL.set(g, { opacity: i === (f / 2) % 6 ? 0.55 : 0 }, f * F));
+        window.__timelines["main"] = TL; TL.seek(0);
+      }
+      window.__hf = window.__hf || {}; window.__hf.buildReady = window.__hf.buildReady || {};
+      window.__hf.buildReady["main"] = build();
+    </script>
+  </body>
+</html>

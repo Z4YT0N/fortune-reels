@@ -1,0 +1,13 @@
+لينكدإن، ٨ نوفمبر، ٩ الصبح (ستاتيك إنجليزي): معرض ٣٤ ميجا صار ١٤٠ كيلو. الفكرة: دمبل حديد (٣٤ MB) جنب ريشة (١٤٠ KB). العميل مش مذكور.
+
+الكابشن المقترح:
+A large company's photo gallery weighed 34 MB.
+It now loads as 140 KB.
+
+Same photos. Same quality. Only the weight changed.
+
+On mobile, that weight is the difference between a visitor who sees the work and one who leaves before it appears.
+
+Comment "review" and we'll send a first-impression review of your site.
+
+#WebPerformance #WebDevelopment #FortuneCode

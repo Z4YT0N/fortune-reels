@@ -4,7 +4,9 @@ contact sheet (one frame a second), first and last frame, report.json. Quote the
 A FAIL is fixed before delivery, never argued. Checks (rules/quality-gates.md):
   format 1080x1920 ~30fps, length 30-60 s, audio present, loudness ~-14 LUFS,
   no black frames, no frozen picture longer than 2.5 s, no dead air at the end,
-  last frame close to the first frame (the loop)."""
+  last frame close to the first frame (the loop),
+  SAFE ZONE (safezone_check.py, HARD FAIL), SMOOTH MOTION (motion_check.py, HARD FAIL), TEXT OVERLAP/CLIP (overlap_check.py, HARD FAIL)
+  and no regular SFX tick (tick_check.py)."""
 import json, os, re, subprocess, sys
 from common import load_cfg, reel_dir
 
@@ -54,6 +56,24 @@ sh(['ffmpeg', '-v', 'error', '-y', '-sseof', '-0.05', '-i', film, '-frames:v', '
 ss = sh(['ffmpeg', '-hide_banner', '-i', first, '-i', last, '-lavfi', 'ssim', '-f', 'null', '-']).stderr
 m = re.search(r'All:([\d.]+)', ss); s = float(m.group(1)) if m else 0
 verdict('PASS' if s >= 0.85 else 'WARN', 'loop', f'first vs last frame SSIM {s:.3f} (>= 0.85 reads as a loop)')
+
+# HARD gate: safe zone (every text glyph and [data-key] visual inside x 60-960, y 230-1440), plus the overlay sheet
+szr = subprocess.run([sys.executable, os.path.join(os.path.dirname(__file__), 'safezone_check.py'), os.path.basename(rd), '--sheet', film],
+                     capture_output=True, text=True, encoding='utf-8', errors='replace')
+szl = [l for l in szr.stdout.splitlines() if l.startswith(('PASS safezone', 'FAIL safezone'))]
+verdict('PASS' if szr.returncode == 0 else 'FAIL', 'safezone', szl[-1].split(':', 1)[1].strip() if szl else (szr.stdout + szr.stderr)[-300:])
+# text never over photos/phones/faces/cut-outs, never left clipped (owner 2026-11-06)
+ocr = subprocess.run([sys.executable, os.path.join(os.path.dirname(__file__), 'overlap_check.py'), os.path.basename(rd)], capture_output=True, text=True)
+ocl = [l for l in ocr.stdout.splitlines() if l.startswith(('PASS overlap', 'FAIL overlap'))]
+verdict('PASS' if ocr.returncode == 0 else 'FAIL', 'overlap', ocl[-1].split(':', 1)[1].strip() if ocl else (ocr.stdout + ocr.stderr)[-300:])
+# smooth motion: at most 2 motion events at once, pieces rest >= 0.6 s between moves (owner 2026-11-06)
+mcr = subprocess.run([sys.executable, os.path.join(os.path.dirname(__file__), 'motion_check.py'), os.path.basename(rd)], capture_output=True, text=True)
+mcl = [l for l in mcr.stdout.splitlines() if l.startswith(('PASS motion', 'FAIL motion'))]
+verdict('PASS' if mcr.returncode == 0 else 'FAIL', 'motion', mcl[-1].split(':', 1)[1].strip() if mcl else (mcr.stdout + mcr.stderr)[-300:])
+# regularity: no SFX tick at a fixed interval (owner 2026-11-06); compare with the voice-only baseline
+tk = subprocess.run([sys.executable, os.path.join(os.path.dirname(__file__), 'tick_check.py'), film, 'film'], capture_output=True, text=True).stdout
+mt = re.search(r'peak ([\d.]+)', tk); pk = float(mt.group(1)) if mt else 1
+verdict('PASS' if pk < 0.12 else 'FAIL', 'tick', f'strongest periodic onset peak {pk:.3f} (fail >= 0.12)')
 
 cols = 8; rows = -(-int(dur) // cols)
 sh(['ffmpeg', '-v', 'error', '-y', '-i', film, '-vf', f'fps=1,scale=216:384,tile={cols}x{rows}:padding=4:color=white', '-frames:v', '1', os.path.join(out, 'sheet.jpg')])

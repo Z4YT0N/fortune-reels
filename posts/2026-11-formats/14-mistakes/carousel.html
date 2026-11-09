@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8">
+<link rel="stylesheet" href="common.css">
+<style>
+@font-face { font-family: PlexUI; src: url(assets/IBMPlexSansArabic-Medium.ttf); }
+@font-face { font-family: PlexUIB; src: url(assets/IBMPlexSansArabic-Bold.ttf); }
+html,body { width:5400px; height:1350px; }
+:root { --red:#FF4D4D; }
+.r { color:var(--red); }
+.dev { position:absolute; -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 30%, #000 72%, transparent 88%), linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent); -webkit-mask-composite: source-in; }
+/* fake site */
+.site { position:absolute; left:0; top:0; width:1280px; height:800px; overflow:hidden; background:#fff; direction:rtl; transform-origin:0 0; font-family:PlexUI, sans-serif; color:#222; }
+.site .nav { position:absolute; left:0; right:0; top:0; height:78px; display:flex; align-items:center; padding:0 34px; gap:18px; background:#fff; border-bottom:1px solid #e6e6e6; }
+.site .lg { display:flex; align-items:center; gap:10px; }
+.site .lg b { width:44px; height:44px; border-radius:10px; background:#3b5b8c; display:block; }
+.site .lg span { font-family:PlexUIB; font-size:22px; filter:blur(6px); }
+.site .links { display:flex; gap:16px; font-size:15px; color:#666; margin-right:auto; }
+.site .hero { position:absolute; left:0; right:0; top:78px; height:560px; background-size:cover; background-position:50% 45%; }
+.site .h1 { position:absolute; right:80px; top:200px; font-family:PlexUIB; font-size:52px; color:#fff; }
+.site .h2 { position:absolute; right:80px; top:280px; font-size:21px; color:#f2f2f2; }
+.site .more { position:absolute; right:80px; top:330px; font-size:15px; color:#eee; text-decoration:underline; }
+.site .dots { position:absolute; left:50%; bottom:22px; display:flex; gap:8px; transform:translateX(-50%); }
+.site .dots i { width:10px; height:10px; border-radius:50%; background:rgba(255,255,255,.6); display:block; }
+.site .cards { position:absolute; left:34px; right:34px; top:666px; display:flex; gap:20px; }
+.site .cards div { flex:1; height:120px; border-radius:10px; background:#f1f2f4; }
+.site .btn { font-family:PlexUIB; font-size:18px; border-radius:12px; padding:12px 26px; display:inline-block; }
+.mark { position:absolute; width:64px; height:64px; margin:-32px 0 0 -32px; border-radius:50%; background:var(--red); color:#fff; font-family:Plex; font-size:40px; font-weight:700; line-height:1; display:flex; align-items:center; justify-content:center; box-shadow:0 0 0 6px rgba(255,77,77,.25), 0 10px 24px rgba(0,0,0,.4); z-index:20; }
+.mark.ok { background:var(--g); color:var(--bg); box-shadow:0 0 0 6px rgba(0,219,51,.25), 0 0 30px rgba(0,219,51,.5); }
+.mark.dim { opacity:.28; }
+.ring { position:absolute; border:4px solid var(--red); border-radius:14px; z-index:19; }
+.browser { position:absolute; border-radius:18px; overflow:hidden; border:1.5px solid rgba(255,255,255,.18); box-shadow:0 30px 80px rgba(0,0,0,.7); background:#17191C; }
+.browser .bar { height:36px; display:flex; align-items:center; gap:8px; padding:0 16px; direction:ltr; }
+.browser .bar i { width:11px; height:11px; border-radius:50%; background:#3A3D41; display:block; }
+.item { position:absolute; white-space:nowrap; }
+.item .p { font-size:44px; font-weight:700; line-height:1.15; display:flex; align-items:center; gap:18px; }
+.item .f { font-size:40px; line-height:1.15; color:var(--g); margin-top:10px; margin-right:82px; }
+.num { flex:none; width:64px; height:64px; border-radius:50%; background:var(--red); color:#fff; display:flex; align-items:center; justify-content:center; font-size:40px; font-weight:700; line-height:1; }
+.pill { display:inline-block; background:var(--g); color:var(--bg); border-radius:22px; padding:0 52px; box-shadow:0 0 60px rgba(0,219,51,.45); }
+.src { position:absolute; font-size:20px; font-weight:400; color:rgba(255,255,255,.45); white-space:nowrap; }
+</style></head>
+<body>
+<div id="stage"></div>
+<svg class="marks" width="5400" height="1350" style="z-index:40"><defs><filter id="rough"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="4"/><feDisplacementMap in="SourceGraphic" scale="3"/></filter></defs><g id="mk"></g></svg>
+<script src="footer.js"></script>
+<script>
+const W = 1080, S = (i, x) => (i - 1) * W + x;
+const stage = document.getElementById('stage'), M = document.getElementById('mk');
+function el(html, z = 10) { const d = document.createElement('div'); d.innerHTML = html.trim(); const n = d.firstChild; if (!n.style.zIndex) n.style.zIndex = z; stage.appendChild(n); return n; }
+const P = (d, cls = 'mk', st = '') => M.insertAdjacentHTML('beforeend', `<path class="${cls}" d="${d}" style="${st}"/>`);
+function ct(i, top, html, size, st = '', cls = '') { return el(`<div class="t ${cls}" style="left:${S(i, 540)}px; top:${top}px; font-size:${size}px; ${st}">${html}</div>`, 30); }
+function glow(cx, cy, r, a = 1, col) { const g = el(`<div class="glow" style="left:${cx - r}px; top:${cy - r}px; width:${2 * r}px; height:${2 * r}px; opacity:${a}"></div>`, 1); if (col) g.style.background = col; }
+const AR = n => String(n).replace(/\d/g, d => '٠١٢٣٤٥٦٧٨٩'[d]);
+const LAP_Q = [[178,473],[718,473],[723,812],[172,812]];
+
+// ---- the fake sites. marks: [n, x, y] in site coords ----
+const BAD_MARKS = [[1, 520, 39], [2, 700, 228], [3, 640, 292], [4, 560, 342]];
+function badSite(show = [1,2,3,4], ok = false) {
+  const d = document.createElement('div'); d.className = 'site';
+  const links = ['الرئيسية','من نحن','خدماتنا','مشاريعنا','الأخبار','الوظائف','الشهادات','المعرض','الأسئلة','الفروع','اتصل بنا'];
+  d.innerHTML = `<div class="nav"><div class="lg"><b></b><span>اسم الشركة</span></div><div class="links">${links.map(l => `<span>${l}</span>`).join('')}</div></div>
+    <div class="hero" style="background-image:url(gen/p5_photo_a.png)"></div>
+    <div class="h1">مرحبًا بكم في موقعنا الرسمي</div>
+    <div class="h2">نحن شركة رائدة نسعى دائمًا للتميز والجودة في جميع المجالات وتقديم أفضل الحلول</div>
+    <div class="more">اقرأ المزيد</div>
+    <div class="dots"><i></i><i></i><i></i><i></i><i></i></div>
+    <div class="cards"><div></div><div></div><div></div></div>`;
+  d.dataset.marks = JSON.stringify([['.links',1],['.h1',2],['.h2',3],['.more',4]].map(([q,n]) => [q, n, show.includes(n) ? '' : 'dim']));
+  return d;
+}
+const GOOD_MARKS = [[1, 620, 39], [2, 470, 238], [3, 330, 318], [4, 330, 410]];
+function goodSite() {
+  const d = document.createElement('div'); d.className = 'site';
+  d.innerHTML = `<div class="nav"><div class="lg"><b></b><span>اسم الشركة</span></div>
+      <div class="links" style="font-size:17px; color:#333; gap:30px; margin-right:60px"><span>خدماتنا</span><span>مشاريعنا</span><span>من نحن</span><span>الأسئلة</span></div>
+      <span class="btn cta1" style="margin-right:auto; background:#1fa855; color:#fff; padding:10px 22px">تواصل واتساب</span></div>
+    <div class="hero" style="background-image:linear-gradient(270deg, rgba(10,14,20,.88) 0, rgba(10,14,20,.75) 45%, rgba(10,14,20,.15) 80%), url(gen/p5_photo_a.png)"></div>
+    <div class="h1" style="top:190px; font-size:54px; line-height:1.3">مقاولات تجارية في الرياض<br>بموعد تسليم مكتوب</div>
+    <div class="h2" style="top:350px; font-size:22px; color:#d9dde2">نصمّم وننفّذ المكاتب والمعارض، من المخطط إلى التسليم.</div>
+    <div class="btns" style="position:absolute; right:80px; top:410px; display:flex; gap:14px"><span class="btn" style="background:#1fa855; color:#fff">اطلب عرض سعر</span><span class="btn" style="border:2px solid #fff; color:#fff; padding:10px 24px">شاهد مشاريعنا</span></div>
+    <div class="cards"><div></div><div></div><div></div></div>`;
+  d.dataset.marks = JSON.stringify([['.cta1',1],['.h1',2],['.h2',3],['.btns',4]].map(([q,n]) => [q, n, 'ok']));
+  return d;
+}
+function laptop(i, site, top = -70) {
+  const left = S(i, 130), width = 820, k = width / 896;
+  el(`<img class="dev" src="gen/p1_laptop.png" style="left:${left}px; top:${top}px; width:${width}px">`, 5);
+  const Q = LAP_Q.map(([x, y]) => [left + x * k, top + y * k]);
+  site.style.transform = quadTransform(1280, 800, Q); site.style.zIndex = 6; stage.appendChild(site);
+  const sh = el(`<div class="abs" style="left:0; top:0; width:1280px; height:800px; transform-origin:0 0; background:linear-gradient(115deg, rgba(255,255,255,.10), rgba(255,255,255,0) 40%)"></div>`, 7);
+  sh.style.transform = quadTransform(1280, 800, Q);
+}
+function browser(i, site, top = 268, w = 900) {
+  const k = w / 1280, h = 800 * k;
+  const b = el(`<div class="browser" style="left:${S(i, (1080 - w) / 2)}px; top:${top}px; width:${w}px; height:${h + 36}px"><div class="bar"><i></i><i></i><i></i></div><div class="abs" style="left:0; top:36px; width:${w}px; height:${h}px; overflow:hidden"></div></div>`, 8);
+  site.style.transform = `scale(${k})`; b.lastChild.appendChild(site);
+  return b;
+}
+function item(i, top, n, prob, fix) {
+  el(`<div class="item" style="right:${5400 - S(i, 1000)}px; top:${top}px"><div class="p"><span class="num">${AR(n)}</span><span>${prob}</span></div><div class="f">← ${fix}</div></div>`, 30);
+}
+
+/* brand frame + logo + footer on each slide */
+for (let i = 1; i <= 5; i++) {
+  el(`<div class="frame" style="left:${S(i, 40)}px; top:40px; width:1000px; height:1140px"></div>`, 50);
+  el(`<img class="logo" src="assets/logo-en-h-primary-white.svg" style="left:${S(i, 540)}px; top:82px; transform:translateX(-50%)">`, 50);
+  foot(S(i, 66), 1208, 948);
+}
+const RED = 'radial-gradient(closest-side, rgba(255,77,77,.35), rgba(255,77,77,.10) 55%, rgba(255,77,77,0))';
+
+/* 1 — hook */
+glow(S(1, 540), 780, 520, .55, RED); glow(S(1, 540), 760, 380, .35);
+ct(1, 150, '<span class="r">٤</span> أخطاء <span class="r">تقتل</span> موقع شركتك', 92);
+ct(1, 268, 'شيّك موقعك وأنت تقرأ.', 42, '', 'mute');
+laptop(1, badSite());
+ct(1, 850, 'كل رقم <span class="r">أحمر</span> = شي يطفّش الزائر', 52);
+ct(1, 1066, 'اسحب وشوف وش الحل', 40);
+P(`M${S(1, 250)},1094 C ${S(1, 200)},1120 ${S(1, 150)},1110 ${S(1, 110)},1090`); P(`M${S(1, 140)},1068 L${S(1, 108)},1090 L${S(1, 142)},1112`);
+
+/* 2 — mistakes 1, 2 */
+glow(S(2, 540), 600, 480, .35, RED);
+ct(2, 150, 'الخطأ <span class="r">١</span> و<span class="r">٢</span>', 84);
+browser(2, badSite([1, 2]));
+item(2, 902, 1, 'قائمة فيها ١١ رابط', '٥ روابط بس، والباقي تحت');
+item(2, 1036, 2, '«مرحبًا بكم في موقعنا»', 'قول وش تسوي ولمين، بجملة وحدة');
+
+/* 3 — mistakes 3, 4 */
+glow(S(3, 540), 600, 480, .35, RED);
+ct(3, 150, 'الخطأ <span class="r">٣</span> و<span class="r">٤</span>', 84);
+browser(3, badSite([3, 4]));
+item(3, 902, 3, 'كلام فاتح فوق صورة زحمة', 'تظليل يخلّي الكلام واضح');
+item(3, 1036, 4, 'ما فيه زر تواصل واضح', 'زر واتساب وعرض سعر قدّام عينه');
+
+/* 4 — after */
+glow(S(4, 540), 760, 520, .7);
+ct(4, 150, 'نفس الشركة، <span class="g">بعد التعديل</span>', 84);
+ct(4, 262, 'الأربعة انحلّت في الصفحة الأولى.', 40, '', 'mute');
+laptop(4, goodSite());
+ct(4, 850, 'ليش يهم؟ الزائر يحكم على موقعك', 46);
+ct(4, 920, 'في حوالي <span class="g">٥٠ جزء من الثانية</span>', 64);
+el(`<div class="src" style="left:${S(4, 540)}px; transform:translateX(-50%); top:1020px">المصدر: <bdi>Lindgaard et al., Carleton University, 2006</bdi></div>`, 30);
+
+/* 5 — CTA */
+glow(S(5, 540), 640, 560, .9);
+ct(5, 230, 'ودّك نشيّك على موقعك؟', 76);
+ct(5, 340, 'اكتب بالتعليقات', 52, '', 'mute');
+ct(5, 448, '<span class="pill">انطباع</span>', 176, 'line-height:1.5');
+ct(5, 800, 'ونرسل لك مراجعة <span class="g">مجانية</span>', 60);
+ct(5, 890, 'لأول انطباع يعطيه موقعك للزائر.', 46, '', 'mute');
+ct(5, 1040, 'أو احفظ البوست وارجع له قبل ما تطلق موقعك', 34, '', 'mute');
+
+function placeMarks() {
+  for (const site of document.querySelectorAll('.site')) {
+    for (const [q, n, cls] of JSON.parse(site.dataset.marks)) {
+      const e = site.querySelector(q); let x = 0, y = 0, o = e;
+      while (o && o !== site) { x += o.offsetLeft; y += o.offsetTop; o = o.offsetParent; }
+      const w = e.offsetWidth, h = e.offsetHeight, pad = 8;
+      if (cls !== 'dim') site.insertAdjacentHTML('beforeend', `<div class="ring" style="left:${x-pad}px; top:${y-pad}px; width:${w+2*pad}px; height:${h+2*pad}px; ${cls === 'ok' ? 'border-color:#00DB33' : ''}"></div>`);
+      const mx = x - pad - 30 < 60 ? x + w + pad + 30 : x - pad - 30;
+      site.insertAdjacentHTML('beforeend', `<div class="mark ${cls}" style="left:${mx}px; top:${y + h/2}px">${AR(n)}</div>`);
+    }
+  }
+}
+document.fonts.ready.then(() => { placeMarks(); fitLines('.t', 900); fitLines('.item .p', 900); fitLines('.item .f', 800); document.body.dataset.ready = 1; });
+</script>
+</body></html>

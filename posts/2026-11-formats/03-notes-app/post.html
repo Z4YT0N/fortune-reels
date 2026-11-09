@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8">
+<link rel="stylesheet" href="common.css">
+<style>
+html,body { width:1080px; height:1350px; }
+.sheet { position:absolute; left:100px; top:138px; width:880px; height:982px; background:#000; border-radius:46px; border:2px solid rgba(255,255,255,.14); overflow:hidden; z-index:10;
+  box-shadow:0 0 0 1px rgba(0,219,51,.22), 0 40px 90px rgba(0,0,0,.75), 0 0 110px rgba(0,219,51,.2); }
+.sb { position:absolute; left:46px; right:46px; top:22px; height:40px; direction:rtl; display:flex; justify-content:space-between; align-items:center; font-family:Plex; font-weight:600; font-size:28px; color:#fff; }
+.sb .ic { display:flex; gap:12px; align-items:center; }
+.nav { position:absolute; left:40px; right:34px; top:84px; height:60px; direction:rtl; display:flex; align-items:center; gap:26px; }
+.nav .back { display:flex; align-items:center; gap:6px; color:var(--g); font-size:40px; }
+.nav svg { stroke:var(--g); fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+.nav .sp { flex:1; }
+.date { position:absolute; left:0; right:0; top:168px; text-align:center; font-size:26px; font-weight:400; color:#8e8e93; }
+.ttl { position:absolute; right:58px; top:210px; font-size:60px; line-height:1.3; font-weight:700; white-space:nowrap; }
+.list { position:absolute; right:58px; top:380px; left:58px; }
+.it { display:flex; align-items:center; gap:22px; height:84px; font-size:44px; white-space:nowrap; }
+.ck { flex:none; width:44px; height:44px; border-radius:50%; background:var(--g); display:flex; align-items:center; justify-content:center; box-shadow:0 0 18px rgba(0,219,51,.45); }
+.ck svg { width:26px; height:26px; stroke:#000; stroke-width:3.4; fill:none; stroke-linecap:round; stroke-linejoin:round; }
+.it b { font-weight:600; color:var(--g); }
+.ps { position:absolute; right:58px; top:830px; font-size:34px; color:#c7c7cc; white-space:nowrap; }
+.pill { display:inline-block; background:var(--g); color:#000; border-radius:10px; padding:0 14px 4px; line-height:1.3; font-weight:600; }
+.tb { position:absolute; left:56px; right:56px; bottom:30px; display:flex; justify-content:space-between; direction:ltr; }
+.tb svg { width:46px; height:46px; stroke:var(--g); fill:none; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
+</style></head>
+<body>
+<div class="glow" style="left:-200px; top:60px; width:1480px; height:1240px; opacity:.9"></div>
+<div class="frame" style="left:40px; top:40px; width:1000px; height:1140px"></div>
+<img class="logo" src="assets/logo-en-h-primary-white.svg" style="left:50%; top:76px; transform:translateX(-50%); height:40px">
+
+<div class="sheet">
+  <div class="sb"><span>9:41</span><span class="ic">
+    <svg width="34" height="22" viewBox="0 0 17 11"><rect x="0" y="7" width="3" height="4" rx="1" fill="#fff"/><rect x="4.6" y="5" width="3" height="6" rx="1" fill="#fff"/><rect x="9.2" y="2.5" width="3" height="8.5" rx="1" fill="#fff"/><rect x="13.8" y="0" width="3" height="11" rx="1" fill="#fff"/></svg>
+    <svg width="30" height="22" viewBox="0 0 15 11"><path d="M7.5 10.5 L9.6 8.2a3 3 0 0 0-4.2 0Z M3.6 6.5a5.5 5.5 0 0 1 7.8 0l1.4-1.5a7.6 7.6 0 0 0-10.6 0Z M.6 3.6a9.8 9.8 0 0 1 13.8 0" fill="#fff" stroke="#fff" stroke-width=".4"/></svg>
+    <svg width="50" height="24" viewBox="0 0 25 12"><rect x=".6" y=".6" width="21" height="10.8" rx="3" fill="none" stroke="#8e8e93" stroke-width="1.2"/><rect x="2.4" y="2.4" width="15" height="7.2" rx="1.6" fill="#fff"/><rect x="22.6" y="4" width="1.6" height="4" rx=".8" fill="#8e8e93"/></svg>
+  </span></div>
+  <div class="nav">
+    <div class="back"><svg width="26" height="40" viewBox="0 0 13 20"><path d="M2 2 L10 10 L2 18"/></svg>الملاحظات</div>
+    <div class="sp"></div>
+    <svg width="40" height="40" viewBox="0 0 24 24"><path d="M12 3v12M7 8l5-5 5 5M5 13v7h14v-7"/></svg>
+    <svg width="40" height="40" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="7.5" cy="12" r=".6" fill="#00DB33"/><circle cx="12" cy="12" r=".6" fill="#00DB33"/><circle cx="16.5" cy="12" r=".6" fill="#00DB33"/></svg>
+  </div>
+  <div class="date">٧ نوفمبر ٢٠٢٦ الساعة ٩:٤١ م</div>
+  <div class="ttl">أشياء لازم تسويها<br>قبل ما تطلق <span class="g">موقع شركتك</span></div>
+  <div class="list" id="list"></div>
+  <div class="tb">
+    <svg viewBox="0 0 24 24"><circle cx="5" cy="7" r="2"/><circle cx="5" cy="17" r="2"/><path d="M10 7h11M10 17h11"/></svg>
+    <svg viewBox="0 0 24 24"><path d="M20 11.5 12.2 19.3a5 5 0 0 1-7.1-7.1l8-8a3.3 3.3 0 0 1 4.7 4.7l-8 8a1.7 1.7 0 0 1-2.4-2.4l7.3-7.3"/></svg>
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8.5 16.5 12 7l3.5 9.5M9.6 13.5h4.8"/></svg>
+    <svg viewBox="0 0 24 24"><path d="M20 13v7H4V4h7"/><path d="M17.5 3.5a2.1 2.1 0 0 1 3 3L12 15l-4 1 1-4Z"/></svg>
+  </div>
+  <div class="ps">ودّك نشيّك عليه قبل الإطلاق؟ اكتب <span class="pill">انطباع</span></div>
+</div>
+
+<div class="t mute" style="top:1136px; font-size:22px; z-index:20">جوجل يقيّم موقعك بنسخة الجوال أول. المصدر: <bdi>Google Search Central</bdi></div>
+
+<script src="footer.js"></script>
+<script>
+const items = [
+  'جرّبه من <b>جوالك</b> قبل اللابتوب',
+  'تأكد إنه يفتح في أقل من <b>٣ ثواني</b>',
+  'صغّر الصور قبل ما ترفعها',
+  'حط زر <b>واتساب</b> واضح بكل صفحة',
+  'اكتب عنوان ووصف لكل صفحة',
+];
+const CK = '<span class="ck"><svg viewBox="0 0 24 24"><path d="M5 12.5 L10 17 L19 7"/></svg></span>';
+document.getElementById('list').innerHTML = items.map(t => `<div class="it">${CK}<span>${t}</span></div>`).join('');
+foot(66, 1208, 948);
+document.fonts.ready.then(() => { fitLines('.it span', 700); fitLines('.ps', 764); fitLines('.t', 900); document.body.dataset.ready = 1; });
+</script>
+</body></html>

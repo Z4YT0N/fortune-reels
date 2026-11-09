@@ -1,0 +1,17 @@
+{
+  "slug": "nov14-security-audit",
+  "title": "Nov 14: audited a site before launch, 14 issues found and fixed",
+  "created": "2026-11-07",
+  "status": "building",
+  "speed": 1.1,
+  "voice": {
+    "id": "hKxOF1e0PGHjtctJDcOl",
+    "model": "eleven_v3",
+    "text": "script.txt (plain Gulf, no tashkeel)",
+    "pick": "B2"
+  },
+  "keyword": "انطباع",
+  "sources": [
+    "BRIEF.md rule 3: security audit before launch, 14 issues found and fixed; generic categories only (client not named)"
+  ]
+}

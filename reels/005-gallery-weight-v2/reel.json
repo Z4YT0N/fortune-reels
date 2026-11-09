@@ -1,0 +1,85 @@
+{
+  "slug": "gallery-weight-v2",
+  "title": "Heavy gallery v2: 34 MB to 140 KB",
+  "created": "2026-11-06",
+  "status": "delivered",
+  "speed": 1.0,
+  "voice": {
+    "id": "hKxOF1e0PGHjtctJDcOl",
+    "pick": "V5c",
+    "model": "eleven_v3",
+    "text": "script-v5.txt (plain, no tashkeel; مبطئ not مبطي)"
+  },
+  "keyword": "فحص مجاني",
+  "sources": [
+    "November 2026 content plan (owner-approved): gallery 34 MB -> 140 KB (project withheld, no client name/logo per DECISIONS)"
+  ],
+  "flow": {
+    "clips": 0,
+    "credits": 0,
+    "note": "Brave remote-debugging approval lapsed; Flow not reachable from the fork"
+  },
+  "delivered": "2026-11-06",
+  "qa": {
+    "length_s": 34.5,
+    "lufs": -14.1,
+    "true_peak": -4.5,
+    "loop_ssim": 0.656,
+    "tick_peak": 0.048
+  },
+  "whatsapp": {
+    "video": "3EB04760772766A34F9EFD",
+    "voice_takes": "3EB046E8D3AB9C810F9C9D"
+  },
+  "whatsapp_v3": {
+    "video": "3EB08CA0F1250B3540C289",
+    "voice_takes": "3EB0AF4E5C5556D53E0D96"
+  },
+  "qa_v4": {
+    "render": "renders/gallery-weight-v5-final.mp4",
+    "length_s": 34.45,
+    "lufs": -14.4,
+    "true_peak": -2.1,
+    "loop_ssim": 0.718,
+    "tick_peak": 0.048,
+    "safezone_violations": 0,
+    "safezone_before": 380,
+    "motion_frames_over_2": 0,
+    "short_holds": 0
+  },
+  "whatsapp_v4": {
+    "video": "3EB0ED46AFDC738AB9ECE6"
+  },
+  "desktop_v4": "C:/Users/Mahmoud/Desktop/fortunecode-reel-005-gallery-weight-v4.mp4",
+  "qa_v5": {
+    "render": "renders/gallery-weight-v5b-final.mp4",
+    "length_s": 34.69,
+    "lufs": -14.5,
+    "true_peak": -2.1,
+    "loop_ssim": 0.718,
+    "tick_peak": 0.065,
+    "safezone_violations": 0,
+    "motion_frames_over_2": 0,
+    "short_holds": 0
+  },
+  "whatsapp_v5": {
+    "video": "3EB034115510E348B6BB59"
+  },
+  "desktop_v5": "C:/Users/Mahmoud/Desktop/fortunecode-reel-005-gallery-weight-v5.mp4",
+  "qa_v6": {
+    "render": "renders/gallery-weight-v6-final.mp4",
+    "length_s": 34.69,
+    "lufs": -14.5,
+    "true_peak": -2.1,
+    "loop_ssim": 0.718,
+    "tick_peak": 0.065,
+    "safezone_violations": 0,
+    "overlap_spans": 0,
+    "motion_frames_over_2": 0,
+    "short_holds": 0
+  },
+  "whatsapp_v6": {
+    "video": "3EB09AAD76F184665097A4"
+  },
+  "desktop_v6": "C:/Users/Mahmoud/Desktop/fortunecode-reel-005-gallery-weight-v6.mp4"
+}

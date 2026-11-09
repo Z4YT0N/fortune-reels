@@ -1,0 +1,25 @@
+@font-face { font-family: Plex; src: url(assets/IBMPlexSansArabic-Regular.ttf); font-weight:400; }
+@font-face { font-family: Plex; src: url(assets/IBMPlexSansArabic-Medium.ttf); font-weight:500; }
+@font-face { font-family: Plex; src: url(assets/IBMPlexSansArabic-SemiBold.ttf); font-weight:600; }
+@font-face { font-family: Plex; src: url(assets/IBMPlexSansArabic-Bold.ttf); font-weight:700; }
+:root { --bg:#121416; --g:#00DB33; --dg:#006A39; --w:#FFFFFF; --mute:#BBBDBF; }
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family: Plex, sans-serif; font-weight:500; color:var(--w); background:var(--bg); position:relative; overflow:hidden; }
+.abs { position:absolute; }
+.t { position:absolute; white-space:nowrap; line-height:1.12; font-weight:700; text-align:center; left:50%; transform:translateX(-50%); }
+.g { color:var(--g); }
+.mute { color:var(--mute); }
+.t.mute { font-weight:500; }
+/* brand frame */
+.frame { position:absolute; border:2px solid rgba(255,255,255,.22); border-radius:30px; pointer-events:none; }
+.logo { position:absolute; height:44px; }
+.foot { position:absolute; height:70px; border:2px solid rgba(255,255,255,.22); border-radius:36px; display:flex; align-items:center; justify-content:space-between; padding:0 34px; direction:ltr;
+  font-family: Plex, sans-serif; font-weight:500; font-size:26px; color:#fff; background:rgba(18,20,22,.55); backdrop-filter: blur(6px); }
+.foot span { display:flex; align-items:center; gap:14px; }
+.foot svg { width:34px; height:34px; }
+/* marker accents */
+svg.marks { position:absolute; left:0; top:0; overflow:visible; pointer-events:none; }
+.mk { fill:none; stroke:var(--g); stroke-width:10; stroke-linecap:round; stroke-linejoin:round; filter:url(#rough); }
+.mkd { fill:none; stroke:var(--g); stroke-width:4; stroke-dasharray:16 12; }
+.hdl { fill:var(--bg); stroke:var(--g); stroke-width:4; }
+.glow { position:absolute; border-radius:50%; background: radial-gradient(closest-side, rgba(0,219,51,.55), rgba(0,219,51,.18) 55%, rgba(0,219,51,0)); filter: blur(30px); pointer-events:none; }

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ar" data-resolution="portrait">
+  <!-- Reel 006 test (first ~12 s): Fortune style (owner pick 2026-11-07: B riso collage + C documentary photo with green marker).
+       The picture is ONE continuous AI film (Google Flow Omni 1.2, frames-to-video, chained K0->K1->K2->K3), retimed to the voice
+       in assets/video/bg.mp4. This page only adds type, grain and sound. Text never clears to empty: each new line pushes the
+       previous ones up (one continuous column), the way the picture never cuts. build_test.py fills __D__ and WORDS. -->
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1080, height=1920">
+    <title>Gallery continuity test</title>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      @font-face { font-family: "ZainL"; src: url("assets/fonts/zain-mob-long.ttf") format("truetype"); }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1080px; height: 1920px; overflow: hidden; background: #F0F1F2; }
+      #main { position: relative; width: 100%; height: 100%; overflow: hidden; font-family: "ZainL", sans-serif; color: #121416; }
+      #bgWrap { position: absolute; inset: 0; }
+      #bgWrap video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+      #col { position: absolute; left: 60px; width: 900px; top: 0; height: 1920px; z-index: 20; }
+      .blk { position: absolute; right: 0; width: 900px; direction: rtl; }
+      .ln { display: flex; flex-direction: row; justify-content: flex-start; align-items: baseline; white-space: nowrap; position: relative; }
+      .tk { position: relative; display: inline-block; margin: 0 0.07em; }
+      .m { display: inline-block; overflow: hidden; padding: 0.10em 0.14em 0.26em; margin: -0.10em -0.14em -0.26em; vertical-align: bottom; }
+      .w { display: inline-block; line-height: 1.12; }
+      .box { position: absolute; left: -0.16em; right: -0.16em; top: 0.12em; bottom: 0.04em; background: #00DB33; transform: scaleX(0); transform-origin: right center; z-index: -1; }
+      .paper { position: absolute; z-index: -2; background: #F0F1F2; box-shadow: 2px 3px 8px rgba(18,20,22,0.25);
+               clip-path: polygon(0 6%, 9% 0, 24% 4%, 40% 0, 58% 5%, 75% 0, 100% 5%, 98% 50%, 100% 95%, 82% 100%, 60% 95%, 40% 100%, 20% 96%, 0 100%, 2% 50%); }
+      .grain { position: absolute; inset: 0; width: 1080px; height: 1920px; mix-blend-mode: soft-light; opacity: 0; z-index: 30; }
+    </style>
+  </head>
+  <body>
+    <div id="main" data-composition-id="main" data-start="0" data-duration="__D__" data-width="1080" data-height="1920">
+      <div id="bgWrap"><video id="bg" src="assets/video/bg.mp4" data-start="0" data-duration="__D__" data-media-start="0" data-track-index="0" muted playsinline></video></div>
+      <div id="stage" class="clip" data-start="0" data-duration="__D__" data-track-index="1" style="position:absolute;inset:0">
+        <div id="col"></div>
+        <img class="grain" src="assets/img/grain0.png" alt=""><img class="grain" src="assets/img/grain1.png" alt=""><img class="grain" src="assets/img/grain2.png" alt="">
+        <img class="grain" src="assets/img/grain3.png" alt=""><img class="grain" src="assets/img/grain4.png" alt=""><img class="grain" src="assets/img/grain5.png" alt="">
+      </div>
+      <audio id="mix" src="assets/audio/test-mix.mp3" data-start="0" data-duration="__D__" data-track-index="2" data-volume="1"></audio>
+    </div>
+    <script>
+      const D = __D__;
+      const WORDS = /*WORDS*/[];
+      const W = (i) => WORDS[i][1];
+      const F = 1 / 30;
+      window.__timelines = window.__timelines || {};
+      const TL = gsap.timeline({ paused: true });
+      const col = document.getElementById("col");
+      const blocks = [];
+      // one line of type; tokens [text, {s, i (word index), hl, kash}]
+      function line(id, tokens, opt = {}) {
+        const b = document.createElement("div"); b.className = "blk"; b.id = id;
+        const L = document.createElement("div"); L.className = "ln"; b.appendChild(L);
+        const toks = tokens.map(([text, o]) => {
+          const tk = document.createElement("span"); tk.className = "tk"; tk.style.fontSize = (o.s || 80) + "px";
+          if (o.hl !== undefined) { const bx = document.createElement("span"); bx.className = "box"; tk.appendChild(bx); }
+          const m = document.createElement("span"); m.className = "m"; const w = document.createElement("span"); w.className = "w"; w.textContent = text;
+          m.appendChild(w); tk.appendChild(m); L.appendChild(tk); return { tk, w, o };
+        });
+        if (opt.paper) { const p = document.createElement("div"); p.className = "paper"; b.insertBefore(p, L); b._paper = p; }
+        col.appendChild(b); gsap.set(toks.map((t) => t.w), { yPercent: 130, opacity: 0 });
+        const r = { b, toks, h: opt.h || 120 }; blocks.push(r); return r;
+      }
+      function rise(t, at) { TL.set(t.w, { opacity: 1 }, at); TL.fromTo(t.w, { yPercent: 120 }, { yPercent: 0, duration: 0.5, ease: "expo.out", immediateRender: false }, at); }
+      function kash(t, at, d = 0.8) { TL.set(t.w, { yPercent: 0, opacity: 1 }, at - F); TL.fromTo(t.w, { clipPath: "inset(-20% 0% -30% 100%)" }, { clipPath: "inset(-20% 0% -30% 0%)", duration: d, ease: "expo.inOut", immediateRender: false }, at); }
+      function hl(t, at) { TL.fromTo(t.tk.querySelector(".box"), { scaleX: 0 }, { scaleX: 1, duration: 0.45, ease: "expo.out", immediateRender: false }, at); }
+      // the column: lines stack from TOP0 down; when a new line enters, older lines of the same group slide up and fade
+      const TOP0 = 250;
+      function place(blk, y) { gsap.set(blk.b, { top: y }); }
+      function lift(blks, dy, at, fade = false) { blks.forEach((k) => TL.to(k.b, { y: "-=" + dy, opacity: fade ? 0 : 1, duration: 0.55, ease: "power3.inOut" }, at)); }
+      function speak(blk) { blk.toks.forEach((t) => { const at = t.o.i !== undefined ? W(t.o.i) - 0.04 : t.o.at; if (t.o.kash) kash(t, at, t.o.kash); else rise(t, at); if (t.o.hl !== undefined) hl(t, W(t.o.hl)); }); }
+      function sizePaper(blk) { const p = blk.b._paper; if (!p) return; const L = blk.b.querySelector(".ln"); const r = L.getBoundingClientRect(), br = blk.b.getBoundingClientRect(); Object.assign(p.style, { right: "-24px", top: (r.top - br.top - 6) + "px", width: (r.width + 48) + "px", height: (r.height + 10) + "px" }); }
+
+      async function build() {
+        await document.fonts.ready; await document.fonts.load("80px ZainL", "معرض");
+        TL.to({}, { duration: D }, 0);
+        // beat 1: معرض صور / في موقع شركة كبيرة، / حجمه ٣٤ ميجا.
+        const a1 = line("a1", [["معرض", { s: 96, i: 0 }], ["صور", { s: 150, i: 1, kash: 0.7 }]], { paper: true });
+        const a2 = line("a2", [["في موقع", { s: 62, i: 2 }], ["شركة", { s: 62, i: 4 }], ["كبيرة،", { s: 92, i: 5 }]], { paper: true });
+        const a3 = line("a3", [["حجمه", { s: 70, i: 6 }], ["٣٤", { s: 150, i: 7 }], ["ميجا", { s: 120, i: 9, hl: 9 }]], { paper: true });
+        place(a1, TOP0); place(a2, TOP0 + 190); place(a3, TOP0 + 300);
+        // beat 2 (pushes beat 1 out upward): عميلك يفتحه من جواله، / ويستنى، ويستنى، / ويطلع.
+        const b1 = line("b1", [["عميلك", { s: 110, i: 10 }], ["يفتحه", { s: 70, i: 11 }], ["من", { s: 70, i: 12 }], ["جواله،", { s: 70, i: 13 }]], { paper: true });
+        const b2 = line("b2", [["ويستنى،", { s: 96, i: 14 }]], { paper: true });
+        const b2b = line("b2b", [["ويستنـــــى،", { s: 96, i: 15, kash: 0.9 }]], { paper: true });
+        const b3 = line("b3", [["ويطلع.", { s: 140, i: 16, hl: 16 }]], { paper: true });
+        place(b1, TOP0 + 470); place(b2, TOP0 + 470 + 170); place(b2b, TOP0 + 470 + 170); place(b3, TOP0 + 470 + 290);
+        // beat 3: لا تدور على صور أقل.
+        const c1 = line("c1", [["لا", { s: 120, i: 17 }], ["تدور", { s: 70, i: 18 }], ["على", { s: 70, i: 19 }], ["صور", { s: 96, i: 20 }], ["أقل.", { s: 96, i: 21 }]], { paper: true });
+        place(c1, TOP0 + 940 + 60);
+        // beat 4: دور على أحد يعرف / يخفف اللي عندك.
+        const d1 = line("d1", [["دور", { s: 70, i: 22 }], ["على", { s: 70, i: 23 }], ["أحد", { s: 96, i: 24 }], ["يعرف", { s: 70, i: 25 }]], { paper: true });
+        const d2 = line("d2", [["يخفف", { s: 160, i: 26, hl: 26, kash: 0.7 }], ["اللي عندك.", { s: 70, i: 27 }]], { paper: true });
+        place(d1, TOP0 + 1410); place(d2, TOP0 + 1410 + 110);
+        blocks.forEach(sizePaper);
+        // papers appear with their line's first word
+        blocks.forEach((k) => { const t0 = k.toks[0]; const at = t0.o.i !== undefined ? W(t0.o.i) - 0.08 : 0; if (k.b._paper) gsap.set(k.b._paper, { scaleX: 0, transformOrigin: "right center" }); if (k.b._paper) TL.fromTo(k.b._paper, { scaleX: 0, transformOrigin: "right center" }, { scaleX: 1, duration: 0.4, ease: "expo.out", immediateRender: false }, at); });
+        blocks.forEach(speak);
+        // the column scrolls: the whole stack travels up one beat at a time (one continuous column, never a clear-and-rebuild)
+        const beatsAt = [W(10), W(17), W(22)];
+        const groups = [[a1, a2, a3], [b1, b2, b2b, b3], [c1], [d1, d2]];
+        beatsAt.forEach((t, k) => {
+          TL.to(col, { y: -470 * (k + 1), duration: 0.6, ease: "power3.inOut" }, t - 0.4);
+          groups[k].forEach((g) => TL.to(g.b, { opacity: 0, duration: 0.45, ease: "power1.in" }, t - 0.3));
+        });
+        // «ويستنى» stretches: the short word hands over to the long one in place
+        TL.to(b2.b, { opacity: 0, duration: 0.15 }, W(15) - 0.02);
+        // sound-free grain cycling every 2 frames
+        const grains = Array.from(document.querySelectorAll(".grain"));
+        for (let f = 0; f < D * 30; f += 2) grains.forEach((g, i) => TL.set(g, { opacity: i === (f / 2) % 6 ? 0.55 : 0 }, f * F));
+        window.__timelines["main"] = TL; TL.seek(0);
+      }
+      window.__hf = window.__hf || {}; window.__hf.buildReady = window.__hf.buildReady || {};
+      window.__hf.buildReady["main"] = build();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="ar" data-resolution="portrait">
+  <!-- Style lab 007 / showreel: "MOTION DESIGN SHOWREEL 2025" (Bohdan Martovskyi) vocabulary on the shared voice.
+       Flag-warped word (64 vertical slices of the WHOLE rendered phrase, CSS-trig scaleY/translateY per slice -> Arabic never splits),
+       photo tiles orbiting the word like the "Smooth" app icons, colour pill tags (Token/HEX), glossy file card + cursor click with
+       rounded ripple rings (the "Create" button), heavy counter, the card swells into the dark world, 3D-tilting phone with button that
+       morphs into a crawling progress bar, the whole dark world is a card the cursor swipes away, UI toast ending.
+       Motion that depends on time (orbit, warp, counter, kashida, percent) is BAKED as TL.set per frame (no onUpdate, seek-safe).
+       build.py fills __D__ and WORDS. -->
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1080, height=1920">
+    <title>Nov 7 gallery reel</title>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/MotionPathPlugin.min.js"></script>
+    <style>
+      @font-face { font-family: "ZainL"; src: url("assets/fonts/zain-mob-long.ttf") format("truetype"); }
+      @font-face { font-family: "InterX"; src: url("assets/fonts/inter-lat-700.woff2") format("woff2"); font-weight: 700; }
+      @font-face { font-family: "PlexA"; src: url("assets/fonts/IBMPlexSansArabic-Medium.ttf") format("truetype"); font-weight: 500; }
+      @font-face { font-family: "PlexA"; src: url("assets/fonts/IBMPlexSansArabic-SemiBold.ttf") format("truetype"); font-weight: 600; }
+      @font-face { font-family: "InterX"; src: url("assets/fonts/inter-lat-800.woff2") format("woff2"); font-weight: 800; }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1080px; height: 1920px; overflow: hidden; background: #F0F1F2; }
+      #main { position: relative; width: 1080px; height: 1920px; overflow: hidden; font-family: "ZainL", sans-serif; color: #121416; }
+      .abs { position: absolute; }
+      .ar { direction: rtl; white-space: nowrap; line-height: 1.3; }
+      #world { position: absolute; inset: 0; background: #F0F1F2; overflow: hidden; z-index: 0; }
+      .lab { position: absolute; font-family: "PlexA", sans-serif; font-weight: 600; font-size: 24px; white-space: nowrap; }
+      /* flag warp */
+      #warp { position: absolute; transform-origin: 50% 50%; z-index: 5; --bow: 0; --wav: 0; --ph: 0; --oa: 1; --ob: 0; }
+      .strip { position: absolute; top: 0; overflow: hidden; transform-origin: 50% 50%; }
+      .wtxt { position: absolute; top: 0; text-align: center; direction: rtl; white-space: nowrap; color: #121416; }
+      .wa { opacity: var(--oa); } .wb { opacity: var(--ob); }
+      /* orbit tiles */
+      .tile { position: absolute; left: 0; top: 0; width: 172px; height: 172px; border-radius: 38px; overflow: hidden; border: 6px solid #F0F1F2;
+              box-shadow: 0 16px 34px rgba(18,20,22,0.22), 0 3px 8px rgba(18,20,22,0.18); background: #ccc; }
+      .tile img { width: 100%; height: 100%; object-fit: cover; display: block; }
+      /* pills */
+      .pill { position: absolute; border-radius: 999px; direction: rtl; white-space: nowrap; line-height: 1.25; display: flex; align-items: center; justify-content: center; }
+      /* dark world */
+      #darkWrap { position: absolute; inset: 0; z-index: 10; }
+      #dark { position: absolute; inset: 0; background: #121416; overflow: hidden; clip-path: inset(880px 540px 1040px 540px round 44px); }
+      .ring { position: absolute; border: 4px solid #121416; border-radius: 48px; opacity: 0; }
+      .ripple { position: absolute; width: 120px; height: 120px; margin: -60px 0 0 -60px; border-radius: 50%; border: 5px solid #00DB33; opacity: 0; }
+      /* phone */
+      #phone { position: absolute; left: 92px; top: 372px; width: 404px; height: 830px; border-radius: 66px; background: #1E2124; border: 2px solid #3A3E43; padding: 16px;
+               box-shadow: 0 50px 90px rgba(0,0,0,0.55), inset 0 0 0 2px #2A2E32; }
+      #screen { position: relative; width: 100%; height: 100%; border-radius: 52px; background: #F0F1F2; overflow: hidden; }
+      .notch { position: absolute; left: 50%; top: 16px; width: 110px; height: 32px; margin-left: -55px; border-radius: 20px; background: #121416; }
+      .sk { position: absolute; width: 158px; height: 158px; border-radius: 26px; background: #D9DCDF; overflow: hidden; }
+      .band { position: absolute; top: 0; bottom: 0; left: 0; width: 60%; background: rgba(240,241,242,0.75); transform: skewX(-18deg); }
+      #btn { position: absolute; left: 36px; width: 300px; top: 640px; height: 100px; border-radius: 999px; background: #00DB33; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+      #fill { position: absolute; right: 0; top: 0; bottom: 0; width: 0%; background: #00DB33; border-radius: 999px; }
+      /* toast */
+      #toast { position: absolute; left: 80px; top: 790px; width: 920px; height: 210px; border-radius: 60px; background: #121416; z-index: 20;
+               box-shadow: 0 30px 60px rgba(18,20,22,0.30), 0 6px 14px rgba(18,20,22,0.2); direction: rtl; }
+      #cur { position: absolute; left: 0; top: 0; z-index: 50; width: 58px; height: 80px; transform-origin: 0 0; }
+      .grain { position: absolute; inset: 0; width: 1080px; height: 1920px; mix-blend-mode: soft-light; opacity: 0; z-index: 60; pointer-events: none; }
+    </style>
+  </head>
+  <body>
+    <div id="main" data-composition-id="main" data-start="0" data-duration="__D__" data-width="1080" data-height="1920">
+      <div id="stage" class="clip" data-start="0" data-duration="__D__" data-track-index="1" style="position:absolute;inset:0">
+        <div id="world"></div>
+        <div id="darkWrap"><div id="dark"></div></div>
+        <svg id="cur" viewBox="-4 -4 40 52"><path d="M0 0 L0 38 L10 29 L17 45 L24 42 L17 26 L30 26 Z" fill="#F0F1F2" stroke="#121416" stroke-width="3" stroke-linejoin="round"/></svg>
+        <img class="grain" src="assets/img/grain0.png"><img class="grain" src="assets/img/grain1.png"><img class="grain" src="assets/img/grain2.png">
+        <img class="grain" src="assets/img/grain3.png"><img class="grain" src="assets/img/grain4.png"><img class="grain" src="assets/img/grain5.png">
+      </div>
+    </div>
+    <script>
+      window.__timelines = window.__timelines || {};
+      const WORDS = /*WORDS*/[];
+      const D = __D__, FPS = 30, F = 1 / FPS, TAU = Math.PI * 2;
+      const V = i => WORDS[i][1], W = i => WORDS[i][2];
+      const K = "#121416", G = "#00DB33", DG = "#006A39", L = "#F0F1F2", GREY = "#8B9096";
+      const AR = n => String(n).replace(/\d/g, d => "٠١٢٣٤٥٦٧٨٩"[d]);
+      const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+      const lerp = (a, b, p) => a + (b - a) * p;
+      const ramp = (t, a, b) => clamp((t - a) / (b - a));
+      const expoOut = p => (p >= 1 ? 1 : 1 - Math.pow(2, -10 * p));
+      const inOut = p => (p < 0.5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2);
+      const inCubic = p => p * p * p;
+      const backOut = (p, s = 1.7) => 1 + (s + 1) * Math.pow(p - 1, 3) + s * Math.pow(p - 1, 2);
+      const bump = (t, a, d) => { const p = ramp(t, a, a + d); return p <= 0 || p >= 1 ? 0 : Math.sin(Math.PI * p); };
+      const el = (tag, cls, parent, css = {}, html = "") => { const e = document.createElement(tag); if (cls) e.className = cls; Object.assign(e.style, css); if (html) e.innerHTML = html; parent.appendChild(e); return e; };
+      const frames = (a, b, fn) => { for (let f = Math.max(0, Math.round(a * FPS)); f <= Math.round(b * FPS); f++) fn(f * F, f); };
+      const at = t => Math.max(0, t - 0.0004);
+
+      async function build() {
+        await document.fonts.load('100px "ZainL"'); await document.fonts.load('700 20px "InterX"'); await document.fonts.load('500 40px "PlexA"'); await document.fonts.load('600 40px "PlexA"'); await document.fonts.ready;
+        await Promise.all(Array.from(document.images).map(i => i.complete ? 0 : new Promise(r => { i.onload = i.onerror = r; })));
+        const TL = gsap.timeline({ paused: true });
+        const world = document.getElementById("world"), dark = document.getElementById("dark"), darkWrap = document.getElementById("darkWrap");
+        const cur = document.getElementById("cur");
+        const measure = (html, size, fam = "ZainL") => { const s = el("span", "ar", document.body, { position: "absolute", left: "-5000px", top: "0", fontSize: size + "px", fontFamily: fam }, html); const r = s.getBoundingClientRect().width; s.remove(); return r; };
+
+        // ── corner credits (reference: PRODUCER / @handle / MOTION DESIGNER / ART DIRECTOR), inside the safe zone, in both worlds
+        const labels = (parent, col) => {
+          const box = el("div", "", parent, { position: "absolute", inset: "0", color: col });
+          [["fortunecode.org", 60, 232, "l"], ["سرعة المواقع", 960, 232, "r"],
+           ["٢٠٢٦", 60, 1404, "l"], ["فورتشن كود", 960, 1404, "r"]].forEach(([s, x, y, a]) => {
+            const l = el("div", "lab", box, { top: y + "px" }, s);
+            if (a === "l") l.style.left = x + "px"; else if (a === "r") l.style.right = (1080 - x) + "px"; else { l.style.left = x + "px"; l.style.transform = "translateX(-50%)"; }
+          });
+          return box;
+        };
+        const labW = labels(world, K);
+
+        // ═══ B1 flag-warped phrase «معرض صور» ═══
+        const FS = 200, HP = Math.round(FS * 1.55);
+        const phraseHTML = '<span class="wa">معرض</span> <span class="wb">صور</span>';
+        const w0 = Math.ceil(measure(phraseHTML, FS)) + 60;
+        const warp = el("div", "", world, { left: (540 - w0 / 2) + "px", top: (860 - HP / 2) + "px", width: w0 + "px", height: HP + "px" });
+        warp.id = "warp"; warp.style.setProperty("--hp", HP + "px");
+        const NS = 128, sw = w0 / NS, strips = [];
+        for (let i = 0; i < NS; i++) {
+          const u = (i + 0.5) / NS, s = el("div", "strip", warp, { left: (i * sw) + "px", width: (sw + 1.2) + "px", height: HP + "px" });
+          s._u = u; strips.push(s);
+          el("div", "wtxt", s, { left: (-i * sw) + "px", width: w0 + "px", height: HP + "px", fontSize: FS + "px", lineHeight: HP + "px" }, phraseHTML);
+        }
+        const sS = 400 / w0, sB = 850 / w0, sH = 470 / w0;
+        const warpAt = t => {
+          let S, bow = 0, wav = 0, x = 0, y = 0, op = 1;
+          if (t < 0.45) S = sS * (1 + 0.16 * bump(t, 0, 0.22) + 0.12 * bump(t, 0.4, 0.2));
+          else if (t < 0.72) { const p = ramp(t, 0.45, 0.72); S = lerp(sS, sB, backOut(p, 1.4)); bow = expoOut(p); wav = 0.15 * p; }
+          else if (t < 1.2) { S = sB * (1 + 0.02 * Math.sin((t - 0.72) * 9)); bow = 1 - 0.45 * ramp(t, 0.72, 1.2); wav = lerp(0.15, 0.7, ramp(t, 0.72, 0.95)); }
+          else if (t < 1.6) { const p = inOut(ramp(t, 1.2, 1.6)); S = lerp(sB, sH, p); bow = 0.55 * (1 - p); wav = lerp(0.7, 0.06, p); }
+          else { S = sH; wav = 0.06; }
+          if (t >= 2.06) { const p = inOut(ramp(t, 2.06, 2.34)); S = lerp(sH, 0.28, p); x = lerp(0, 40, p); y = lerp(0, -95, p); op = t > 2.3 ? 0 : 1; }
+          return { S, bow, wav, ph: t * 1.25, x, y, op, ob: t >= 0.4 ? 1 : 0 };
+        };
+        // flag: ends balloon (left end up, right end down, like the SHOWREEL fish), the middle pinches, a wave runs through
+        const stripAt = (u, s) => {
+          const c = 2 * u - 1, e = Math.pow(Math.abs(c), 1.05), w = 2 * Math.PI * (u * 1.15 - s.ph);
+          const sy = (1 + s.bow * 3.6 * e) * (1 - 0.42 * s.bow * (1 - e)) + s.wav * 0.6 * Math.cos(w);
+          const ty = (-s.bow * c * 0.4 + s.wav * 0.24 * Math.sin(w)) * HP;
+          return { sy: Math.max(0.2, sy), ty };
+        };
+        let lastWS = null;
+        frames(0, 2.4, (t) => {
+          const s = warpAt(t); TL.set(warp, { scale: s.S, x: s.x, y: s.y, opacity: s.op, "--ob": s.ob }, at(t));
+          const flat = s.bow < 0.002 && s.wav < 0.002;
+          if (flat && lastWS === "flat") return;
+          strips.forEach(st => { const v = stripAt(st._u, s); TL.set(st, { y: v.ty, scaleY: v.sy }, at(t)); });
+          lastWS = flat ? "flat" : "w";
+        });
+        { const s = warpAt(0); gsap.set(warp, { scale: s.S, "--ob": 0 }); }
+
+        // ═══ B2 photo tiles orbit the word (the "Smooth" scene) ═══
+        const tiles = [];
+        for (let i = 0; i < 8; i++) { const tl = el("div", "tile", world, {}, `<img src="assets/img/t${i + 1}.jpg">`); tiles.push(tl); gsap.set(tl, { opacity: 0 }); }
+        const ICON = [790, 800];
+        const orbitAt = (i, t) => {
+          const base = i * TAU / 8 + 0.4;
+          let out = { o: 0 };
+          // phase A: fly in from outside onto the ellipse around the phrase
+          const pA = expoOut(ramp(t, 0.62 + i * 0.05, 1.45 + i * 0.05));
+          if (t < 2.6 && pA > 0) {
+            const a = base + t * 0.95 + 2.4 * (1 - pA), rf = lerp(3.1, 1, pA), tilt = -10 * Math.PI / 180;
+            let ex = Math.cos(a) * 370 * rf, ey = Math.sin(a) * 195 * rf;
+            let px = 540 + ex * Math.cos(tilt) - ey * Math.sin(tilt), py = 862 + ex * Math.sin(tilt) + ey * Math.cos(tilt);
+            const d = (Math.sin(a) + 1) / 2; let s = 0.7 + 0.4 * d, rot = 9 * Math.cos(a);
+            const q = inCubic(ramp(t, 2.08 + i * 0.025, 2.38 + i * 0.025));
+            px = lerp(px, ICON[0], q); py = lerp(py, ICON[1], q); s *= lerp(1, 0.32, q);
+            out = { x: px - 86, y: py - 86, s, rot, z: d > 0.62 ? 7 : d < 0.38 ? 3 : 4, o: q >= 1 ? 0 : 1 };
+          }
+          // phase C: the photos are still all there, orbiting the toast (revealed under the swiped card)
+          const pC = expoOut(ramp(t, 6.95 + i * 0.04, 7.85 + i * 0.04));
+          if (t >= 6.95 && pC > 0) {
+            const a = base + t * 0.75, tilt = -7 * Math.PI / 180;
+            let ex = Math.cos(a) * 375 * lerp(0.3, 1, pC), ey = Math.sin(a) * 455 * lerp(0.3, 1, pC);
+            const px = 540 + ex * Math.cos(tilt) - ey * Math.sin(tilt), py = 895 + ex * Math.sin(tilt) + ey * Math.cos(tilt);
+            const d = (Math.sin(a) + 1) / 2;
+            let s = (0.62 + 0.36 * d) * pC * (1 + 0.2 * bump(t, 8.5 + i * 0.035, 0.32));
+            const lift = expoOut(ramp(t, V(26), V(26) + 0.6)); s *= 1 - 0.18 * lift;
+            const q2 = inCubic(ramp(t, 11.12 + i * 0.03, 11.42 + i * 0.03));
+            const qx = lerp(px, 906, q2), qy = lerp(py - 60 * lift, 595, q2);
+            out = { x: qx - 86, y: qy - 86, s: s * lerp(1, 0.2, q2), rot: 10 * Math.cos(a), z: d > 0.55 ? 25 : 3, o: q2 >= 1 ? 0 : 1 };
+          }
+          return out;
+        };
+        frames(0, 11.7, (t) => tiles.forEach((tl, i) => { const s = orbitAt(i, t); if (s.o) TL.set(tl, { x: s.x, y: s.y, scale: s.s, rotation: s.rot, zIndex: s.z, opacity: 1 }, at(t)); else TL.set(tl, { opacity: 0 }, at(t)); }));
+
+        // ═══ B2 pill tags «في موقع» «شركة» «كبيرة،» (the Token / HEX / Design System scene) ═══
+        const pill = (txt, size, bg, col, cx, cy, rot, border) => {
+          const p = el("div", "pill", world, { fontSize: size + "px", background: bg, color: col, padding: `${size * 0.02}px ${size * 0.42}px ${size * 0.12}px`, zIndex: 8 }, txt);
+          if (border) p.style.boxShadow = `inset 0 0 0 4px ${K}`;
+          const r = p.getBoundingClientRect(); p.style.left = (cx - r.width / 2) + "px"; p.style.top = (cy - r.height / 2) + "px";
+          gsap.set(p, { scale: 0, rotation: rot * 2.5, opacity: 0 }); p._rot = rot; return p;
+        };
+        const p1 = pill("في موقع", 66, L, K, 690, 1188, 6, true);
+        const p2 = pill("شركة", 74, K, L, 330, 1206, -7);
+        const p3 = pill("كبيرة،", 124, G, K, 560, 1316, -3);
+        const popP = (p, t) => { TL.set(p, { opacity: 1 }, t); TL.to(p, { scale: 1, rotation: p._rot, duration: 0.55, ease: "back.out(2.4)" }, t); };
+        popP(p1, V(2)); popP(p2, V(4)); popP(p3, V(5));
+        // «كبيرة» lands and shoulders the others aside
+        TL.to(p1, { x: 40, y: -26, rotation: 10, duration: 0.4, ease: "back.out(2)" }, V(5) + 0.05);
+        TL.to(p2, { x: -40, y: -20, rotation: -11, duration: 0.4, ease: "back.out(2)" }, V(5) + 0.05);
+        TL.to(p3, { scaleX: 1.08, scaleY: 0.9, duration: 0.08, ease: "power2.out" }, V(5) + 0.12); TL.to(p3, { scaleX: 1, scaleY: 1, duration: 0.4, ease: "back.out(3)" }, V(5) + 0.2);
+        // the file is coming: the tags drop like weights
+        [[p1, 0, 18], [p2, 0.05, -22], [p3, 0.1, 9]].forEach(([p, dl, r]) => TL.to(p, { y: 820, rotation: r, duration: 0.5, ease: "power2.in" }, V(6) + 0.02 + dl));
+
+        // ═══ B3 the file card (dark) + cursor click ═══
+        const CARD = { l: 190, t: 700, r: 890, b: 1060 };
+        const clip = (t, r, b, l, rad) => `inset(${t}px ${r}px ${b}px ${l}px round ${rad}px)`;
+        const CLIP_CARD = clip(CARD.t, 1080 - CARD.r, 1920 - CARD.b, CARD.l, 46);
+        const shadow = el("div", "abs", world, { left: CARD.l + "px", top: CARD.t + "px", width: (CARD.r - CARD.l) + "px", height: (CARD.b - CARD.t) + "px", borderRadius: "46px", boxShadow: "0 40px 70px rgba(18,20,22,0.35), 0 8px 18px rgba(18,20,22,0.25)", zIndex: 9 });
+        gsap.set(shadow, { opacity: 0, scale: 0.2 });
+        TL.to(dark, { clipPath: CLIP_CARD, duration: 0.42, ease: "back.out(1.5)" }, V(6) - 0.02);
+        TL.to(shadow, { opacity: 1, scale: 1, duration: 0.42, ease: "back.out(1.5)" }, V(6) - 0.02);
+        // card content (full-frame coordinates inside #dark)
+        const cardC = el("div", "", dark, { position: "absolute", inset: "0" });
+        const icon = el("div", "abs", cardC, { left: "730px", top: "742px", width: "122px", height: "122px", borderRadius: "30px", background: G, overflow: "hidden" });
+        [[2, -12, 24, 26], [3, 8, 40, 30], [4, -2, 30, 44]].forEach(([n, r, x, y]) => el("img", "", icon, { position: "absolute", left: x + "px", top: y + "px", width: "58px", height: "58px", borderRadius: "12px", border: "3px solid #F0F1F2", objectFit: "cover", transform: `rotate(${r}deg)` }).src = `assets/img/t${n}.jpg`);
+        const title = el("div", "abs ar", cardC, { right: "374px", top: "726px", fontSize: "70px", color: L }, "معرض صور");
+        const sizeL = el("div", "abs ar", cardC, { right: "374px", top: "812px", fontSize: "50px", color: GREY }, "حجمه");
+        const cnt = el("div", "abs ar", cardC, { right: "228px", top: "872px", display: "flex", alignItems: "baseline", gap: "26px", transformOrigin: "100% 60%" });
+        const num = el("div", "", cnt, { fontSize: "170px", color: G, lineHeight: "1.05", transformOrigin: "50% 80%" }, "٤");
+        const mega = el("div", "", cnt, { fontSize: "96px", color: L, lineHeight: "1.05" }, "ميجا");
+        gsap.set([title, sizeL], { opacity: 0, y: 24 }); gsap.set(icon, { scale: 0, rotation: -20 }); gsap.set(num, { opacity: 0, scale: 0.4 }); gsap.set(mega, { opacity: 0, scale: 2.2, transformOrigin: "100% 70%" });
+        TL.to(icon, { scale: 1, rotation: 0, duration: 0.45, ease: "back.out(2.2)" }, V(6) + 0.18);
+        TL.to(title, { opacity: 1, y: 0, duration: 0.3, ease: "expo.out" }, V(6) + 0.22);
+        TL.to(sizeL, { opacity: 1, y: 0, duration: 0.3, ease: "expo.out" }, V(6) + 0.08);
+        // counter: «اربعه» -> ٤, «وثلاثين» rolls to ٣٤
+        TL.to(num, { opacity: 1, scale: 1, duration: 0.35, ease: "back.out(2.6)" }, V(7));
+        let last = "٤";
+        frames(V(8), W(8), (t) => { const n = Math.round(lerp(4, 34, expoOut(ramp(t, V(8), W(8))))); const s = AR(n); if (s !== last) { TL.set(num, { textContent: s }, at(t)); last = s; } });
+        TL.set(num, { textContent: "٣٤" }, W(8));
+        // «ميجا» slams, the number bloats (the "2025" bloat) and the card gets heavy
+        TL.to(mega, { opacity: 1, scale: 1, duration: 0.22, ease: "power4.out" }, V(9));
+        TL.fromTo(num, { scaleX: 1.22, scaleY: 1.32 }, { scaleX: 1, scaleY: 1, duration: 0.6, ease: "elastic.out(1, 0.45)", immediateRender: false }, V(9) + 0.03);
+        gsap.set(dark, { transformOrigin: "540px 880px" });
+        TL.to(dark, { scale: 1.04, duration: 0.35, ease: "back.out(2)" }, V(7));
+        TL.to(dark, { scale: 1.1, duration: W(8) - V(8), ease: "sine.inOut" }, V(8));
+        TL.to(shadow, { scale: 1.06, duration: W(8) - V(7), ease: "sine.inOut" }, V(7));
+        TL.to(dark, { y: 46, scaleY: 1.02, scaleX: 1.16, duration: 0.09, ease: "power3.in" }, V(9));
+        TL.to(dark, { y: 30, scaleY: 1.1, scaleX: 1.1, duration: 0.3, ease: "back.out(2.5)" }, V(9) + 0.09);
+        TL.to(shadow, { y: 40, scaleX: 1.14, opacity: 0.7, duration: 0.12, ease: "power3.in" }, V(9));
+        TL.to(labW, { y: 8, duration: 0.06, ease: "power2.out" }, V(9) + 0.06); TL.to(labW, { y: 0, duration: 0.35, ease: "back.out(3)" }, V(9) + 0.12);
+        // click rings (the "Create" button rings)
+        const CLICK1 = 2.27;
+        for (let k = 0; k < 3; k++) {
+          const r = el("div", "ring", world, { left: CARD.l + "px", top: CARD.t + "px", width: (CARD.r - CARD.l) + "px", height: (CARD.b - CARD.t) + "px", zIndex: 9 });
+          TL.fromTo(r, { opacity: 0.85, scaleX: 1, scaleY: 1 }, { opacity: 0, scaleX: 1.12 + k * 0.06, scaleY: 1.3 + k * 0.14, duration: 0.55, ease: "expo.out", immediateRender: false }, CLICK1 + k * 0.07);
+        }
+
+        // ═══ B4 the card swells into the dark world; the phone tilts in ═══
+        const EXP = 3.44;
+        TL.to(dark, { clipPath: clip(0, 0, 0, 0, 0), scale: 1, scaleX: 1, scaleY: 1, y: 0, duration: 0.38, ease: "expo.inOut" }, EXP);
+        TL.to([icon, title, sizeL], { opacity: 0, scale: 0.6, filter: "blur(8px)", duration: 0.22, ease: "power2.in", stagger: 0.03 }, EXP);
+        TL.to(shadow, { opacity: 0, duration: 0.2 }, EXP + 0.2);
+        const labD = labels(dark, "#5E6369"); gsap.set(labD, { opacity: 0 }); TL.to(labD, { opacity: 1, duration: 0.3 }, EXP + 0.3);
+        // phone
+        const persp = el("div", "", dark, { position: "absolute", inset: "0" });
+        const phone = el("div", "", persp); phone.id = "phone";
+        const screen = el("div", "", phone); screen.id = "screen";
+        el("div", "notch", screen);
+        const hdr = el("div", "abs ar", screen, { right: "26px", top: "70px", fontSize: "32px", color: K }, "معرض صور");
+        const chip = el("div", "abs ar", screen, { left: "22px", top: "72px", fontSize: "27px", color: K, background: G, borderRadius: "999px", padding: "0 18px 4px" }, "٣٤ ميجا");
+        const sks = [];
+        for (let r = 0; r < 3; r++) for (let c = 0; c < 2; c++) { const s = el("div", "sk", screen, { left: (22 + c * 172) + "px", top: (148 + r * 172) + "px" }); sks.push(s); s._b = el("div", "band", s); gsap.set(s._b, { xPercent: -140 }); }
+        const spin = el("div", "abs", screen, { left: "126px", top: "324px", width: "120px", height: "120px" }, `<svg viewBox="0 0 120 120" width="120" height="120"><circle cx="60" cy="60" r="46" fill="none" stroke="#121416" stroke-opacity="0.12" stroke-width="12"/><circle cx="60" cy="60" r="46" fill="none" stroke="#00DB33" stroke-width="12" stroke-linecap="round" stroke-dasharray="90 400"/></svg>`);
+        const btn = el("div", "", screen); btn.id = "btn";
+        const fill = el("div", "", btn); fill.id = "fill";
+        const btnT = el("div", "ar", btn, { fontSize: "58px", color: K, position: "relative" }, "يفتحه");
+        const pct = el("div", "abs ar", screen, { left: "0", width: "100%", textAlign: "center", top: "602px", fontSize: "36px", color: K }, "٠٪");
+        gsap.set([hdr, chip], { opacity: 0, y: -20 }); gsap.set(spin, { opacity: 0, scale: 0.3 }); gsap.set(btn, { scale: 0, opacity: 0 }); gsap.set(pct, { opacity: 0 });
+        gsap.set(phone, { transformPerspective: 1900, rotationX: 68, rotationY: -38, rotationZ: 8, y: 1000, opacity: 1 });
+        const PH_IN = 3.6;
+        TL.to(phone, { rotationX: 7, rotationY: 19, rotationZ: -2, y: 0, duration: 0.62, ease: "back.out(1.25)" }, PH_IN);
+        TL.to(phone, { rotationX: 3, rotationY: 9, rotationZ: 0, duration: 7.2 - (PH_IN + 0.62), ease: "sine.inOut" }, PH_IN + 0.62);
+        // the counter flies into the phone and becomes its file chip
+        TL.seek(4.1); const chR = chip.getBoundingClientRect(); TL.seek(EXP); const cnR = cnt.getBoundingClientRect(); TL.seek(0);
+        const fdx = (chR.left + chR.width / 2) - (cnR.left + cnR.width / 2), fdy = (chR.top + chR.height / 2) - (cnR.top + cnR.height / 2);
+        gsap.set(cnt, { transformOrigin: "50% 50%" });
+        TL.to(cnt, { motionPath: { path: [{ x: fdx * 0.35, y: fdy * 0.2 - 160 }, { x: fdx, y: fdy }], curviness: 1.3 }, scale: chR.width / cnR.width, duration: 0.5, ease: "power2.inOut" }, EXP + 0.08);
+        TL.to(cnt, { opacity: 0, duration: 0.08 }, EXP + 0.56);
+        TL.to(hdr, { opacity: 1, y: 0, duration: 0.3, ease: "expo.out" }, PH_IN + 0.32);
+        TL.set(chip, { opacity: 1, y: 0 }, EXP + 0.56); TL.fromTo(chip, { scale: 1.4 }, { scale: 1, duration: 0.35, ease: "back.out(3)", immediateRender: false }, EXP + 0.56);
+        TL.to(btn, { opacity: 1, scale: 1, duration: 0.42, ease: "back.out(2.4)" }, 3.9);
+        // «عميلك» / «من جواله،» column (right, RTL)
+        const fit = (e, maxW) => { const w = e.getBoundingClientRect().width; if (w > maxW) e.style.fontSize = (parseFloat(e.style.fontSize) * maxW / w) + "px"; };
+        const cl = el("div", "abs ar", dark, { right: "120px", top: "404px", fontSize: "176px", color: L, transformOrigin: "100% 60%" }, "عميلك"); fit(cl, 430);
+        const fromL = el("div", "abs ar", dark, { right: "120px", top: "642px", fontSize: "92px", color: L, display: "flex", gap: "22px" });
+        const wMin = el("span", "", fromL, {}, "من"), wJaw = el("span", "", fromL, { color: G }, "جواله،"); fit(fromL, 430);
+        gsap.set(cl, { opacity: 0, scale: 0.25, rotation: -8 }); gsap.set([wMin, wJaw], { opacity: 0, y: 40, display: "inline-block" });
+        TL.to(cl, { opacity: 1, duration: 0.05 }, V(10)); TL.to(cl, { scale: 1, rotation: 0, duration: 0.55, ease: "back.out(2)" }, V(10));
+        TL.to(wMin, { opacity: 1, y: 0, duration: 0.3, ease: "back.out(2.5)" }, V(12));
+        TL.to(wJaw, { opacity: 1, y: 0, duration: 0.34, ease: "back.out(2.5)" }, V(13));
+
+        // ═══ cursor: the recurring thread ═══
+        gsap.set(cur, { x: 1100, y: 1560, opacity: 1 });
+        const ripple = (parent, x, y, t, col = G) => { const r = el("div", "ripple", parent, { left: x + "px", top: y + "px", borderColor: col, zIndex: 49 }); TL.fromTo(r, { opacity: 1, scale: 0.25 }, { opacity: 0, scale: 1.5, duration: 0.45, ease: "expo.out", immediateRender: false }, t); };
+        const press = t => { TL.to(cur, { scale: 0.78, duration: 0.06, ease: "power2.out" }, t - 0.06); TL.to(cur, { scale: 1, duration: 0.25, ease: "back.out(3)" }, t); };
+        TL.to(cur, { x: 690, y: 985, duration: 0.55, ease: "power3.out" }, CLICK1 - 0.6);
+        press(CLICK1); ripple(document.getElementById("stage"), 690, 985, CLICK1);
+        TL.to(cur, { x: 935, y: 1150, duration: 0.5, ease: "power2.inOut" }, CLICK1 + 0.3);
+        TL.to(cur, { y: 1196, duration: 0.09, ease: "power3.in" }, V(9)); TL.to(cur, { y: 1176, duration: 0.3, ease: "back.out(2)" }, V(9) + 0.09);
+        // click «يفتحه» on the tilted phone (position measured in the phone's pose at that moment)
+        const CLICK2 = 4.2;
+        TL.seek(CLICK2); const br = btn.getBoundingClientRect(); TL.seek(0);
+        const bx = br.left + br.width * 0.56, by = br.top + br.height * 0.52;
+        TL.to(cur, { x: bx, y: by, duration: 0.45, ease: "power3.inOut" }, CLICK2 - 0.48);
+        press(CLICK2); ripple(document.getElementById("stage"), bx, by, CLICK2);
+        TL.to(btn, { scale: 0.92, duration: 0.06 }, CLICK2 - 0.06); TL.to(btn, { scale: 1, duration: 0.2, ease: "back.out(3)" }, CLICK2);
+        // the button morphs into the progress bar (the waiting begins)
+        const M = CLICK2 + 0.12;
+        TL.to(btnT, { opacity: 0, scale: 0.6, duration: 0.12 }, M);
+        TL.to(btn, { top: 676, height: 18, left: 34, width: 304, backgroundColor: "#D3D6D9", duration: 0.4, ease: "expo.inOut" }, M);
+        TL.to(pct, { opacity: 1, duration: 0.2 }, M + 0.3);
+        TL.to(spin, { opacity: 1, scale: 1, duration: 0.4, ease: "back.out(2.2)" }, M + 0.2);
+        TL.to(spin, { rotation: 360 * 4.2, duration: 7.3 - (M + 0.2), ease: "none" }, M + 0.2);
+        for (let c = 0, t0 = M + 0.25; t0 < 7.2; c++, t0 += 1.05) sks.forEach((s, k) => TL.fromTo(s._b, { xPercent: -140 }, { xPercent: 260, duration: 0.8, ease: "sine.inOut", immediateRender: false }, t0 + k * 0.05));
+        TL.to(cur, { x: 560, y: 1080, duration: 0.6, ease: "power2.inOut" }, CLICK2 + 0.3);
+        // crawl: 0 -> 3% by the first «ويستنى», 6% by the second, 9% when he leaves
+        const progAt = t => t < M + 0.5 ? 0 : t < V(14) ? lerp(0, 3, ramp(t, M + 0.5, V(14))) : t < V(15) ? lerp(3, 4, ramp(t, V(14), V(15) - 0.2)) : lerp(4, 9, ramp(t, V(15), 7.1));
+        let lp = "";
+        frames(M + 0.5, 7.15, (t) => { const p = progAt(t); TL.set(fill, { width: (p * 1.0) + "%" }, at(t)); const s = AR(Math.floor(p)) + "٪"; if (s !== lp) { TL.set(pct, { textContent: s }, at(t)); lp = s; } });
+
+        // ═══ B5 «ويستنى، ويستنى،»: one string grows by kashida, its green underline is the progress bar ═══
+        const wait = el("div", "abs ar", dark, { right: "120px", top: "1236px", fontSize: "142px", color: L, transformOrigin: "100% 60%" }, "ويستنى،");
+        const under = el("div", "abs", dark, { right: "120px", top: "1418px", height: "12px", width: "0px", background: G, borderRadius: "6px" });
+        const kw = (measure("ويستنـــــــــــــــــــى،", 142) - measure("ويستنـى،", 142)) / 19;
+        const w1 = measure("ويستنى،", 142), NK = Math.max(4, Math.floor((900 - w1) / Math.max(kw, 1)));
+        gsap.set(wait, { opacity: 0, scale: 0.4, y: 30 });
+        TL.to(wait, { opacity: 1, scale: 1, y: 0, duration: 0.5, ease: "back.out(2)" }, V(14));
+        TL.to([cl, fromL], { opacity: 0.35, duration: 0.4 }, V(14));
+        TL.to(under, { width: w1 * 0.18, duration: 0.6, ease: "power2.out" }, V(14) + 0.2);
+        let lk = -1;
+        frames(V(15), 7.12, (t) => {
+          const n = Math.round(NK * Math.pow(ramp(t, V(15), 7.05), 0.85));
+          if (n !== lk) { TL.set(wait, { textContent: n ? "ويستن" + "ـ".repeat(n) + "ى،" : "ويستنى،" }, at(t)); lk = n; }
+          TL.set(under, { width: (w1 * 0.18 + (n * kw + w1) * 0.5 * ramp(t, V(15), 7.05)) + "px" }, at(t));
+        });
+        TL.to(wait, { scaleY: 0.9, duration: 0.08 }, V(15)); TL.to(wait, { scaleY: 1, duration: 0.4, ease: "back.out(3)" }, V(15) + 0.08);
+        // an impatient tap on the second «ويستنى» - nothing moves
+        const tapX = bx - 30, tapY = by - 250;
+        TL.to(cur, { x: tapX, y: tapY, duration: 0.35, ease: "power2.inOut" }, V(15) - 0.4);
+        press(V(15)); ripple(document.getElementById("stage"), tapX, tapY, V(15), L);
+        press(V(15) + 0.28); ripple(document.getElementById("stage"), tapX, tapY, V(15) + 0.28, L);
+
+        // ═══ B6 «ويطلع.»: stamped, then the whole dark world is a card the cursor swipes away ═══
+        const go = el("div", "pill", dark, { left: "0", top: "0", fontSize: "150px", background: L, color: K, padding: "0 62px 16px", zIndex: 6 }, "ويطلع.");
+        { const r = go.getBoundingClientRect(); go.style.left = (540 - r.width / 2) + "px"; go.style.top = (930 - r.height / 2) + "px"; }
+        gsap.set(go, { opacity: 0, scale: 2.4, rotation: 4 });
+        TL.to(go, { opacity: 1, duration: 0.05 }, V(16)); TL.to(go, { scale: 1, rotation: -6, duration: 0.32, ease: "back.out(1.8)" }, V(16));
+        TL.to(phone, { rotationY: -8, rotationX: 10, duration: 0.3, ease: "power2.out" }, V(16));
+        const GRAB = 7.33, FLICK = 7.42;
+        TL.to(cur, { x: 900, y: 930, duration: 0.25, ease: "power2.inOut" }, V(16) - 0.05);
+        TL.to(cur, { scale: 0.8, duration: 0.06 }, GRAB);
+        TL.set(darkWrap, { filter: "drop-shadow(0 40px 50px rgba(18,20,22,0.45))" }, V(16));
+        TL.to(dark, { clipPath: clip(96, 60, 96, 60, 70), scale: 0.95, duration: 0.24, ease: "power2.out", transformOrigin: "540px 960px" }, V(16) + 0.02);
+        TL.to(dark, { x: -1500, y: 160, rotation: -17, duration: 0.42, ease: "power3.in" }, FLICK);
+        TL.to(cur, { x: 430, y: 990, duration: 0.3, ease: "power3.in" }, FLICK);
+        TL.to(cur, { scale: 1, duration: 0.2 }, FLICK + 0.22);
+        TL.set(darkWrap, { opacity: 0 }, FLICK + 0.44);
+
+        // ═══ B7 «لا تدور على صور أقل.» as a UI toast; the photos are all still orbiting ═══
+        const toast = el("div", "", world); toast.id = "toast";
+        const ticon = el("div", "abs", toast, { right: "34px", top: "45px", width: "120px", height: "120px", borderRadius: "50%", background: G, display: "flex", alignItems: "center", justifyContent: "center" },
+          `<img src="assets/brand/mark.svg" style="width:72px;height:68px;filter:brightness(0)">`);
+        const tline = el("div", "abs ar", toast, { right: "182px", top: "34px", fontSize: "88px", color: "#5E6369", display: "flex", gap: "20px", alignItems: "center" });
+        const tw = ["لا", "تدور", "على", "صور", "أقل."].map(s => el("span", "", tline, { display: "inline-block", borderRadius: "22px", padding: "0 10px 8px", margin: "0 -10px" }, s));
+        fit(tline, 690);
+        const tbar = el("div", "abs", toast, { left: "60px", right: "60px", bottom: "22px", height: "6px", borderRadius: "3px", background: G, transformOrigin: "0 50%" });
+        gsap.set(toast, { y: -1400, rotation: -5 });
+        TL.to(toast, { y: 0, rotation: 0, duration: 0.6, ease: "back.out(1.4)" }, V(17) - 0.12);
+        TL.fromTo(tbar, { scaleX: 1 }, { scaleX: 0.5, duration: V(22) - V(17), ease: "none", immediateRender: false }, V(17));
+        tw.forEach((s, k) => TL.to(s, { color: L, duration: 0.14 }, V(17 + k)));
+        TL.to(tw[3], { backgroundColor: G, color: K, duration: 0.16 }, V(20));
+        TL.fromTo(tw[3], { scale: 1.3 }, { scale: 1, duration: 0.4, ease: "back.out(3)", immediateRender: false }, V(20));
+        TL.fromTo(tw[4], { scale: 1.35, y: -10 }, { scale: 1, y: 0, duration: 0.45, ease: "back.out(3)", immediateRender: false }, V(21));
+        TL.to(toast, { scale: 1.03, duration: 0.12, ease: "power2.out" }, V(21)); TL.to(toast, { scale: 1, duration: 0.4, ease: "back.out(2)" }, V(21) + 0.12);
+        TL.to(ticon, { rotation: 360, duration: 0.6, ease: "back.out(1.6)" }, V(17));
+        { const r = tw[4].getBoundingClientRect(); TL.to(cur, { x: 270, y: 1030, duration: 0.9, ease: "power2.inOut" }, 8.1); }
+        TL.to(cur, { x: 286, y: 1012, duration: 0.25, ease: "sine.inOut" }, 9.0);
+
+        /*EXT*/
+        // grain, every 2 frames
+        const grains = Array.from(document.querySelectorAll(".grain"));
+        for (let f = 0; f < D * FPS; f += 2) grains.forEach((g, i) => TL.set(g, { opacity: i === (f / 2) % 6 ? 0.42 : 0 }, f * F));
+        TL.set({}, {}, D);
+        window.__timelines["main"] = TL; TL.seek(0);
+      }
+      window.__hf = window.__hf || {}; window.__hf.buildReady = window.__hf.buildReady || {};
+      window.__hf.buildReady["main"] = build();
+    </script>
+  </body>
+</html>

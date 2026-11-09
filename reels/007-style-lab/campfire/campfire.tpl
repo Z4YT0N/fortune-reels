@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="ar" data-resolution="portrait">
+  <!-- Style lab 007 / CAMPFIRE (kinetic typography, ref tOX9hLmBxho).
+       Two colours per scene, hard swaps on beats: cream+green -> green+black -> black+green -> cream+green/black -> green+black -> black+green (neon).
+       Moves taken from the reference at 12 fps: dot->circle wipe, word grid with one boxed row (US US US / AND THERE YOU'LL FIND US),
+       box collapses into a thin line that streaks off as speed lines, small solid word between huge outline rows (MOMENTUM),
+       outline circle + solid circle intersect and absorb, text spins in/out of a circle with rotation blur (WE'LL GO),
+       vertical echo stack with one solid copy (NEW NEW NEW), stack collapses (regather), whip exit with rotation blur,
+       a thin line draws the sign outline, the sign lights with a flicker (CAMPFIRE neon). '+' crosses float everywhere.
+       build.py fills __D__ and WORDS. -->
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1080, height=1920">
+    <title>Campfire style</title>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      @font-face { font-family: "ZainL"; src: url("assets/zain-mob-long.ttf") format("truetype"); }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1080px; height: 1920px; overflow: hidden; background: #F0F1F2; }
+      #main { position: relative; width: 100%; height: 100%; overflow: hidden; font-family: "ZainL", sans-serif; }
+      #bg { position: absolute; inset: 0; background: #F0F1F2; }
+      #stage { position: absolute; inset: 0; }
+      .anc { position: absolute; width: 0; height: 0; }
+      .abs { position: absolute; }
+      .wd { position: absolute; left: 0; top: 0; white-space: nowrap; direction: rtl; line-height: 1.25; }
+      .ol { position: relative; display: inline-block; white-space: nowrap; direction: rtl; line-height: 1.25; }
+      .ol .s, .ol .f { display: inline-block; }
+      .ol .f { position: absolute; left: 0; top: 0; }
+      .clipbox { position: absolute; overflow: hidden; }
+      .row { position: absolute; left: 0; right: 0; display: flex; flex-direction: row; justify-content: center; direction: rtl; white-space: nowrap; }
+      .tok { display: inline-block; line-height: 1.25; }
+      .disc { position: absolute; border-radius: 50%; }
+      .cross { position: absolute; width: 22px; height: 22px; }
+      .cross::before, .cross::after { content: ""; position: absolute; background: currentColor; }
+      .cross::before { left: 10px; top: 0; width: 2px; height: 22px; }
+      .cross::after { left: 0; top: 10px; width: 22px; height: 2px; }
+      .grain { position: absolute; inset: 0; width: 1080px; height: 1920px; mix-blend-mode: soft-light; opacity: 0; z-index: 50; pointer-events: none; }
+    </style>
+  </head>
+  <body>
+    <div id="main" data-composition-id="main" data-start="0" data-duration="__D__" data-width="1080" data-height="1920">
+      <div id="bg" class="clip" data-start="0" data-duration="__D__" data-track-index="0"></div>
+      <div id="stage" class="clip" data-start="0" data-duration="__D__" data-track-index="1">
+        <img class="grain" src="assets/grain0.png" alt=""><img class="grain" src="assets/grain1.png" alt=""><img class="grain" src="assets/grain2.png" alt="">
+        <img class="grain" src="assets/grain3.png" alt=""><img class="grain" src="assets/grain4.png" alt=""><img class="grain" src="assets/grain5.png" alt="">
+      </div>
+    </div>
+    <script>
+      const D = __D__;
+      const WORDS = /*WORDS*/[];
+      const W = (i) => WORDS[i][1];
+      const V = (i) => W(i) - 0.03; // land on the spoken frame
+      const F = 1 / 30;
+      const G = "#00DB33", K = "#121416", C = "#F0F1F2", DG = "#006A39";
+      const CX = 540, CY = 835;
+      window.__timelines = window.__timelines || {};
+      const TL = gsap.timeline({ paused: true });
+      const stage = document.getElementById("stage");
+      const bg = document.getElementById("bg");
+      // deterministic random
+      let seed = 7; const rnd = () => { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; };
+
+      function el(tag, parent, css = {}, cls = "") { const e = document.createElement(tag); if (cls) e.className = cls; Object.assign(e.style, css); (parent || stage).appendChild(e); return e; }
+      function anchor(x, y, z = 1) { return el("div", stage, { left: x + "px", top: y + "px", zIndex: z }, "anc"); }
+      // centred solid word inside an anchor
+      function word(parent, text, size, color, dy = 0) {
+        const w = el("div", parent, { fontSize: size + "px", color }, "wd"); w.textContent = text;
+        gsap.set(w, { xPercent: -50, yPercent: -50, y: dy, transformOrigin: "50% 50%" }); return w;
+      }
+      // outline word: thick stroke layer + fill layer on top in the bg colour -> clean outer outline (no inner contour lines of joined Arabic)
+      function outline(parent, text, size, stroke, fill, sw) {
+        const o = el("span", parent, { fontSize: size + "px" }, "ol");
+        const s = el("span", o, { color: stroke, webkitTextStroke: (sw * 2) + "px " + stroke }, "s"); s.textContent = text;
+        const f = el("span", o, { color: fill }, "f"); f.textContent = text;
+        return { o, s, f };
+      }
+      function setOl(t, at, stroke, fill) { TL.set(t.s, { color: stroke, webkitTextStroke: t.sw + "px " + stroke }, at); TL.set(t.f, { color: fill }, at); }
+      function bgAt(col, at) { TL.set(bg, { backgroundColor: col }, at); }
+      // spin a word in / out of a circle (rotation + blur), as the reference's «WE'LL GO»
+      function spinIn(w, at, d = 0.2) { gsap.set(w, { opacity: 0 }); TL.fromTo(w, { rotation: 50, scale: 0.7, filter: "blur(10px)", opacity: 0 }, { rotation: 0, scale: 1, filter: "blur(0px)", opacity: 1, duration: d, ease: "power3.out", immediateRender: false }, at); }
+      function spinOut(w, at, d = 0.14) { TL.to(w, { rotation: -45, scale: 0.8, filter: "blur(10px)", opacity: 0, duration: d, ease: "power2.in" }, at); }
+      function blurIn(w, at, d = 0.16) { gsap.set(w, { opacity: 0 }); TL.fromTo(w, { scaleX: 1.35, filter: "blur(9px)", opacity: 0 }, { scaleX: 1, filter: "blur(0px)", opacity: 1, duration: d, ease: "power3.out", immediateRender: false }, at); }
+
+      async function build() {
+        await document.fonts.load('100px "ZainL"', "معرض ٣٤");
+        await document.fonts.ready;
+
+        // ── floating '+' crosses (the reference sprinkles them in every scene) ──
+        const crosses = [];
+        [[120, 300], [930, 360], [210, 1180], [880, 1330], [470, 270], [96, 760], [960, 960], [640, 1400], [300, 520], [780, 640]].forEach(([x, y], i) => {
+          const c = el("div", stage, { left: x + "px", top: y + "px", color: K, zIndex: 40 }, "cross");
+          gsap.set(c, { opacity: 0, scale: 0.6 + rnd() * 0.5 });
+          TL.to(c, { opacity: 0.55, duration: 0.2 }, 0.1 + i * 0.05);
+          TL.to(c, { x: (rnd() - 0.5) * 60, y: -40 - rnd() * 60, duration: D, ease: "none" }, 0);
+          crosses.push(c);
+        });
+        const crossCol = (col, at) => TL.set(crosses, { color: col }, at);
+
+        // ═══ S1 (cream) «معرض»: a green dot opens with the word in it ═══
+        const g1 = anchor(CX, CY, 5);
+        const disc1 = el("div", g1, { left: "-160px", top: "-160px", width: "320px", height: "320px", background: G }, "disc");
+        gsap.set(disc1, { scale: 0 });
+        TL.to(disc1, { scale: 1, duration: 0.3, ease: "back.out(1.6)" }, 0.0);
+        // «صور» (0.40): the dot floods the frame -> colour flip by circle wipe
+        TL.to(disc1, { scale: 8.2, duration: 0.24, ease: "expo.in" }, V(1) - 0.06);
+        bgAt(C, 0); bgAt(G, V(1) + 0.18); TL.set(disc1, { opacity: 0 }, V(1) + 0.19);
+        crossCol(G, 0); crossCol(K, V(1) + 0.18);
+
+        // ═══ S2 (green) «صور» grid with one boxed row: «معرض صور في موقع شركة كبيرة» ═══
+        const grid = el("div", stage, { left: "60px", top: "250px", width: "900px", height: "1170px", zIndex: 3 }, "clipbox");
+        const PITCH = 78, ROWS = 15, BOXROW = 7;
+        const toks = [];
+        for (let r = 0; r < ROWS; r++) {
+          const row = el("div", grid, { top: (r * PITCH) + "px", height: PITCH + "px", alignItems: "center", gap: "34px" }, "row");
+          for (let k = 0; k < 10; k++) { const t = el("span", row, { fontSize: "50px", color: K }, "tok"); t.textContent = "صور"; toks.push({ t, r, k }); }
+          gsap.set(row, { x: (r % 2 ? 1 : -1) * 30 });
+          TL.to(row, { x: (r % 2 ? -1 : 1) * 30, duration: 1.6, ease: "none" }, 0.4);
+        }
+        // pop in radially from the centre as the circle floods
+        toks.forEach((o) => {
+          const b = o.t.getBoundingClientRect(); const dx = b.left + b.width / 2 - CX, dy = b.top + b.height / 2 - CY;
+          o.dist = Math.hypot(dx, dy); gsap.set(o.t, { opacity: 0, y: 14 });
+          TL.to(o.t, { opacity: 1, y: 0, duration: 0.08, ease: "power2.out" }, V(1) + 0.16 + o.dist / 2600 + rnd() * 0.04);
+        });
+        // the box row
+        const boxY = 250 + BOXROW * PITCH + PITCH / 2; // centre y of the boxed row
+        const ga = anchor(CX, boxY, 6);
+        const box = el("div", ga, { background: K, height: "86px", top: "-43px" }, "abs");
+        const line = el("div", ga, { display: "flex", flexDirection: "row", direction: "rtl", gap: "20px", alignItems: "center", whiteSpace: "nowrap" }, "abs");
+        const bw = ["معرض", "صور", "في", "موقع", "شركة", "كبيرة،"].map((t, i) => { const s = el("span", line, { fontSize: (i === 5 ? 66 : 56) + "px", color: G, lineHeight: "1.25", display: "inline-block" }, "tok"); s.textContent = t; return s; });
+        const lb = line.getBoundingClientRect();
+        gsap.set(line, { x: -lb.width / 2, y: -lb.height / 2 });
+        const boxW = lb.width + 70; Object.assign(box.style, { left: (-boxW / 2) + "px", width: boxW + "px" });
+        gsap.set(box, { scaleX: 0, transformOrigin: "100% 50%" });
+        // «معرض» starts big and black inside the dot, then settles into its slot in the boxed row
+        const m0 = bw[0].getBoundingClientRect();
+        const offX = CX - (m0.left + m0.width / 2), offY = CY - (m0.top + m0.height / 2);
+        gsap.set(bw[0], { x: offX, y: offY, scale: 1.5, color: K, opacity: 0 });
+        TL.fromTo(bw[0], { opacity: 0, yPercent: 40 }, { opacity: 1, yPercent: 0, duration: 0.22, ease: "expo.out", immediateRender: false }, 0.06);
+        TL.to(bw[0], { x: 0, y: 0, scale: 1, duration: 0.32, ease: "expo.inOut" }, V(1) + 0.06);
+        TL.to(box, { scaleX: 1, duration: 0.22, ease: "expo.out" }, V(1) + 0.2);
+        TL.set(bw[0], { color: G }, V(1) + 0.24);
+        // the rest of the phrase is typed in, whole words, right to left, on the voice
+        [1, 2, 3, 4, 5].forEach((wi) => {
+          const s = bw[wi]; gsap.set(s, { clipPath: "inset(-30% 0% -30% 100%)" });
+          const at = Math.max(V(wi), V(1) + 0.26 + (wi === 1 ? 0 : 0));
+          TL.to(s, { clipPath: "inset(-30% 0% -30% 0%)", duration: wi === 5 ? 0.12 : 0.09, ease: "power2.out" }, at);
+        });
+        // «كبيرة» punches the box: the box swells for one beat
+        TL.to(box, { scaleY: 1.32, duration: 0.12, ease: "power2.out" }, V(5)); TL.to(box, { scaleY: 1, duration: 0.3, ease: "sine.inOut" }, V(5) + 0.1);
+        TL.fromTo(bw[5], { scale: 1.25 }, { scale: 1, duration: 0.3, ease: "back.out(2)", immediateRender: false }, V(5));
+
+        // ═══ S3 the grid rains out, the box collapses into a line that streaks off ═══
+        const T3 = V(6) - 0.12;
+        toks.forEach((o) => { TL.to(o.t, { y: 60 + rnd() * 70, scaleY: 2.6, opacity: 0, filter: "blur(2px)", duration: 0.16, ease: "power2.in" }, T3 - 0.06 + rnd() * 0.14); });
+        bw.slice().reverse().forEach((s, i) => TL.to(s, { clipPath: "inset(-30% 100% -30% 0%)", duration: 0.06, ease: "none" }, T3 + i * 0.012));
+        TL.to(box, { scaleY: 0.05, duration: 0.08, ease: "power3.in" }, T3 + 0.02);
+        TL.to(ga, { x: -820, duration: 0.17, ease: "power3.in" }, T3 + 0.1);
+        TL.to(box, { scaleX: 0.25, transformOrigin: "0% 50%", duration: 0.17, ease: "power3.in" }, T3 + 0.1);
+        TL.set(ga, { opacity: 0 }, T3 + 0.4);
+        // speed lines around the small word (reference: MOMENTUM)
+        const lines = [[-46, 520, 0.0], [38, 340, 0.05], [70, 210, 0.11], [-80, 160, 0.16]].map(([dy, w, d]) => {
+          const l = el("div", stage, { left: "0px", top: (CY + dy) + "px", width: w + "px", height: "3px", background: K, zIndex: 6 }, "abs");
+          gsap.set(l, { x: 1000, opacity: 0 });
+          TL.set(l, { opacity: 1 }, T3 + 0.18 + d);
+          TL.to(l, { x: -w - 20, duration: 0.34, ease: "power2.inOut" }, T3 + 0.18 + d);
+          return l;
+        });
+        // «حجمه» small solid word in the middle
+        const g4 = anchor(CX, CY, 8);
+        const hj = word(g4, "حجمه", 86, K); blurIn(hj, V(6) + 0.05);
+
+        // ═══ S3b huge outline rows: «٣٤» (اربعه وثلاثين) above, «ميجا» below (on the swap) ═══
+        const top = el("div", stage, { left: "60px", top: "330px", width: "900px", height: "380px", zIndex: 4 }, "clipbox");
+        const bot = el("div", stage, { left: "60px", top: "985px", width: "900px", height: "380px", zIndex: 4 }, "clipbox");
+        const mkRow = (box, text, size, n) => {
+          const r = el("div", box, { top: "0px", height: "380px", alignItems: "center", gap: "70px" }, "row");
+          const arr = []; for (let i = 0; i < n; i++) { const t = outline(r, text, size, K, G, 3); t.sw = 6; arr.push(t); }
+          return { r, arr };
+        };
+        const R1 = mkRow(top, "٣٤", 330, 5), R2 = mkRow(bot, "ميجا", 250, 4);
+        gsap.set(R1.r, { x: -40 }); TL.to(R1.r, { x: 60, duration: 1.4, ease: "none" }, V(7));
+        gsap.set(R2.r, { x: 60 }); TL.to(R2.r, { x: -60, duration: 1.0, ease: "none" }, V(8) - 0.3);
+        // copies pop in piece by piece (random order), half on «اربعه», the rest on «وثلاثين»
+        const pop = (t, at) => { gsap.set(t.o, { opacity: 0 }); TL.fromTo(t.o, { opacity: 0, scale: 0.92 }, { opacity: 1, scale: 1, duration: 0.06, ease: "power2.out", immediateRender: false }, at); };
+        [2, 0, 4, 1, 3].forEach((i, k) => pop(R1.arr[i], (k < 3 ? V(7) : V(8)) + (k % 3) * 0.07));
+        [1, 3, 0, 2].forEach((i, k) => pop(R2.arr[i], V(9) - 0.02 + k * 0.05));
+        // «ميجا» = hard colour swap to black; outlines and the small word go green
+        const SW = V(9);
+        bgAt(K, SW); crossCol(G, SW);
+        R1.arr.concat(R2.arr).forEach((t) => setOl(t, SW, G, K));
+        TL.set(hj, { opacity: 0 }, SW);
+        const mg = word(g4, "٣٤ ميجا", 80, G); blurIn(mg, SW, 0.12);
+
+        // ═══ S4 rows scatter; the small word becomes a disc; cut to cream; circles meet ═══
+        const T4 = V(10);
+        TL.to(top, { y: -220, opacity: 0, filter: "blur(10px)", duration: 0.24, ease: "power2.in" }, T4 - 0.26);
+        TL.to(bot, { y: 220, opacity: 0, filter: "blur(10px)", duration: 0.24, ease: "power2.in" }, T4 - 0.26);
+        const disc2 = el("div", g4, { left: "-150px", top: "-150px", width: "300px", height: "300px", background: G, zIndex: -1 }, "disc");
+        gsap.set(disc2, { scale: 0 });
+        TL.to(disc2, { scale: 1, duration: 0.2, ease: "back.out(1.7)" }, T4 - 0.2);
+        TL.set(mg, { color: K }, T4 - 0.16);
+        bgAt(C, T4); crossCol(K, T4);
+        spinOut(mg, T4 - 0.02);
+        const cl = word(g4, "عميلك", 64, K); spinIn(cl, T4 + 0.02);
+        TL.to(g4, { x: 120, y: 150, duration: 0.42, ease: "sine.inOut" }, T4 + 0.2);
+        // outline ring with «يفتحه» slides in from the upper left
+        const g5 = anchor(CX, CY, 9);
+        const ring = el("div", g5, { left: "-150px", top: "-150px", width: "300px", height: "300px", border: "6px solid " + K, background: C }, "disc");
+        gsap.set(g5, { x: -820, y: -140, opacity: 1 });
+        TL.to(g5, { x: -130, y: -150, duration: 0.36, ease: "expo.out" }, V(11) - 0.1);
+        const op = word(g5, "يفتحه", 70, K); spinIn(op, V(11) + 0.02);
+        // a thin line draws between the two circles; «من» sits on it
+        const svgNS = "http://www.w3.org/2000/svg";
+        const ln = document.createElementNS(svgNS, "svg"); Object.assign(ln.style, { position: "absolute", left: "0", top: "0", width: "1080px", height: "1920px", overflow: "visible", zIndex: 7 }); stage.appendChild(ln);
+        ln.innerHTML = `<path d="M${CX - 130 + 98} ${CY - 150 + 118} L${CX + 120 - 98} ${CY + 150 - 118}" fill="none" stroke="${K}" stroke-width="4" pathLength="1" stroke-dasharray="1" stroke-dashoffset="1"/>`;
+        TL.to(ln.querySelector("path"), { strokeDashoffset: 0, duration: 0.14, ease: "power2.out" }, V(12) - 0.1);
+        const gm = anchor(CX - 5, CY, 10);
+        const minW = word(gm, "من", 50, K); minW.style.background = C; minW.style.padding = "0 14px";
+        gsap.set(minW, { opacity: 0, scale: 0.4 }); TL.to(minW, { opacity: 1, scale: 1, duration: 0.12, ease: "back.out(2.5)" }, V(12));
+        // «جواله»: the ring rolls onto the disc and swallows it
+        const T5 = V(13) - 0.06;
+        TL.to(ln, { opacity: 0, duration: 0.08 }, T5); TL.to(minW, { scale: 0, opacity: 0, duration: 0.1, ease: "power2.in" }, T5);
+        TL.to(g5, { x: 0, y: 0, duration: 0.3, ease: "power3.inOut" }, T5);
+        TL.to(g4, { x: 18, y: 14, duration: 0.3, ease: "power3.inOut" }, T5);
+        TL.to(g4, { x: 0, y: 0, duration: 0.25, ease: "sine.inOut" }, T5 + 0.3);
+        spinOut(cl, T5); spinOut(op, T5 + 0.04);
+        const jw = word(g5, "جواله", 70, K); spinIn(jw, V(13) + 0.08);
+        TL.set(g4, { opacity: 0 }, T5 + 0.6);
+        // the ring turns into a loading ring
+        const arc = document.createElementNS(svgNS, "svg"); arc.setAttribute("viewBox", "0 0 300 300");
+        Object.assign(arc.style, { position: "absolute", left: "-150px", top: "-150px", width: "300px", height: "300px", overflow: "visible" }); g5.appendChild(arc);
+        arc.innerHTML = `<circle cx="150" cy="150" r="147" fill="none" stroke="${G}" stroke-width="14" stroke-linecap="round" pathLength="100" stroke-dasharray="0 100"/>`;
+        const ac = arc.querySelector("circle");
+        TL.to(ac, { attr: { "stroke-dasharray": "26 74" }, duration: 0.18, ease: "power2.out" }, V(13) + 0.3);
+        gsap.set(arc, { rotation: -90, transformOrigin: "50% 50%" });
+        TL.to(arc, { rotation: 520, duration: 0.75, ease: "power1.in" }, V(13) + 0.3);
+        // the ring drops into the next word
+        const T6 = V(14);
+        TL.to(g5, { scale: 0.05, opacity: 0, duration: 0.1, ease: "power3.in" }, T6 - 0.09);
+
+        // ═══ S5 «ويستنى» echo stack (green), second «ويستنى» = swap to black, the stack steps up ═══
+        bgAt(G, T6); crossCol(K, T6);
+        const NST = 14, PIT = 72, GAP = 96;
+        const st = el("div", stage, { left: "0px", top: "0px", zIndex: 11 }, "anc");
+        const layout = (k, c) => { const d = k - c; const y = d === 0 ? 0 : Math.sign(d) * (GAP + (Math.abs(d) - 1) * PIT); return { d, y, sy: d === 0 ? 1 : 0.46 }; };
+        const kind = (d) => { const a = Math.abs(d); return a === 0 ? "solid" : (a === 1 || a === 3) ? "solid" : "ol"; };
+        const rows = [];
+        for (let k = 0; k < NST; k++) {
+          const a = anchor(CX, CY, 11); st.appendChild(a);
+          const s = word(a, "ويستنى", 124, K);
+          const holder = el("div", a, {}, "wd"); const o = outline(holder, "ويستنى", 124, K, G, 2.5); o.sw = 5; gsap.set(holder, { xPercent: -50, yPercent: -50 });
+          rows.push({ a, s, holder, o });
+        }
+        // first layout: centre = 6 (rows 0..12), row 13 waits below
+        rows.forEach((r, k) => {
+          const L = layout(k, 6), kd = kind(L.d);
+          gsap.set(r.s, { opacity: 0 }); gsap.set(r.holder, { opacity: 0 });
+          gsap.set(r.a, { y: 0, scaleY: 0.1 });
+          if (k === 13) return;
+          const tgt = kd === "solid" ? r.s : r.holder;
+          if (L.d === 0) {
+            TL.set(r.a, { scaleY: 1 }, T6);
+            TL.fromTo(r.s, { opacity: 1, scale: 1.4, filter: "blur(8px)" }, { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.14, ease: "power3.out", immediateRender: false }, T6);
+          } else {
+            const at = T6 + 0.06 + Math.abs(L.d) * 0.022;
+            TL.set(tgt, { opacity: Math.abs(L.d) > 4 ? 0.7 : 1 }, at);
+            TL.fromTo(r.a, { y: L.y * 0.25, scaleY: 1.6, filter: "blur(6px)" }, { y: L.y, scaleY: L.sy, filter: "blur(0px)", duration: 0.32, ease: "expo.out", immediateRender: false }, at);
+          }
+        });
+        TL.to(st, { y: -18, duration: V(15) - T6, ease: "none" }, T6);
+        // second «ويستنى»: swap to black, everything steps up one row, the next copy becomes the solid one
+        const T7 = V(15);
+        bgAt(K, T7); crossCol(G, T7);
+        rows.forEach((r, k) => {
+          TL.set(r.s, { color: G }, T7); setOl(r.o, T7, G, K);
+          const A = layout(k, 6), B = layout(k, 7), ka = kind(A.d), kb = kind(B.d);
+          if (k === 13) { TL.set(r.holder, { opacity: 0.7 }, T7); TL.fromTo(r.a, { y: B.y + 120, scaleY: 0.1 }, { y: B.y, scaleY: B.sy, duration: 0.26, ease: "expo.out", immediateRender: false }, T7); return; }
+          if (ka !== kb) { TL.set(ka === "solid" ? r.s : r.holder, { opacity: 0 }, T7); TL.set(kb === "solid" ? r.s : r.holder, { opacity: 1 }, T7); }
+          TL.to(r.a, { y: B.y, scaleY: B.sy, duration: 0.24, ease: "expo.out" }, T7);
+        });
+        TL.to(st, { y: -50, duration: V(16) - T7, ease: "none" }, T7);
+
+        // ═══ S6 «ويطلع»: the stack regathers into one word, which whips out and leaves a line ═══
+        const T8 = V(16);
+        rows.forEach((r, k) => { if (k === 7) return; const d = Math.abs(k - 7); TL.to(r.a, { y: 0, scaleY: 0, opacity: 0, duration: 0.12, ease: "power3.in" }, T8 - 0.12 + (6 - Math.min(d, 6)) * 0.004); });
+        TL.to(rows[7].s, { opacity: 0, filter: "blur(6px)", duration: 0.05 }, T8 - 0.02);
+        const gx = anchor(CX, CY - 50, 12);
+        const ex = word(gx, "ويطلع.", 150, G); blurIn(ex, T8, 0.12);
+        const TX = T8 + 0.3;
+        TL.to(ex, { x: 30, duration: 0.1, ease: "sine.out" }, TX - 0.1);
+        TL.to(ex, { x: -1100, rotation: -14, skewX: 28, scaleX: 1.6, filter: "blur(14px)", duration: 0.26, ease: "power3.in" }, TX);
+        // the trail: a thin green line left behind, which then becomes the sign
+        const SL = 140, ST = 700, SR = 940, SB = 1000, DOMEC = 540, DOMER = 200;
+        const trail = el("div", stage, { left: SL + "px", top: (CY - 2) + "px", width: (900 - SL) + "px", height: "4px", background: G, zIndex: 12 }, "abs");
+        gsap.set(trail, { scaleX: 0, transformOrigin: "100% 50%" });
+        TL.to(trail, { scaleX: 1, duration: 0.22, ease: "power3.in" }, TX + 0.04);
+        TL.to(trail, { scaleX: 0, transformOrigin: "0% 50%", duration: 0.3, ease: "power2.inOut" }, TX + 0.28);
+
+        // ═══ S7 neon sign: «لا تدور على» / «صور أقل.» ═══
+        const sg = document.createElementNS(svgNS, "svg"); Object.assign(sg.style, { position: "absolute", left: "0", top: "0", width: "1080px", height: "1920px", overflow: "visible", zIndex: 13 }); stage.appendChild(sg);
+        const outer = `M${SL} ${CY} L${SL} ${ST} L${DOMEC - DOMER} ${ST} A${DOMER} ${DOMER} 0 0 1 ${DOMEC + DOMER} ${ST} L${SR} ${ST} L${SR} ${SB} L${SL} ${SB} Z`;
+        const i1 = 18, inner = `M${SL + i1} ${CY} L${SL + i1} ${ST + i1} L${DOMEC - DOMER + i1} ${ST + i1} A${DOMER - i1} ${DOMER - i1} 0 0 1 ${DOMEC + DOMER - i1} ${ST + i1} L${SR - i1} ${ST + i1} L${SR - i1} ${SB - i1} L${SL + i1} ${SB - i1} Z`;
+        let ticks = ""; for (let x = SL + 40; x <= SR - 40; x += 60) ticks += `M${x} ${SB + 6} L${x} ${SB + 30} `;
+        const base = `M${SL + 20} ${SB + 30} L${SR - 20} ${SB + 30}`;
+        const band = [150, 172].map((dy) => { const hw = Math.sqrt(DOMER * DOMER - dy * dy) - 34; return `M${DOMEC - hw} ${ST - dy} L${DOMEC + hw} ${ST - dy}`; }).join(" ");
+        const P = (d, sw, extra = "") => `<path d="${d}" fill="none" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round" pathLength="1" stroke-dasharray="1" stroke-dashoffset="1" ${extra}/>`;
+        sg.innerHTML = `<g id="dim" stroke="${DG}">${P(outer, 4)}${P(inner, 3)}${P(ticks, 3)}${P(base, 3)}${P(band, 3)}</g>` +
+          `<g id="lit" stroke="${G}" style="filter: drop-shadow(0 0 6px ${G}) drop-shadow(0 0 18px ${G})" opacity="0">${P(outer, 4)}${P(inner, 3)}${P(ticks, 3)}${P(base, 3)}${P(band, 3)}</g>`;
+        const dimP = sg.querySelectorAll("#dim path"), litP = sg.querySelectorAll("#lit path"), lit = sg.querySelector("#lit");
+        const TS = TX + 0.3;
+        [0.0, 0.1, 0.22, 0.26, 0.3].forEach((d, i) => { TL.to(dimP[i], { strokeDashoffset: 0, duration: i === 0 ? 0.5 : 0.36, ease: "power2.inOut" }, TS + d); gsap.set(litP[i], { strokeDashoffset: 0 }); });
+        const haze = el("div", stage, { left: "40px", top: "380px", width: "1000px", height: "860px", background: `radial-gradient(closest-side, rgba(0,219,51,0.22), rgba(0,219,51,0))`, zIndex: 12, opacity: 0 }, "abs");
+        // dome text: small solid green words, right to left on the voice
+        const gd = anchor(CX, ST - 52, 14);
+        const dl = el("div", gd, { display: "flex", flexDirection: "row", direction: "rtl", gap: "18px", alignItems: "center", whiteSpace: "nowrap" }, "abs");
+        const dw = ["لا", "تدور", "على"].map((t, i) => { const s = el("span", dl, { fontSize: (i === 0 ? 70 : 54) + "px", color: G, lineHeight: "1.25", display: "inline-block" }, "tok"); s.textContent = t; return s; });
+        const db = dl.getBoundingClientRect(); gsap.set(dl, { x: -db.width / 2, y: -db.height / 2 });
+        [17, 18, 19].forEach((wi, k) => blurIn(dw[k], V(wi), 0.12));
+        // tube text: «صور أقل.» unlit tube first, then the flicker
+        const gt = anchor(CX, (ST + SB) / 2 + 6, 14);
+        const tl = el("div", gt, { display: "flex", flexDirection: "row", direction: "rtl", gap: "48px", alignItems: "center", whiteSpace: "nowrap" }, "abs");
+        const tube = ["صور", "أقل."].map((t) => {
+          const h = el("span", tl, { position: "relative", display: "inline-block", fontSize: "128px", lineHeight: "1.25" });
+          const off = el("span", h, { color: "transparent", webkitTextStroke: "3px " + DG, display: "inline-block" }); off.textContent = t;
+          const on = el("span", h, { position: "absolute", left: "0", top: "0", color: "transparent", webkitTextStroke: "5px " + G, display: "inline-block", filter: `drop-shadow(0 0 6px ${G}) drop-shadow(0 0 22px ${G})` }); on.textContent = t;
+          gsap.set(h, { opacity: 0 }); gsap.set(on, { opacity: 0 });
+          return { h, on };
+        });
+        const tb = tl.getBoundingClientRect(); gsap.set(tl, { x: -tb.width / 2, y: -tb.height / 2 });
+        TL.to(tube.map((t) => t.h), { opacity: 1, duration: 0.25, stagger: 0.08, ease: "none" }, TS + 0.3);
+        const flick = (target, at, pat) => { pat.forEach(([dt, v]) => TL.set(target, { opacity: v }, at + dt)); };
+        // «صور»: the sign and the first word light together
+        flick([lit, tube[0].on], V(20), [[0, 1], [2 * F, 0.15], [3 * F, 1], [5 * F, 0.3], [7 * F, 1]]);
+        TL.to(haze, { opacity: 1, duration: 0.3, ease: "power2.out" }, V(20));
+        flick(tube[1].on, V(21), [[0, 1], [F, 0.2], [3 * F, 1], [4 * F, 0.4], [6 * F, 1]]);
+        // the tube hums: tiny dips to the end
+        flick([lit, tube[0].on, tube[1].on], 9.36, [[0, 0.75], [F, 1], [5 * F, 0.85], [6 * F, 1]]);
+        TL.to(gt, { scale: 1.02, duration: D - V(20), ease: "sine.inOut" }, V(20));
+
+        const grains = Array.from(document.querySelectorAll(".grain"));
+        for (let f = 0; f < D * 30; f += 2) grains.forEach((g, i) => TL.set(g, { opacity: i === (f / 2) % 6 ? 0.5 : 0 }, f * F));
+        TL.set({}, {}, D);
+        window.__timelines["main"] = TL; TL.seek(0);
+      }
+      window.__hf = window.__hf || {}; window.__hf.buildReady = window.__hf.buildReady || {};
+      window.__hf.buildReady["main"] = build();
+    </script>
+  </body>
+</html>
