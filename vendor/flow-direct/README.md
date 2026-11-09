@@ -37,10 +37,18 @@ node vendor/flow-direct/fd.mjs gen jobs.json --par 4
 - 4 images in parallel: 42 s total, no UI.
 - 1 frames-to-video shot (padlock pedestal → hinge pedestal): chained correctly, 15 credits, ready about 2 min after submit.
 
-## Not done yet
-- **Uploading a LOCAL image** (for example a real client photo) still goes through the MCP (`flow_upload_images`) or the UI.
-  - The upload RPC was not captured yet. Capture it with `sniff.mjs` while uploading once in the UI, then add an `upload` command (token action `UPLOAD_IMAGE`).
-  - Media generated in the project can already be attached by ID.
+## Upload local images (since 2026-11-09)
+```
+node fd.mjs upload img1.jpg img2.png
+```
+- It prints `[{file, media}]`. Attach those media IDs in `att`.
+- It uses the RPC `maseQ`: `[ctx(token UPLOAD_IMAGE), base64, mime, 1, null×4, fileName, null, UUID, UUID]`.
+- It needs no clicks and no MCP.
+- Verified with a 1600×1046 client photo that downloaded back intact.
+
+## Traps
+- **Background tabs:** a background or hidden tab may never acknowledge CDP Input events. `wiggle` therefore waits at most 400 ms per event; without that, the call hangs forever.
+- **Leftover tabs:** an extra Drive tab left by `gd_upload_batch.py` is harmless, but close it.
 
 ## Research files
 - `probe.mjs`: the replay experiment.

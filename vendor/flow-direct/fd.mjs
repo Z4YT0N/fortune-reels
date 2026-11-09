@@ -4,6 +4,7 @@
 //
 //   node fd.mjs gen  jobs.json [--par 4]   run jobs (see below) in parallel, download results, print a JSON summary
 //   node fd.mjs chat "<text>" [--att id,id] [--approve]          one agent message (debug)
+//   node fd.mjs upload <img...>                                  upload local images (png/jpg/webp), prints media ids
 //   node fd.mjs rpc  <rpcId> '<json payload>'                     one read-only RPC (debug)
 //
 // jobs.json: [{ "name": "K0", "prompt": "...", "att": ["<mediaId>", ...], "out": "C:/abs/dir", "maxCredits": 16 }, ...]
@@ -28,16 +29,18 @@ async function tab() {
     return r.result.result.value;
   };
   // Human-like pointer activity in the tab before a generation (reCAPTCHA is score based; video needs a higher score).
+  // a hidden/background tab may never ack input events: never wait more than 400 ms for one
+  const race = (p) => Promise.race([p, new Promise(r => setTimeout(r, 400))]);
   const wiggle = async () => { let x = 300 + Math.random() * 400, y = 300 + Math.random() * 300;
     for (let i = 0; i < 25; i++) { x += (Math.random() - 0.5) * 60; y += (Math.random() - 0.5) * 40;
-      await send('Input.dispatchMouseEvent', { type: 'mouseMoved', x, y }); await new Promise(r => setTimeout(r, 40 + Math.random() * 80)); }
-    await send('Input.dispatchMouseEvent', { type: 'mouseWheel', x, y, deltaX: 0, deltaY: 120 }); };
+      await race(send('Input.dispatchMouseEvent', { type: 'mouseMoved', x, y })); await new Promise(r => setTimeout(r, 40 + Math.random() * 80)); }
+    await race(send('Input.dispatchMouseEvent', { type: 'mouseWheel', x, y, deltaX: 0, deltaY: 120 })); };
   return { ev, wiggle, close: () => ws.close() };
 }
 
 // Installed in the page on every call (idempotent), so a page reload never breaks us.
 const PAGE_JS = String.raw`() => {
-  if (window.__fd && window.__fd.v === 3) return;
+  if (window.__fd && window.__fd.v === 4) return;
   const w = () => window.WIZ_global_data;
   const pid = () => location.pathname.split('/project/')[1].split(/[/?#]/)[0];
   const key = () => [...document.scripts].map(s => s.src).find(s => s.includes('enterprise.js?')).match(/render=([^&]+)/)[1];
@@ -63,7 +66,14 @@ const PAGE_JS = String.raw`() => {
   };
   const session = async () => JSON.stringify((await rpc('csbIsb', [pid(), null, crypto.randomUUID()])).data).match(/[0-9a-f-]{36}/)[0];
   const url = async (mediaId) => { const r = await rpc('as29s', [mediaId]); const s = JSON.stringify(r.data || ''); return { url: (s.match(/https:\/\/flow-content\.google\/video\/[^"]+/) || s.match(/https:\/\/flow-content\.google\/image\/[^"]+/) || [null])[0], error: r.error }; };
-  window.__fd = { v: 3, rpc, chat, session, url };
+  const upload = async (b64, mime, name) => {     // FlowService upload (maseQ), token action UPLOAD_IMAGE
+    const tok = await grecaptcha.enterprise.execute(key(), { action: 'UPLOAD_IMAGE' });
+    const ctx = [null, 22, null, null, null, pid(), null, null, null, null, [tok, 1]];
+    const r = await rpc('maseQ', [ctx, b64, mime, 1, null, null, null, null, name, null, crypto.randomUUID().toUpperCase(), crypto.randomUUID().toUpperCase()]);
+    const ids = JSON.stringify(r.data || '').match(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/g) || [];
+    return { error: r.error, media: ids.find(i => i !== pid()) || null };
+  };
+  window.__fd = { v: 4, rpc, chat, session, url, upload };
 }`;
 
 const sleep = (ms) => new Promise(r => setTimeout(r, ms));
@@ -102,7 +112,15 @@ const argv = process.argv.slice(2); const [cmd, a1, a2] = argv;
 const opt = (n, d) => { const i = argv.indexOf(n); return i >= 0 ? argv[i + 1] : d; };
 const t = await tab();
 try {
-  if (cmd === 'rpc') console.log(JSON.stringify(await t.ev(`__fd.rpc(${JSON.stringify(a1)}, ${a2})`)).slice(0, 4000));
+  if (cmd === 'upload') {                      // node fd.mjs upload <file...>  -> prints {file, media}
+    const files = argv.slice(1); const out = [];
+    for (const f of files) {
+      const ext = path.extname(f).toLowerCase(); const mime = ext === '.png' ? 'image/png' : ext === '.webp' ? 'image/webp' : 'image/jpeg';
+      const r = await t.ev(`__fd.upload(${JSON.stringify(fs.readFileSync(f).toString('base64'))}, ${JSON.stringify(mime)}, ${JSON.stringify(path.basename(f))})`);
+      out.push({ file: f, ...r });
+    }
+    console.log(JSON.stringify(out, null, 1));
+  } else if (cmd === 'rpc') console.log(JSON.stringify(await t.ev(`__fd.rpc(${JSON.stringify(a1)}, ${a2})`)).slice(0, 4000));
   else if (cmd === 'chat') {
     const sid = opt('--session') || await t.ev('__fd.session()');
     const att = (opt('--att', '') || '').split(',').filter(Boolean);
