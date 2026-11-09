@@ -32,7 +32,8 @@ Every rule here exists because the owner rejected a version that broke it. When 
   - `node vendor/flow-direct/fd.mjs gen jobs.json --par 3` (Flow over RPC, no UI). Images are free; a 5 s frames-to-video costs 15 credits.
   - The UI fallback is the `google-flow` MCP.
   - No Gemini API: it was deleted on 2026-11-09.
-  - Local reference photos are uploaded once with the MCP (`flow_upload_images`), then attached by media ID.
+  - Local reference photos: `node vendor/flow-direct/fd.mjs upload <img...>`, then attach them by media ID.
+- **A new reel ALWAYS starts with** `python engine/tools/new_collage_reel.py <slug> --brand <id>`, and is checked with `engine/tools/brand_lint.py` (see collage-reel.md). The brands are `brands/*.json`.
 - **Voice:** ElevenLabs clone `hKxOF1e0PGHjtctJDcOl`, eleven_v3, plain Gulf text, no tashkeel, no stretch above ×1.05.
 - **Languages:**
   - Instagram: light Gulf Arabic.

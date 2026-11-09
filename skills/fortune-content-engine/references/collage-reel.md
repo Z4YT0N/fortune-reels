@@ -21,6 +21,20 @@ The first full reel in this style is **reel 018** (Alum Aman). The owner approve
 - plain captions;
 - a voice stretched above ×1.05.
 
+## Start every reel with the scaffold (since 2026-11-09)
+```
+python engine/tools/new_collage_reel.py <slug> --brand fortune|alumaman|<client>
+```
+- It creates `reels/NNN-<slug>/` from `engine/template/collage/`:
+  - `reel.tpl` on the shared library `engine/kinetic/kinetic.js` (every 006/018 move; README in `engine/kinetic/`), with brand CSS variables and fonts;
+  - `build.py`, `film.py`, `make_cues.py`, `mix.py`, `sfxgen.py`, `tts.py` / `stt.py` (brand voice), `qa_strips.py`;
+  - `BRIEF.md` and `NOTE.md` with both gates;
+  - `gen/jobs.*.json` for fd.mjs, with the brand style suffix.
+- Brand profiles live in `brands/<id>.json` (with fonts and logos in `brands/<id>/`). They hold colours, fonts, the logo, contact, the CTA, the voice, `allowed_facts`, `banned_words`, `required_phrases` and `never`.
+  - A new client takes about 5 minutes (`brands/README.md`).
+- **Before Gate 1 and before sending:** run `python engine/tools/brand_lint.py reels/NNN-<slug>`. It fails on banned words, numbers outside `allowed_facts`, and missing required phrases.
+- **Local photos** (client projects): `node vendor/flow-direct/fd.mjs upload <img...>` returns media IDs to attach. No MCP is needed.
+
 ## The look
 - A black-and-white halftone documentary cut-out collage on light paper with grain, with torn edges and tape.
 - ONE riso ink accent, slightly mis-registered.
