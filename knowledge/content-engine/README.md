@@ -25,8 +25,9 @@ them. When the two disagree, the owner's latest decision wins. Update both.
 | [11-fortune-style.md](11-fortune-style.md) | Fortune house style notes |
 | [12-kinetic-type-engine.md](12-kinetic-type-engine.md) | Kinetic type engine: depth matte, motion blur, moves |
 | [13-reel-craft-8-refs.md](13-reel-craft-8-refs.md) | Reel craft learned from the owner's 8 references |
-| [14-roar-ai-video-pipeline.md](14-roar-ai-video-pipeline.md) | DEFAULT reel pipeline: ROAR look + Flow frames-to-video shots + HyperFrames type layer, traps |
+| [14-roar-ai-video-pipeline.md](14-roar-ai-video-pipeline.md) | LEGACY (photoreal ROAR, rejected looks): ROAR look + Flow frames-to-video shots + HyperFrames type layer, traps |
 | [15-delivery-and-storage.md](15-delivery-and-storage.md) | WhatsApp media + document, Desktop copy, Google Drive upload (CDP drag-drop) |
+| [17-collage-reel.md](17-collage-reel.md) | THE reel style since 2026-11-08 (reel 006 v6 look + kinetic type, brand profiles, 2 owner gates). Example: reels/018 |
 | [16-production-log.md](16-production-log.md) | Every finished piece: date, platform, folder, owner verdict, credits |
 
 Binding rules that came out of this research:
