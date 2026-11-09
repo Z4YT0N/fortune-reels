@@ -1,0 +1,63 @@
+{
+  "id": "alumaman",
+  "name_ar": "ألمنيوم نظم أمان",
+  "name_en": "Nozom Aman Aluminum",
+  "client": true,
+  "source": "E:/fortune projects/almanyum-aman (lib/business.js, app/globals.css, public/font/thmanyah, public/images/logos), read 2026-11-09",
+  "colors": {
+    "ink": "#0199a2",
+    "ink_deep": "#017a82",
+    "ink_soft": "#01b8c3",
+    "paper": "#F0F1F2",
+    "dark": "#1d1d1d",
+    "on_ink": "#F0F1F2"
+  },
+  "style": {
+    "ink_word": "teal",
+    "ink_deep_word": "deep teal",
+    "paper_word": "cool neutral light grey",
+    "world": "Saudi homes in Al-Ahsa: villa walls, windows, doors and aluminium facades"
+  },
+  "fonts": {
+    "hero": { "family": "Thmanyah Serif Display", "files": [{ "file": "brands/alumaman/thmanyahserifdisplay-Black.otf", "weight": 900 }] },
+    "label": { "family": "Thmanyah Sans", "files": [
+      { "file": "brands/alumaman/thmanyahsans-Bold.otf", "weight": 700 },
+      { "file": "brands/alumaman/thmanyahsans-Medium.otf", "weight": 500 }
+    ] },
+    "latin": null
+  },
+  "logo": {
+    "on_dark": "brands/alumaman/logo-on-dark.png",
+    "on_light": "brands/alumaman/logo-on-light.png",
+    "icon": "brands/alumaman/icon.png"
+  },
+  "contact": [
+    "alumaman.com",
+    "واتساب +966 56 634 3386",
+    "@nozomaman"
+  ],
+  "cta": "احجز معاينة مجانية",
+  "voice": { "voice_id": "hKxOF1e0PGHjtctJDcOl", "model": "eleven_v3", "stability": 0.5 },
+  "allowed_facts": [
+    "ضمان مكتوب: ١٠ سنوات على الألمنيوم",
+    "ضمان مكتوب: ٥ سنوات على الصبغ",
+    "ضمان مكتوب: ٢ (سنتان) على الإكسسوارات",
+    "موعد التركيب مكتوب في العقد ونلتزم به",
+    "صيانة مجانية مدى الحياة",
+    "جودة تستاهل: زجاج مزدوج جارديان، سيليكون ألماني، ربر EPDM مقاوم للحرارة والشمس، إكسسوارات أوروبية",
+    "نصنع في مصنعنا بالأحساء ونركب في المنطقة الشرقية",
+    "معاينة مجانية (الـCTA)"
+  ],
+  "banned_words": {
+    "شباك": "نافذة"
+  },
+  "required_phrases": [
+    "نصنع في مصنعنا بالأحساء"
+  ],
+  "never": [
+    "no gold, no beige (paper is cool grey)",
+    "no FortuneCode logo or contact on their reel",
+    "no years of experience, project counts, Google rating or discounts (not confirmed by the owner)",
+    "no hex codes or any text inside a Flow prompt (Omni paints them into the picture)"
+  ]
+}

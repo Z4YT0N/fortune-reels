@@ -45,6 +45,8 @@ node_modules/
 !assets/**
 !research/style-bible-2026-11/*
 !reels/*/keys/contact-sheet.jpg
+# brand profiles carry their logos (png/svg) and fonts so the repo is self-contained (engine/tools/new_collage_reel.py)
+!brands/**
 # re-ignore heavy restorable assets after the !assets/** whitelist
 assets/models/*.fbx
 assets/sfx-library/*

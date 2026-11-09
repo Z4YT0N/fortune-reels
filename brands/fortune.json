@@ -1,0 +1,65 @@
+{
+  "id": "fortune",
+  "name_ar": "فورتشن كود",
+  "name_en": "FortuneCode",
+  "client": false,
+  "source": "fortune-content-engine references/rules.md (§1 brand, §3 facts, §4 contact, §5 fonts, §6 voice), read 2026-11-09",
+  "colors": {
+    "ink": "#00DB33",
+    "ink_deep": "#006A39",
+    "ink_soft": "#5CF07E",
+    "paper": "#F0F1F2",
+    "dark": "#121416",
+    "on_ink": "#121416"
+  },
+  "style": {
+    "ink_word": "bright green",
+    "ink_deep_word": "deep forest green",
+    "paper_word": "cool neutral light grey",
+    "world": "a web studio's desk: laptops, phones, browser windows and the client's website"
+  },
+  "fonts": {
+    "hero": { "family": "Zain mob-long", "files": [{ "file": "brands/fortune/zain-mob-long.ttf", "weight": 500 }],
+              "note": "very long tails: at most 2-3 Zain words a line, measure and fit() every line; long lines and buttons go in the label font" },
+    "label": { "family": "IBM Plex Sans Arabic", "files": [
+      { "file": "brands/fortune/IBMPlexSansArabic-SemiBold.ttf", "weight": 600 },
+      { "file": "brands/fortune/IBMPlexSansArabic-Medium.ttf", "weight": 500 }
+    ] },
+    "latin": { "family": "Inter", "files": [{ "file": "brands/fortune/inter-lat-700.woff2", "weight": 700 }] }
+  },
+  "logo": {
+    "on_dark": "brands/fortune/logo-on-dark.svg",
+    "on_light": "brands/fortune/logo-on-light.svg",
+    "icon": "brands/fortune/mark.svg"
+  },
+  "contact": [
+    "www.fortunecode.org",
+    "+20 10 98066484"
+  ],
+  "cta": "اكتب انطباع بالتعليقات",
+  "voice": { "voice_id": "hKxOF1e0PGHjtctJDcOl", "model": "eleven_v3", "stability": 0.5 },
+  "allowed_facts": [
+    "معرض الصور: 34 MB → 140 KB، نفس الصور ونفس الجودة",
+    "فحص أمان قبل الإطلاق: 14 مشكلة اتلقت واتصلحت (فئات عامة فقط)",
+    "JavaScript: 2.2 MB → 1.2 MB",
+    "فيديو الخلفية: 2 MB → 613 KB",
+    "Google: 53% من زوار الموبايل يخرجوا بعد 3 ثواني (اذكر المصدر على الشاشة)",
+    "Deloitte for Google: أسرع بـ 0.1 ثانية → +8.4% تحويلات تجزئة (اذكر المصدر على الشاشة)",
+    "الانطباع الأول ≈ 50 ms",
+    "الطريقة 6 خطوات: فهم ← عرض سعر وجدول ← تصميم ← بناء واختبار ← إطلاق ← دعم"
+  ],
+  "banned_words": {
+    "01030608763": "+20 10 98066484",
+    "اربعتون": "اربعه وثلاثين",
+    "Taj": null,
+    "Ambatt": null,
+    "Malahi": null
+  },
+  "required_phrases": [],
+  "never": [
+    "never name a client (no Taj, Ambatt, Malahi, nobody) and no client logos",
+    "one accent only: green; no beige paper, no gold",
+    "derived numbers (sums, percentages) need the owner's OK before publishing",
+    "no hex codes or any text inside a Flow prompt (Omni paints them into the picture)"
+  ]
+}
