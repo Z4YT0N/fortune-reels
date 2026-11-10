@@ -34,6 +34,7 @@ Every rule here exists because the owner rejected a version that broke it. When 
   - No Gemini API: it was deleted on 2026-11-09.
   - Local reference photos: `node vendor/flow-direct/fd.mjs upload <img...>`, then attach them by media ID.
 - **A new reel ALWAYS starts with** `python engine/tools/new_collage_reel.py <slug> --brand <id>`, and is checked with `engine/tools/brand_lint.py` (see collage-reel.md). The brands are `brands/*.json`.
+- **Text moves:** pick every line's move from `references/effects-library.md` (60 named moves: K.* in kinetic.js, X.* in fx.js, a cheat sheet per beat). Watch them all in `engine/kinetic/gallery/gallery.mp4` (owner 2026-11-10: «افكتات كتير… تتسجل في الاسكيل»).
 - **Voice:** ElevenLabs clone `hKxOF1e0PGHjtctJDcOl`, eleven_v3, plain Gulf text, no tashkeel, no stretch above ×1.05.
 - **Languages:**
   - Instagram: light Gulf Arabic.

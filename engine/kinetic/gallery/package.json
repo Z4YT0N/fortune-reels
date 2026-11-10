@@ -1,0 +1,11 @@
+{
+  "name": "kinetic-gallery",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "python build.py",
+    "check": "npx --yes hyperframes@0.9.20 check",
+    "render": "npx --yes hyperframes@0.9.20 render --output gallery.mp4",
+    "sheet": "python sheet.py"
+  }
+}

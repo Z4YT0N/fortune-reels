@@ -4,7 +4,7 @@ Creates reels/NNN-<slug>/ (next free number) with reel.tpl (loads lib/kinetic.js
 example beat per move), build.py, film.py, make_cues.py, mix.py, sfxgen.py, tts.py, stt.py, qa_strips.py, onset.py,
 hyperframes.json, package.json, BRIEF.md, NOTE.md, script.txt, caption.txt, brand.json (local copy) and gen/jobs.keys.json +
 gen/jobs.shots.json (fd.mjs templates with the brand style suffix). Fonts and logos are copied from brands/<id>/, the grain is
-generated, the kinetic library is copied from engine/kinetic/ (build.py --sync refreshes it)."""
+generated, the kinetic libraries (kinetic.js + fx.js) are copied from engine/kinetic/ (build.py --sync refreshes them)."""
 import argparse, datetime, json, os, re, shutil, subprocess, sys
 from common import ENGINE, REELS, ROOT, die
 
@@ -42,7 +42,8 @@ for k, p in B['logo'].items():
 local['source'] = f'brands/{a.brand}.json (copied {datetime.date.today().isoformat()}); edit the brand file, not this copy, for anything that is not reel-specific'
 json.dump(local, open(os.path.join(rd, 'brand.json'), 'w', encoding='utf-8'), ensure_ascii=False, indent=2)
 
-shutil.copy2(os.path.join(ENGINE, 'kinetic', 'kinetic.js'), os.path.join(rd, 'lib', 'kinetic.js'))
+for lib in ('kinetic.js', 'fx.js'):
+    shutil.copy2(os.path.join(ENGINE, 'kinetic', lib), os.path.join(rd, 'lib', lib))
 subprocess.run([sys.executable, os.path.join(ENGINE, 'kinetic', 'make_grain.py'), os.path.join(rd, 'assets', 'img')], check=True, capture_output=True)
 
 TOK = {'{{NNN}}': nnn, '{{SLUG}}': slug, '{{TITLE}}': title, '{{BRAND}}': a.brand, '{{DATE}}': datetime.date.today().isoformat()}

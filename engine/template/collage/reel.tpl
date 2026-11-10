@@ -3,7 +3,8 @@
   <!-- Collage reel {{NNN}}-{{SLUG}} ({{TITLE}}), brand: {{BRAND}}. Scaffolded by engine/tools/new_collage_reel.py from engine/template/collage/.
        Style = reel 006 v6 / reel 018 (the owner's "ROAR"): halftone collage film underneath (assets/video/bg.mp4), kinetic type on top.
        Edit THIS file, never index.html. build.py fills __D__, WORDS (audio/vo.json) and the brand tokens (brand.json) and writes index.html.
-       The moves live in lib/kinetic.js (a copy of engine/kinetic/kinetic.js; README there). Colours and fonts are CSS variables from the brand.
+       The moves live in lib/kinetic.js (K.*) and lib/fx.js (X.*), copies of engine/kinetic/ (README there; catalogue: fortune-content-engine
+       references/effects-library.md; see them all in engine/kinetic/gallery/gallery.mp4). Colours and fonts are CSS variables from the brand.
        Rules: ONE named move per spoken line, changing every beat; text appears only when the picture shows that thing; words react to the
        picture (jolt on a hit, swallowed by a dive, exit with the motion); hidden state at build time; Arabic whole words only.
        Write the line -> move map here before you animate (one line each):
@@ -15,6 +16,7 @@
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/MotionPathPlugin.min.js"></script>
     <script src="lib/kinetic.js"></script>
+    <script src="lib/fx.js"></script>
     <style>
       /*BRAND_CSS*/
       * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -54,6 +56,7 @@
         const K = Kinetic.create(TL, { words: WORDS });
         const { F, C, W, E, V, has, grp, line, scrap, tape, chip, fit, rise, inkIn, blurIn, hl, slam, over, typeOn, mark, strike, selBox, cursor, blink, live, snap,
                 fly, flyOut, echoStack, trails, squash, trailsDrop, rows, feather, kash, kashIn, zoomOut, stamp, jolt, swallow, out, grain } = K;
+        const X = Kinetic.fx(TL, K); // fx.js moves: X.flagWarp, X.kashGrow, X.countRoll, X.searchBar ... (references/effects-library.md)
         const front = document.getElementById("front"), behind = document.getElementById("behind"), endL = document.getElementById("end");
         // a word's time, or a fallback while the voice is not in yet (audio/vo.json missing)
         const at = (i, fb) => (has(i) ? V(i) : fb);

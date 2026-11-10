@@ -2,13 +2,15 @@
 python build.py [--d SECONDS] [--sync]
   --d     duration when there is no bg.mp4 yet (default: last word end + 2 s, at least 7 s); a paper-coloured PLACEHOLDER bg.mp4
           is then written so the page can be checked and snapshotted before the film exists. film.py overwrites it.
-  --sync  re-copy lib/kinetic.js from engine/kinetic/kinetic.js (the reel keeps its own copy so engine changes never break it)."""
+  --sync  re-copy lib/kinetic.js + lib/fx.js from engine/kinetic/ (the reel keeps its own copy so engine changes never break it)."""
 import argparse, json, os, shutil, subprocess, sys
 HERE = os.path.dirname(os.path.abspath(__file__)); ROOT = os.path.join(HERE, '..', '..')
 os.chdir(HERE); sys.stdout.reconfigure(encoding='utf-8')
 ap = argparse.ArgumentParser(); ap.add_argument('--d', type=float); ap.add_argument('--sync', action='store_true'); a = ap.parse_args()
 if a.sync:
-    shutil.copy2(os.path.join(ROOT, 'engine', 'kinetic', 'kinetic.js'), os.path.join('lib', 'kinetic.js')); print('lib/kinetic.js synced')
+    for lib in ('kinetic.js', 'fx.js'):
+        shutil.copy2(os.path.join(ROOT, 'engine', 'kinetic', lib), os.path.join('lib', lib))
+    print('lib/kinetic.js + lib/fx.js synced')
 
 B = json.load(open('brand.json', encoding='utf-8'))
 w = json.load(open('audio/vo.json', encoding='utf-8')) if os.path.exists('audio/vo.json') else []

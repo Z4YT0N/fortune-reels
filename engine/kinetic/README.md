@@ -2,7 +2,7 @@
 
 `kinetic.js` holds every type move of the collage reel (reel 006 v6 and reel 018, the owner's "ROAR"). It is extracted from `reels/018-alumaman-collage/reel.tpl`, plus `kashIn` from `reels/006-gallery-continuity/test.tpl`. The behaviour is the same as in those reels.
 
-- **Start a reel:** `python engine/tools/new_collage_reel.py <slug> --brand <id>`. The scaffold copies this file to `<reel>/lib/kinetic.js`, so a later engine change never breaks an old reel. `python build.py --sync` refreshes the copy.
+- **Start a reel:** `python engine/tools/new_collage_reel.py <slug> --brand <id>`. The scaffold copies `kinetic.js` and `fx.js` to `<reel>/lib/`, so a later engine change never breaks an old reel. `python build.py --sync` refreshes the copies.
 - **Colours and fonts** come from CSS variables that `build.py` writes from `brand.json`:
   - colours: `--ink` (the one accent), `--ink-deep`, `--ink-soft`, `--paper`, `--dark` (text), `--on-ink` (text on an ink chip or highlight);
   - fonts: `--font-hero`, `--font-label`, `--font-latin`;
@@ -10,6 +10,9 @@
   - Nothing in the library is hard-coded to a brand.
 - **Needs:** GSAP 3.14 with MotionPathPlugin. The library injects its own base CSS (`.el .ln .tk .m .w .sans .sansm .lat .box .scrap .tape .chip svg.mk .echo .echoG .echoL .grain`).
 - **Use:** `const K = Kinetic.create(TL, { words: WORDS })` inside `build()`, after the fonts load. Then destructure the moves you need.
+- **fx.js (the second library, 32 more moves):** every other text effect of reels 001–012 and the 007 style lab (flagWarp, sliceGlitch, kashGrow, drum, orbit, echoRings, wordGrid, countRoll, unitSlam, getHeavy, stomp, slab, searchBar, toast, clipCard, hangTag, neon, ...). Load it after kinetic.js and call `const X = Kinetic.fx(TL, K)` (or standalone `KineticFx.create(TL, { stage, front })`). Each function names its source file:line.
+- **Catalogue:** every move, old and new, with its call, what it looks like, when to use it and its source: `C:/Users/Mahmoud/.claude/skills/fortune-content-engine/references/effects-library.md` (repo copy `skills/fortune-content-engine/references/effects-library.md`, KB `knowledge/content-engine/18-effects-library.md`).
+- **Gallery:** `gallery/` plays all 61 moves one after another with their names: `cd gallery && python build.py && npx --yes hyperframes@0.9.20 render --output gallery.mp4 && python sheet.py` (contact sheet `gallery/contact-sheet.jpg`).
 
 ## Rules built in
 1. **Hidden state at build time.** Each move hides its target with `gsap.set` when the page builds. It reveals the target only with `TL.to` or `TL.fromTo(..., { immediateRender: false })`. No word ever flashes before its entrance (owner, 2026-11-07).

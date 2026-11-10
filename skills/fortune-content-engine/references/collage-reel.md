@@ -69,6 +69,7 @@ python engine/tools/new_collage_reel.py <slug> --brand fortune|alumaman|<client>
 5. **Shots:** one fd.mjs gen call, `att` = [Ki, Ki+1], 5 s, 720p, maxCredits 16, `--par 3`. That is about 75 credits for 5 shots.
    - Make a 12 fps strip of every shot. Throw away or trim faces that change, melting or morphing objects, painted text, and dissolves. Keep only the clean part and cover joins with a paper tear or a camera dive.
 6. **Type layer:** port the real functions from 006 `test.tpl` / 018 `reel.tpl`.
+   - Pick the moves from `references/effects-library.md` (K.* kinetic.js + X.* fx.js, cheat sheet per beat); see them all in `engine/kinetic/gallery/gallery.mp4`.
    - One NAMED move per line, changing every beat: fly on a curve, echoStack, trails with squash, rows behind the subject (depth matte), zigzag feather fall, slam, typeOn, kash stretch, selBox plus cursor, stamp.
    - Words react to the picture: they jolt on an impact, get swallowed by a dive, and exit with the motion.
    - Hidden state is set at build time. Arabic is whole words only.
