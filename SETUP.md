@@ -106,7 +106,8 @@ Who and how:
 
 The reel style = reel 006 v6 (he calls it "ROAR"):
 - a halftone black-and-white collage on paper, ONE ink colour, marker marks, a continuous AI film, and the 006 kinetic type library (fly on curves, echoStack, trails with squash, rows behind the subject, zigzag feather, slam, typeOn, kash, selBox and cursor);
-- copy the folder structure of reels/018-alumaman-collage;
+- 61 named text moves: `engine/kinetic/kinetic.js` (29) + `engine/kinetic/fx.js` (32, incl. the 008 flagWarp «معرض صور»). Catalogue with "pick a move per beat": the skill's `references/effects-library.md` (= knowledge/content-engine/18-effects-library.md). Gallery of all of them: `cd engine/kinetic/gallery && python build.py`, then render;
+- start every reel with `python engine/tools/new_collage_reel.py <slug> --brand <id>` (copies both libraries) and check it with `engine/tools/brand_lint.py`;
 - NEVER photoreal props on pedestals, never plain captions, never a voice stretched above ×1.05.
 
 Tools:
